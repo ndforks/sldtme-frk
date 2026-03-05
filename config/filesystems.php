@@ -15,6 +15,10 @@ return [
 
     'default' => env('FILESYSTEM_DISK', 'local'),
 
+    'public' => env('PUBLIC_FILESYSTEM_DISK', 'public'),
+
+    'private' => env('FILESYSTEM_DISK', 'local'),
+
     /*
     |--------------------------------------------------------------------------
     | Filesystem Disks
@@ -48,18 +52,23 @@ return [
         ],
 
         's3' => [
-            'driver' => 's3',
-            'key' => env('AWS_ACCESS_KEY_ID'),
-            'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'region' => env('AWS_DEFAULT_REGION'),
-            'bucket' => env('AWS_BUCKET'),
-            'url' => env('AWS_URL'),
-            'endpoint' => env('AWS_ENDPOINT'),
-            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
-            'throw' => false,
-            'report' => false,
+            'driver'                  => 's3',
+            'key'                     => env('S3_ACCESS_KEY_ID'),
+            'secret'                  => env('S3_SECRET_ACCESS_KEY'),
+            'region'                  => env('S3_REGION'),
+            'bucket'                  => env('S3_BUCKET'),
+            'url'                     => env('S3_URL'),
+            'temporary_url'           => env('S3_URL'),
+            'endpoint'                => env('S3_ENDPOINT'),
+            'use_path_style_endpoint' => env('S3_USE_PATH_STYLE_ENDPOINT', false),
+            'throw'                   => true,
         ],
 
+        'testfiles' => [
+            'driver' => 'local',
+            'root'   => resource_path('testfiles'),
+            'throw'  => true,
+        ],
     ],
 
     /*

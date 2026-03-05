@@ -3,15 +3,22 @@
     "private": true,
     "type": "module",
     "scripts": {
+        "dev": "vite",
         "build": "vite build",
-        "dev": "vite"
+        "lint": "eslint resources/js",
+        "lint:fix": "eslint --fix resources/js",
+        "type-check": "vue-tsc --noEmit",
+        "test:e2e": "rm -rf test-results/.auth && npx playwright test",
+        "zod:generate": "npx openapi-zod-client http://localhost:80/docs/api.json --output resources/js/packages/api/src/openapi.json.client.ts --base-url /api",
+        "format": "prettier --write './**/*.{js,jsx,cjs,mjs,ts,tsx,cts,mts,vue}'",
+        "format:check": "prettier --check './**/*.{js,jsx,cjs,mjs,ts,tsx,cts,mts,vue}'"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
         "axios": "^1.11.0",
         "concurrently": "^9.0.1",
-        "laravel-vite-plugin": "^2.0.0",
-        "tailwindcss": "^4.0.0",
+        "laravel-vite-plugin": "^2.1.0",
+        "tailwindcss": "^4.2.1",
         "vite": "^7.0.7"
     }
 }

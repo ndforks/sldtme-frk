@@ -37,7 +37,12 @@ return [
 
     'guards' => [
         'web' => [
-            'driver' => 'session',
+            'driver'   => 'session',
+            'provider' => 'users',
+        ],
+
+        'api' => [
+            'driver'   => 'passport',
             'provider' => 'users',
         ],
     ],
@@ -112,4 +117,11 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    'super_admins' => ! is_string(env('SUPER_ADMINS', null)) ? [] : explode(',', env('SUPER_ADMINS')),
+
+    'terms_url' => env('TERMS_URL', ''),
+
+    'privacy_policy_url' => env('PRIVACY_POLICY_URL', ''),
+
+    'newsletter_consent' => env('NEWSLETTER_CONSENT', false),
 ];
