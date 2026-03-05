@@ -1,7 +1,12 @@
 <?php
 
-return [
+use App\Enums\CurrencyFormat;
+use App\Enums\DateFormat;
+use App\Enums\IntervalFormat;
+use App\Enums\NumberFormat;
+use App\Enums\TimeFormat;
 
+return [
     /*
     |--------------------------------------------------------------------------
     | Application Name
@@ -133,7 +138,6 @@ return [
 
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
-        'store' => env('APP_MAINTENANCE_STORE', 'database'),
+        'store'  => env('APP_MAINTENANCE_STORE', 'database'),
     ],
-
 ];
