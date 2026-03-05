@@ -8,7 +8,7 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::create('clients', static function (Blueprint $table): void {
-            $table->bigIncrements('id');
+            $table->id();
             $table->string('name', 255);
             $table->dateTime('archived_at')->nullable();
             $table->unsignedBigInteger('organization_id');
