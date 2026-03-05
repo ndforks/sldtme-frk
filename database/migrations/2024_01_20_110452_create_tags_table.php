@@ -8,9 +8,9 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::create('tags', static function (Blueprint $table): void {
-            $table->uuid('id')->primary();
+            $table->id();
+            $table->unsignedBigInteger('organization_id');
             $table->string('name', 255);
-            $table->uuid('organization_id');
             $table->foreign('organization_id')
                 ->references('id')
                 ->on('organizations')

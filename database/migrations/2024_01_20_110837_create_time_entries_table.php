@@ -9,8 +9,14 @@ return new class () extends Migration {
     {
         Schema::create('time_entries', static function (Blueprint $table): void {
             $table->id();
+            $table->unsignedBigInteger('organization_id');
+            $table->unsignedBigInteger('project_id')->nullable();
+            $table->unsignedBigInteger('task_id')->nullable();
+            $table->unsignedBigInteger('client_id')->nullable();
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('member_id');
             // Extended description to 5000 characters
-            $table->string('description', 5000);
+            $table->text('description')->nullable();
             $table->dateTime('start');
             $table->dateTime('end')->nullable();
             $table->integer('billable_rate')->unsigned()->nullable();
@@ -21,13 +27,6 @@ return new class () extends Migration {
 
             // Reminder notifications
             $table->dateTime('still_active_email_sent_at')->nullable();
-
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('member_id');
-            $table->unsignedBigInteger('organization_id');
-            $table->unsignedBigInteger('project_id')->nullable();
-            $table->unsignedBigInteger('task_id')->nullable();
-            $table->unsignedBigInteger('client_id')->nullable();
 
             // MariaDB uses json() instead of jsonb()
             $table->json('tags')->nullable();

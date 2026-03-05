@@ -16,7 +16,7 @@ class CreateAuditsTable extends Migration
 
             $table->id();
             $table->string($morphPrefix . '_type')->nullable();
-            $table->uuid($morphPrefix . '_id')->nullable();
+            $table->unsignedBigInteger($morphPrefix . '_id')->nullable();
             $table->string('event');
             // MariaDB requires explicit UUID columns instead of uuidMorphs()
             $table->string('auditable_type');

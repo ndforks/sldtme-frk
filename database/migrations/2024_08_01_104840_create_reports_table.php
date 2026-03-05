@@ -8,7 +8,8 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::create('reports', static function (Blueprint $table): void {
-            $table->uuid('id')->primary();
+            $table->id();
+            $table->unsignedBigInteger('organization_id');
             $table->string('name');
             $table->text('description')->nullable();
             $table->boolean('is_public')->default(false)->index();
@@ -16,7 +17,6 @@ return new class () extends Migration {
             // MariaDB uses json() instead of jsonb()
             $table->json('properties');
             $table->dateTime('public_until')->nullable();
-            $table->uuid('organization_id');
             $table->foreign('organization_id')
                 ->references('id')
                 ->on('organizations')
