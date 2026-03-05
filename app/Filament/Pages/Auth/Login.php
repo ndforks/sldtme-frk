@@ -20,14 +20,13 @@ class Login extends BaseLogin
 {
     public function authenticate(): ?LoginResponse
     {
-        dd('here?');
-        try {
+        /*try {
             $this->rateLimit(5);
         } catch (TooManyRequestsException $exception) {
             $this->getRateLimitedNotification($exception)?->send();
 
             return null;
-        }
+        }*/
 
         $data = $this->form->getState();
 
