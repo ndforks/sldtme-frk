@@ -26,7 +26,9 @@ return new class () extends Migration {
             $table->text('two_factor_recovery_codes')->nullable();
             $table->timestamp('two_factor_confirmed_at')->nullable();
 
+            // Foreign key to organizations - added after organizations table is created
             $table->uuid('current_team_id')->nullable();
+
             $table->string('profile_photo_path', 2048)->nullable();
             $table->string('timezone');
             $table->enum('week_start', [
@@ -43,13 +45,6 @@ return new class () extends Migration {
             // MariaDB doesn't support partial indexes with WHERE clauses
             // Use a regular unique index instead and enforce the constraint at application level
             $table->unique('email');
-
-            // Foreign key for current_team_id
-            $table->foreign('current_team_id', 'organizations_current_organization_id_foreign')
-                ->references('id')
-                ->on('organizations')
-                ->onDelete('restrict')
-                ->onUpdate('cascade');
         });
     }
 
