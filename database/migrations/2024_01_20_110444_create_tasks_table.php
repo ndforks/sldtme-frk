@@ -8,7 +8,9 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::create('tasks', static function (Blueprint $table): void {
-            $table->uuid('id')->primary();
+            $table->id();
+            $table->unsignedBigInteger('organization_id');
+            $table->unsignedBigInteger('project_id');
             $table->string('name', 500);
 
             // Task lifecycle
@@ -18,13 +20,11 @@ return new class () extends Migration {
             $table->integer('estimated_time')->unsigned()->nullable();
             $table->bigInteger('spent_time')->unsigned()->default(0);
 
-            $table->uuid('project_id');
             $table->foreign('project_id')
                 ->references('id')
                 ->on('projects')
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
-            $table->uuid('organization_id');
             $table->foreign('organization_id')
                 ->references('id')
                 ->on('organizations')

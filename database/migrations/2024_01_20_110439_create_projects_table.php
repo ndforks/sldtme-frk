@@ -9,6 +9,8 @@ return new class () extends Migration {
     {
         Schema::create('projects', static function (Blueprint $table): void {
             $table->id();
+            $table->unsignedBigInteger('organization_id');
+            $table->unsignedBigInteger('client_id')->nullable();
             $table->string('name', 255);
             $table->string('color', 16);
             $table->integer('billable_rate')->unsigned()->nullable();
@@ -17,13 +19,11 @@ return new class () extends Migration {
             $table->dateTime('archived_at')->nullable();
             $table->integer('estimated_time')->unsigned()->nullable();
             $table->bigInteger('spent_time')->unsigned()->default(0);
-            $table->unsignedBigInteger('client_id')->nullable();
             $table->foreign('client_id')
                 ->references('id')
                 ->on('clients')
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
-            $table->unsignedBigInteger('organization_id');
             $table->foreign('organization_id')
                 ->references('id')
                 ->on('organizations')
