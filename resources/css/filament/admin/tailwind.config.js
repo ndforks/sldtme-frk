@@ -1,8 +1,1 @@
-/** @type {import('tailwindcss').Config} */
-export default {
-    content: [
-        './app/Filament/**/*.php',
-        './resources/views/filament/**/*.blade.php',
-        './vendor/filament/**/*.blade.php',
-    ],
-};
+// This file is not needed. Use the root tailwind.config.js for all admin theme builds.

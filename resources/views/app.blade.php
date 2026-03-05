@@ -19,7 +19,7 @@
 
         <!-- Scripts -->
         @routes
-        @vite(array_filter(\Nwidart\Modules\Module::getAssets(), fn($asset) => $asset !== 'resources/css/filament/admin/theme.css'))
+        @vite(array_filter(\Nwidart\Modules\Module::getAssets(), fn($asset) => $asset !== 'resources/css/filament/admin/admintheme.css'))
         @inertiaHead
     </head>
     <body class="font-sans antialiased">

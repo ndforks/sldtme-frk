@@ -53,7 +53,7 @@ class AdminPanelProvider extends PanelProvider
                 TimeEntriesCreated::class,
                 TimeEntriesImported::class,
             ])
-            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->viteTheme('resources/css/filament/admin/admintheme.css')
             ->plugins([
                 EnvironmentIndicatorPlugin::make()
                     ->color(fn () => match (App::environment()) {

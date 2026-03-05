@@ -8,7 +8,7 @@ async function getConfig() {
     const paths = [
         'resources/js/app.ts',
         'resources/css/app.css',
-        'resources/css/filament/admin/theme.css',
+        'resources/css/filament/admin/admintheme.css',
     ];
     const modulePaths = await collectModuleAssetsPaths('extensions');
     const additionalPlugins = await collectModulePlugins('extensions');

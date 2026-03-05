@@ -43,7 +43,7 @@ export const solidtimeTheme = {
         },
         tertiary: 'var(--color-bg-tertiary)',
         quaternary: 'var(--color-bg-quaternary)',
-        background: 'var(--background)',
+        background: 'var(--color-bg-background)',
         'text-primary': 'var(--color-text-primary)',
         'text-secondary': 'var(--color-text-secondary)',
         'text-tertiary': 'var(--color-text-tertiary)',
