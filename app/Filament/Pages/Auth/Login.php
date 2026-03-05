@@ -8,18 +8,15 @@ use App\Filament\Http\Responses\LoginResponse;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
-use Filament\Http\Responses\Auth\Contracts\LoginResponse as LoginResponseContract;
 use Filament\Models\Contracts\FilamentUser;
-use Filament\Pages\Auth\Login as BaseLogin;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Log;
 
-class Login extends BaseLogin
+class Login extends \Filament\Auth\Pages\Login
 {
-    public function authenticate(): LoginResponseContract
+    public function authenticate(): \Filament\Auth\Http\Responses\Contracts\LoginResponse
     {
         /*try {
             $this->rateLimit(5);
@@ -69,11 +66,11 @@ class Login extends BaseLogin
 
         if (
             ($user instanceof FilamentUser)
-            && ( ! $user->canAccessPanel(Filament::getCurrentPanel()))
+            && ( ! $user->canAccessPanel(Filament::getCurrentOrDefaultPanel()))
         ) {
             Log::warning('User cannot access panel', [
                 'user_id' => $user->id,
-                'panel'   => Filament::getCurrentPanel()->getId(),
+                'panel'   => Filament::getCurrentOrDefaultPanel()->getId(),
             ]);
 
             Filament::auth()->logout();
@@ -158,7 +155,7 @@ class Login extends BaseLogin
         ]);
     }
 
-    protected function getEmailFormComponent(): Component
+    protected function getEmailFormComponent(): \Filament\Schemas\Components\Component
     {
         return TextInput::make('email')
             ->label(__('filament-panels::pages/auth/login.form.email.label'))
@@ -168,7 +165,7 @@ class Login extends BaseLogin
             ->autofocus();
     }
 
-    protected function getPasswordFormComponent(): Component
+    protected function getPasswordFormComponent(): \Filament\Schemas\Components\Component
     {
         return TextInput::make('password')
             ->label(__('filament-panels::pages/auth/login.form.password.label'))
@@ -178,13 +175,13 @@ class Login extends BaseLogin
             ->autocomplete('current-password');
     }
 
-    protected function getRememberMeFormComponent(): Component
+    protected function getRememberMeFormComponent(): \Filament\Schemas\Components\Component
     {
         return Checkbox::make('remember')
             ->label(__('filament-panels::pages/auth/login.form.remember.label'));
     }
 
-    protected function getLoginFormComponent(): Component
+    protected function getLoginFormComponent(): \Filament\Schemas\Components\Component
     {
         return parent::getLoginFormComponent()
             ->action($this->getSubmitFormAction());

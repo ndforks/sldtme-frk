@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Filament\Resources;
 
-use App\Filament\Resources\AuditResource;
+use App\Filament\Resources\Audits\AuditResource;
 use App\Models\Audit;
 use App\Models\TimeEntry;
 use App\Models\User;
@@ -37,7 +37,7 @@ class AuditResourceTest extends FilamentTestCase
         $audits = Audit::factory()->auditFor($timeEntry)->auditUser($user->user)->createMany(5);
 
         // Act
-        $response = Livewire::test(AuditResource\Pages\ListAudits::class);
+        $response = Livewire::test(Audits\Pages\ListAudits::class);
 
         // Assert
         $response->assertSuccessful();
@@ -51,7 +51,7 @@ class AuditResourceTest extends FilamentTestCase
         $audit = Audit::factory()->create();
 
         // Act
-        $response = Livewire::test(AuditResource\Pages\ViewAudit::class, ['record' => $audit->getKey()]);
+        $response = Livewire::test(Audits\Pages\ViewAudit::class, ['record' => $audit->getKey()]);
 
         // Assert
         $response->assertSuccessful();

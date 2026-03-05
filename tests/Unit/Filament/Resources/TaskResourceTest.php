@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Filament\Resources;
 
-use App\Filament\Resources\TaskResource;
+use App\Filament\Resources\Tasks\TaskResource;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Support\Facades\Config;
@@ -32,7 +32,7 @@ class TaskResourceTest extends FilamentTestCase
         $tasks = Task::factory()->createMany(5);
 
         // Act
-        $response = Livewire::test(TaskResource\Pages\ListTasks::class);
+        $response = Livewire::test(Tasks\Pages\ListTasks::class);
 
         // Assert
         $response->assertSuccessful();
@@ -45,7 +45,7 @@ class TaskResourceTest extends FilamentTestCase
         $task = Task::factory()->create();
 
         // Act
-        $response = Livewire::test(TaskResource\Pages\EditTask::class, ['record' => $task->getKey()]);
+        $response = Livewire::test(Tasks\Pages\EditTask::class, ['record' => $task->getKey()]);
 
         // Assert
         $response->assertSuccessful();

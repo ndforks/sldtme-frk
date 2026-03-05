@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Filament\Resources;
 
 use App\Exceptions\Api\CanNotDeleteUserWhoIsOwnerOfOrganizationWithMultipleMembers;
-use App\Filament\Resources\TimeEntryResource;
-use App\Filament\Resources\UserResource;
+use App\Filament\Resources\TimeEntries\TimeEntryResource;
 use App\Models\Organization;
 use App\Models\User;
 use App\Service\DeletionService;
@@ -37,7 +36,7 @@ class UserResourceTest extends FilamentTestCase
         $users = User::factory()->createMany(5);
 
         // Act
-        $response = Livewire::test(UserResource\Pages\ListUsers::class);
+        $response = Livewire::test(Users\Pages\ListUsers::class);
 
         // Assert
         $response->assertSuccessful();
@@ -50,7 +49,7 @@ class UserResourceTest extends FilamentTestCase
         $user = User::factory()->create();
 
         // Act
-        $response = Livewire::test(UserResource\Pages\EditUser::class, ['record' => $user->getKey()]);
+        $response = Livewire::test(Users\Pages\EditUser::class, ['record' => $user->getKey()]);
 
         // Assert
         $response->assertSuccessful();
@@ -62,7 +61,7 @@ class UserResourceTest extends FilamentTestCase
         $user = User::factory()->create();
 
         // Act
-        $response = Livewire::test(UserResource\Pages\ViewUser::class, ['record' => $user->getKey()]);
+        $response = Livewire::test(Users\Pages\ViewUser::class, ['record' => $user->getKey()]);
 
         // Assert
         $response->assertSuccessful();
@@ -71,7 +70,7 @@ class UserResourceTest extends FilamentTestCase
     public function test_can_see_create_page_of_user(): void
     {
         // Act
-        $response = Livewire::test(UserResource\Pages\CreateUser::class);
+        $response = Livewire::test(Users\Pages\CreateUser::class);
 
         // Assert
         $response->assertSuccessful();
@@ -83,7 +82,7 @@ class UserResourceTest extends FilamentTestCase
         $userFake = User::factory()->make();
 
         // Act
-        $response = Livewire::test(UserResource\Pages\CreateUser::class)
+        $response = Livewire::test(Users\Pages\CreateUser::class)
             ->fillForm([
                 'name'            => $userFake->name,
                 'email'           => $userFake->email,
@@ -120,7 +119,7 @@ class UserResourceTest extends FilamentTestCase
         });
 
         // Act
-        $response = Livewire::test(UserResource\Pages\EditUser::class, ['record' => $user->user->getKey()])
+        $response = Livewire::test(Users\Pages\EditUser::class, ['record' => $user->user->getKey()])
             ->callAction('delete');
 
         // Assert
@@ -139,7 +138,7 @@ class UserResourceTest extends FilamentTestCase
         });
 
         // Act
-        $response = Livewire::test(UserResource\Pages\EditUser::class, ['record' => $user->user->getKey()])
+        $response = Livewire::test(Users\Pages\EditUser::class, ['record' => $user->user->getKey()])
             ->callAction('delete');
 
         // Assert
@@ -155,9 +154,9 @@ class UserResourceTest extends FilamentTestCase
         $organization      = Organization::factory()->create();
 
         // Act
-        $response = Livewire::test(UserResource\RelationManagers\OrganizationsRelationManager::class, [
+        $response = Livewire::test(Users\RelationManagers\OrganizationsRelationManager::class, [
             'ownerRecord' => $user,
-            'pageClass'   => UserResource\Pages\EditUser::class,
+            'pageClass'   => Users\Pages\EditUser::class,
         ]);
 
         // Assert
@@ -174,9 +173,9 @@ class UserResourceTest extends FilamentTestCase
         $organization      = Organization::factory()->create();
 
         // Act
-        $response = Livewire::test(UserResource\RelationManagers\OwnedOrganizationsRelationManager::class, [
+        $response = Livewire::test(Users\RelationManagers\OwnedOrganizationsRelationManager::class, [
             'ownerRecord' => $user,
-            'pageClass'   => UserResource\Pages\EditUser::class,
+            'pageClass'   => Users\Pages\EditUser::class,
         ]);
 
         // Assert

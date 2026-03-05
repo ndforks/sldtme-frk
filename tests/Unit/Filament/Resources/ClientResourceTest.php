@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Filament\Resources;
 
-use App\Filament\Resources\ClientResource;
+use App\Filament\Resources\Clients\ClientResource;
 use App\Models\Client;
 use App\Models\User;
 use Illuminate\Support\Facades\Config;
@@ -32,7 +32,7 @@ class ClientResourceTest extends FilamentTestCase
         $clients = Client::factory()->createMany(5);
 
         // Act
-        $response = Livewire::test(ClientResource\Pages\ListClients::class);
+        $response = Livewire::test(Clients\Pages\ListClients::class);
 
         // Assert
         $response->assertSuccessful();
@@ -45,7 +45,7 @@ class ClientResourceTest extends FilamentTestCase
         $client = Client::factory()->create();
 
         // Act
-        $response = Livewire::test(ClientResource\Pages\EditClient::class, ['record' => $client->getKey()]);
+        $response = Livewire::test(Clients\Pages\EditClient::class, ['record' => $client->getKey()]);
 
         // Assert
         $response->assertSuccessful();

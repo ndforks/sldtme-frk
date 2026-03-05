@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\Http\Responses;
 
-use Filament\Http\Responses\Auth\Contracts\LoginResponse as LoginResponseContract;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Features\SupportRedirects\Redirector;
 use Log;
 
-class LoginResponse implements LoginResponseContract
+class LoginResponse implements \Filament\Auth\Http\Responses\Contracts\LoginResponse
 {
     public function toResponse($request): RedirectResponse|Redirector
     {

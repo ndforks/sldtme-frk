@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Filament\Resources;
 
-use App\Filament\Resources\TokenResource;
+use App\Filament\Resources\Tokens\TokenResource;
 use App\Models\Passport\Client;
 use App\Models\Passport\Token;
 use App\Models\User;
@@ -34,7 +34,7 @@ class TokenResourceTest extends FilamentTestCase
         $tokens = Token::factory()->forClient($client)->createMany(5);
 
         // Act
-        $response = Livewire::test(TokenResource\Pages\ListTokens::class);
+        $response = Livewire::test(Tokens\Pages\ListTokens::class);
 
         // Assert
         $response->assertSuccessful();
@@ -50,7 +50,7 @@ class TokenResourceTest extends FilamentTestCase
         $personalAccessTokens = Token::factory()->forClient($personalAccessClient)->createMany(5);
 
         // Act
-        $response = Livewire::test(TokenResource\Pages\ListTokens::class)
+        $response = Livewire::test(Tokens\Pages\ListTokens::class)
             ->filterTable('is_personal_access_client', true);
 
         // Assert
@@ -69,7 +69,7 @@ class TokenResourceTest extends FilamentTestCase
         $personalAccessTokens = Token::factory()->forClient($personalAccessClient)->createMany(5);
 
         // Act
-        $response = Livewire::test(TokenResource\Pages\ListTokens::class)
+        $response = Livewire::test(Tokens\Pages\ListTokens::class)
             ->filterTable('is_personal_access_client', false);
 
         // Assert
@@ -86,7 +86,7 @@ class TokenResourceTest extends FilamentTestCase
         $token  = Token::factory()->forClient($client)->create();
 
         // Act
-        $response = Livewire::test(TokenResource\Pages\ViewToken::class, ['record' => $token->getKey()]);
+        $response = Livewire::test(Tokens\Pages\ViewToken::class, ['record' => $token->getKey()]);
 
         // Assert
         $response->assertSuccessful();

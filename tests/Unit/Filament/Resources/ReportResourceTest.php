@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Filament\Resources;
 
-use App\Filament\Resources\ReportResource;
+use App\Filament\Resources\Reports\ReportResource;
 use App\Models\Report;
 use App\Models\User;
 use Illuminate\Support\Facades\Config;
@@ -32,7 +32,7 @@ class ReportResourceTest extends FilamentTestCase
         $reports = Report::factory()->createMany(5);
 
         // Act
-        $response = Livewire::test(ReportResource\Pages\ListReports::class);
+        $response = Livewire::test(Reports\Pages\ListReports::class);
 
         // Assert
         $response->assertSuccessful();
@@ -45,7 +45,7 @@ class ReportResourceTest extends FilamentTestCase
         $report = Report::factory()->create();
 
         // Act
-        $response = Livewire::test(ReportResource\Pages\EditReport::class, [
+        $response = Livewire::test(Reports\Pages\EditReport::class, [
             'record' => $report->getKey(),
         ]);
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Filament\Resources;
 
-use App\Filament\Resources\ProjectResource;
+use App\Filament\Resources\Projects\ProjectResource;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Support\Facades\Config;
@@ -32,7 +32,7 @@ class ProjectResourceTest extends FilamentTestCase
         $projects = Project::factory()->createMany(5);
 
         // Act
-        $response = Livewire::test(ProjectResource\Pages\ListProjects::class);
+        $response = Livewire::test(Projects\Pages\ListProjects::class);
 
         // Assert
         $response->assertSuccessful();
@@ -45,7 +45,7 @@ class ProjectResourceTest extends FilamentTestCase
         $project = Project::factory()->create();
 
         // Act
-        $response = Livewire::test(ProjectResource\Pages\EditProject::class, ['record' => $project->getKey()]);
+        $response = Livewire::test(Projects\Pages\EditProject::class, ['record' => $project->getKey()]);
 
         // Assert
         $response->assertSuccessful();

@@ -24,7 +24,6 @@ use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Dedoc\Scramble\Support\Generator\SecuritySchemes\OAuthFlow;
-use Filament\Forms\Components\Section;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -69,7 +68,7 @@ class AppServiceProvider extends ServiceProvider
         Model::unguard();
 
         // Filament
-        Section::configureUsing(function (Section $section): void {
+        \Filament\Schemas\Components\Section::configureUsing(function (\Filament\Schemas\Components\Section $section): void {
             $section->columns(1);
         }, null, true);
         Table::configureUsing(function (Table $table): void {

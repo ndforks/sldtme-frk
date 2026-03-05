@@ -176,7 +176,7 @@ class Organization extends JetstreamTeam implements AuditableContract
      *
      * @param array<string> $columns
      */
-    public function findOrFail(string $id, array $columns = ['*']): \Laravel\Jetstream\Team
+    public function findOrFail(string $id, array $columns = ['*']): JetstreamTeam
     {
         if ( ! Str::isUuid($id)) {
             throw (new ModelNotFoundException())->setModel(

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Filament\Resources;
 
-use App\Filament\Resources\TagResource;
+use App\Filament\Resources\Tags\TagResource;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Support\Facades\Config;
@@ -32,7 +32,7 @@ class TagResourceTest extends FilamentTestCase
         $tags = Tag::factory()->createMany(5);
 
         // Act
-        $response = Livewire::test(TagResource\Pages\ListTags::class);
+        $response = Livewire::test(Tags\Pages\ListTags::class);
 
         // Assert
         $response->assertSuccessful();
@@ -45,7 +45,7 @@ class TagResourceTest extends FilamentTestCase
         $tag = Tag::factory()->create();
 
         // Act
-        $response = Livewire::test(TagResource\Pages\EditTag::class, ['record' => $tag->getKey()]);
+        $response = Livewire::test(Tags\Pages\EditTag::class, ['record' => $tag->getKey()]);
 
         // Assert
         $response->assertSuccessful();

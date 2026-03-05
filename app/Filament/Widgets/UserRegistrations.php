@@ -13,7 +13,7 @@ class UserRegistrations extends ChartWidget
 {
     public ?string $filter = 'week';
 
-    protected static ?string $heading = 'User Registrations';
+    protected ?string $heading = 'User Registrations';
 
     protected static ?int $sort = 2;
 

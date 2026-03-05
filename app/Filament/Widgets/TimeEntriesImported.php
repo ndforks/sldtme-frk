@@ -13,7 +13,7 @@ class TimeEntriesImported extends ChartWidget
 {
     public ?string $filter = 'week';
 
-    protected static ?string $heading = 'Time Entries Imported';
+    protected ?string $heading = 'Time Entries Imported';
 
     protected static ?int $sort = 4;
 

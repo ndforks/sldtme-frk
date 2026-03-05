@@ -13,7 +13,7 @@ class TimeEntriesCreated extends ChartWidget
 {
     public ?string $filter = 'week';
 
-    protected static ?string $heading = 'Time Entries Created';
+    protected ?string $heading = 'Time Entries Created';
 
     protected static ?int $sort = 3;
 

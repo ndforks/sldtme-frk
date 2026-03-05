@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Filament\Resources;
 
-use App\Filament\Resources\FailedJobResource;
-use App\Filament\Resources\FailedJobResource\Pages\ViewFailedJobs;
+use App\Filament\Resources\FailedJobs\FailedJobResource;
+use App\Filament\Resources\FailedJobs\Pages\ViewFailedJobs;
 use App\Models\FailedJob;
 use App\Models\User;
 use Illuminate\Support\Facades\Config;
@@ -33,7 +33,7 @@ class FailedJobResourceTest extends FilamentTestCase
         $failedJobs = FailedJob::factory()->createMany(5);
 
         // Act
-        $response = Livewire::test(FailedJobResource\Pages\ListFailedJobs::class);
+        $response = Livewire::test(FailedJobs\Pages\ListFailedJobs::class);
 
         // Assert
         $response->assertSuccessful();
