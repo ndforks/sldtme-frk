@@ -1,8 +1,11 @@
 <?php
 
-namespace Tests\Unit\Filament\Resources;
+namespace Unit\Filament\Resources;
 
 use App\Filament\Resources\TimeEntries\TimeEntryResource;
+use App\Filament\Resources\TimeEntries\Pages\ListTimeEntries;
+use App\Filament\Resources\TimeEntries\Pages\EditTimeEntry;
+use App\Filament\Resources\TimeEntries\Pages\CreateTimeEntry;
 use App\Models\Member;
 use App\Models\Organization;
 use App\Models\TimeEntry;
@@ -32,7 +35,7 @@ class TimeEntryResourceTest extends FilamentTestCase
         $timeEntry = TimeEntry::factory()->createMany(5);
 
         /* Act */
-        $response = Livewire::test(TimeEntries\Pages\ListTimeEntries::class);
+        $response = Livewire::test(ListTimeEntries::class);
 
         /* Assert */
         $response->assertSuccessful();
@@ -45,7 +48,7 @@ class TimeEntryResourceTest extends FilamentTestCase
         $timeEntry = TimeEntry::factory()->create();
 
         /* Act */
-        $response = Livewire::test(TimeEntries\Pages\EditTimeEntry::class, ['record' => $timeEntry->getKey()]);
+        $response = Livewire::test(EditTimeEntry::class, ['record' => $timeEntry->getKey()]);
 
         /* Assert */
         $response->assertSuccessful();
@@ -54,7 +57,7 @@ class TimeEntryResourceTest extends FilamentTestCase
     public function test_can_see_create_page_of_time_entry(): void
     {
         /* Act */
-        $response = Livewire::test(TimeEntries\Pages\CreateTimeEntry::class);
+        $response = Livewire::test(CreateTimeEntry::class);
 
         /* Assert */
         $response->assertSuccessful();
@@ -71,7 +74,7 @@ class TimeEntryResourceTest extends FilamentTestCase
             ->create();
 
         /* Act */
-        $response = Livewire::test(TimeEntries\Pages\CreateTimeEntry::class)
+        $response = Livewire::test(CreateTimeEntry::class)
             ->fillForm([
                 'description' => 'Test time entry',
                 'billable'    => true,
@@ -105,7 +108,7 @@ class TimeEntryResourceTest extends FilamentTestCase
         $otherOrganization = Organization::factory()->create();
 
         /* Act */
-        $response = Livewire::test(TimeEntries\Pages\CreateTimeEntry::class)
+        $response = Livewire::test(CreateTimeEntry::class)
             ->fillForm([
                 'description'     => 'Derived fields test',
                 'billable'        => false,
@@ -138,7 +141,7 @@ class TimeEntryResourceTest extends FilamentTestCase
         $timeEntry = TimeEntry::factory()->forMember($member)->create();
 
         /* Act */
-        $response = Livewire::test(TimeEntries\Pages\EditTimeEntry::class, ['record' => $timeEntry->getKey()])
+        $response = Livewire::test(EditTimeEntry::class, ['record' => $timeEntry->getKey()])
             ->fillForm([
                 'description' => 'Updated description',
                 'billable'    => true,
@@ -177,7 +180,7 @@ class TimeEntryResourceTest extends FilamentTestCase
             ->create();
 
         /* Act */
-        $response = Livewire::test(TimeEntries\Pages\EditTimeEntry::class, ['record' => $timeEntry->getKey()])
+        $response = Livewire::test(EditTimeEntry::class, ['record' => $timeEntry->getKey()])
             ->fillForm([
                 'description' => 'Reassigned entry',
                 'billable'    => false,

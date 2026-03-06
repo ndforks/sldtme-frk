@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Filament\Resources;
+namespace Unit\Filament\Resources;
 
 use App\Filament\Resources\Reports\ReportResource;
 use App\Models\Report;
@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Config;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\UsesClass;
 use Tests\Unit\Filament\FilamentTestCase;
+use App\Filament\Resources\Reports\Pages\ListReports;
+use App\Filament\Resources\Reports\Pages\EditReport;
+use App\Filament\Resources\Reports\Pages\CreateReport;
 
 #[UsesClass(ReportResource::class)]
 class ReportResourceTest extends FilamentTestCase
@@ -30,7 +33,7 @@ class ReportResourceTest extends FilamentTestCase
         $reports = Report::factory()->createMany(5);
 
         /* Act */
-        $response = Livewire::test(Reports\Pages\ListReports::class);
+        $response = Livewire::test(ListReports::class);
 
         /* Assert */
         $response->assertSuccessful();
@@ -43,11 +46,93 @@ class ReportResourceTest extends FilamentTestCase
         $report = Report::factory()->create();
 
         /* Act */
-        $response = Livewire::test(Reports\Pages\EditReport::class, [
-            'record' => $report->getKey(),
-        ]);
+        $response = Livewire::test(EditReport::class, ['record' => $report->getKey()]);
 
         /* Assert */
         $response->assertSuccessful();
+    }
+
+    public function test_can_create_report(): void
+    {
+        /* Arrange */
+        $user = $this->createUserWithPermission();
+        $payload = [
+            'name' => 'Test Report',
+            'organization_id' => $user->organization->id,
+        ];
+
+        /* Act */
+        $response = Livewire::test(CreateReport::class)
+            ->fillForm($payload)
+            ->call('create');
+
+        /* Assert */
+        $response->assertHasNoFormErrors();
+        $response->assertSuccessful();
+        $this->assertDatabaseHas('reports', $payload);
+    }
+
+    public function test_cannot_create_report_without_required_fields(): void
+    {
+        /* Act */
+        $response = Livewire::test(CreateReport::class)
+            ->fillForm([])
+            ->call('create');
+
+        /* Assert */
+        $response->assertHasFormErrors(['name', 'organization_id']);
+    }
+
+    public function test_can_edit_report(): void
+    {
+        /* Arrange */
+        $report = Report::factory()->create();
+        $payload = [
+            'name' => 'Updated Report',
+            'organization_id' => $report->organization_id,
+        ];
+
+        /* Act */
+        $response = Livewire::test(EditReport::class, ['record' => $report->getKey()])
+            ->fillForm($payload)
+            ->call('save');
+
+        /* Assert */
+        $response->assertHasNoFormErrors();
+        $response->assertSuccessful();
+        $this->assertDatabaseHas('reports', array_merge($payload, ['id' => $report->id]));
+    }
+
+    public function test_cannot_edit_report_with_invalid_data(): void
+    {
+        /* Arrange */
+        $report = Report::factory()->create();
+        $payload = [
+            'name' => '',
+            'organization_id' => null,
+        ];
+
+        /* Act */
+        $response = Livewire::test(EditReport::class, ['record' => $report->getKey()])
+            ->fillForm($payload)
+            ->call('save');
+
+        /* Assert */
+        $response->assertHasFormErrors(['name', 'organization_id']);
+    }
+
+    public function test_can_delete_report(): void
+    {
+        /* Arrange */
+        $report = Report::factory()->create();
+
+        /* Act */
+        $response = Livewire::test(EditReport::class, ['record' => $report->getKey()])
+            ->callAction('delete');
+
+        /* Assert */
+        $response->assertHasNoActionErrors();
+        $response->assertSuccessful();
+        $this->assertDatabaseMissing('reports', ['id' => $report->id]);
     }
 }
