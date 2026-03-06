@@ -1,0 +1,51 @@
+<?php
+
+namespace App\Filament\Resources\Organizations;
+
+use App\Filament\Resources\Organizations\Pages\ListOrganizations;
+use App\Filament\Resources\Organizations\RelationManagers\InvitationsRelationManager;
+use App\Filament\Resources\Organizations\RelationManagers\UsersRelationManager;
+use App\Filament\Resources\Organizations\Schemas\OrganizationForm;
+use App\Filament\Resources\Organizations\Tables\OrganizationsTable;
+use App\Models\Organization;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+use UnitEnum;
+
+class OrganizationResource extends Resource
+{
+    protected static ?string $model = Organization::class;
+
+    //protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-building-office-2';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Users';
+
+    public static function form(Schema $schema): Schema
+    {
+        return OrganizationForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return OrganizationsTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            UsersRelationManager::class,
+            InvitationsRelationManager::class,
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListOrganizations::route('/'),
+        ];
+    }
+}
