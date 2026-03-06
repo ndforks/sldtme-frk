@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Concerns\CustomAuditable;
-use App\Models\Concerns\HasUuids;
 use Database\Factories\TagFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,7 +14,7 @@ use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 use Staudenmeir\EloquentJsonRelations\Relations\HasManyJson;
 
 /**
- * @property string                     $id
+ * @property int                        $id
  * @property string                     $name
  * @property string                     $organization_id
  * @property Carbon|null                $created_at
@@ -33,7 +32,6 @@ class Tag extends Model implements AuditableContract
     use HasFactory;
 
     use HasJsonRelationships;
-    use HasUuids;
 
     /**
      * The attributes that should be cast.

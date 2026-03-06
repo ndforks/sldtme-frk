@@ -18,15 +18,15 @@ return new class () extends Migration {
             $table->boolean('is_billable')->nullable();
             $table->dateTime('archived_at')->nullable();
             $table->integer('estimated_time')->unsigned()->nullable();
-            $table->bigInteger('spent_time')->unsigned()->default(0);
-            $table->foreign('client_id')
-                ->references('id')
-                ->on('clients')
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
+            $table->unsignedBigInteger('spent_time')->default(0);
             $table->foreign('organization_id')
                 ->references('id')
                 ->on('organizations')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
+            $table->foreign('client_id')
+                ->references('id')
+                ->on('clients')
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
             $table->timestamps();

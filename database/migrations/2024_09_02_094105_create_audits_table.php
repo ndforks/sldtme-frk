@@ -20,7 +20,7 @@ class CreateAuditsTable extends Migration
             $table->string('event');
             // MariaDB requires explicit UUID columns instead of uuidMorphs()
             $table->string('auditable_type');
-            $table->uuid('auditable_id');
+            $table->unsignedBigInteger('auditable_id')->index();
             $table->json('old_values')->nullable();
             $table->json('new_values')->nullable();
             $table->text('url')->nullable();

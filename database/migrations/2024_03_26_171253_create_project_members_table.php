@@ -9,9 +9,9 @@ return new class () extends Migration {
     {
         Schema::create('project_members', static function (Blueprint $table): void {
             $table->id();
-            $table->integer('billable_rate')->unsigned()->nullable();
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('member_id');
+            $table->integer('billable_rate')->unsigned()->nullable();
             $table->timestamps();
             $table->unique(['project_id', 'member_id']);
             $table->foreign('project_id')->references('id')->on('projects')->restrictOnDelete()->cascadeOnUpdate();

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Concerns\CustomAuditable;
-use App\Models\Concerns\HasUuids;
 use Database\Factories\ClientFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -15,7 +14,7 @@ use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
- * @property string       $id
+ * @property int          $id
  * @property string       $name
  * @property string       $organization_id
  * @property bool         $is_archived
@@ -32,8 +31,6 @@ class Client extends Model implements AuditableContract
 
     /** @use HasFactory<ClientFactory> */
     use HasFactory;
-
-    use HasUuids;
 
     /**
      * The attributes that should be cast.

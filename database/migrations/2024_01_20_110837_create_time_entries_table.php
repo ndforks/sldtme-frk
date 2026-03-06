@@ -15,7 +15,6 @@ return new class () extends Migration {
             $table->unsignedBigInteger('client_id')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('member_id');
-            // Extended description to 5000 characters
             $table->text('description')->nullable();
             $table->dateTime('start');
             $table->dateTime('end')->nullable();
@@ -33,16 +32,6 @@ return new class () extends Migration {
             $table->timestamps();
 
             // Foreign keys with restrict on delete for referential integrity
-            $table->foreign('user_id')
-                ->references('id')
-                ->on('users')
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
-            $table->foreign('member_id')
-                ->references('id')
-                ->on('members')
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
             $table->foreign('organization_id')
                 ->references('id')
                 ->on('organizations')
@@ -61,6 +50,16 @@ return new class () extends Migration {
             $table->foreign('client_id')
                 ->references('id')
                 ->on('clients')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
+            $table->foreign('member_id')
+                ->references('id')
+                ->on('members')
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
 

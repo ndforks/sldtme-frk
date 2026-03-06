@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Concerns\CustomAuditable;
-use App\Models\Concerns\HasUuids;
 use Database\Factories\ProjectMemberFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,7 +12,7 @@ use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
- * @property string      $id
+ * @property int         $id
  * @property int|null    $billable_rate
  * @property string      $project_id    Project ID
  * @property string      $member_id     Member ID
@@ -32,8 +31,6 @@ class ProjectMember extends Model implements AuditableContract
 
     /** @use HasFactory<ProjectMemberFactory> */
     use HasFactory;
-
-    use HasUuids;
 
     /**
      * The attributes that should be cast.

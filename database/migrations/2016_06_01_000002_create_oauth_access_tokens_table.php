@@ -10,7 +10,7 @@ return new class () extends Migration {
         Schema::create('oauth_access_tokens', static function (Blueprint $table): void {
             $table->string('id', 100)->primary();
             $table->unsignedBigInteger('user_id')->nullable()->index();
-            $table->unsignedBigInteger('client_id');
+            $table->unsignedBigInteger('client_id')->index();
             $table->string('name')->nullable();
             $table->text('scopes')->nullable();
             $table->boolean('revoked');
@@ -31,6 +31,11 @@ return new class () extends Migration {
 
             // Foreign key to oauth_clients added in separate migration
             // (oauth_clients created after this table)
+            $table->foreign('client_id')
+                ->references('id')
+                ->on('oauth_clients')
+                ->restrictOnDelete()
+                ->cascadeOnUpdate();
         });
     }
 

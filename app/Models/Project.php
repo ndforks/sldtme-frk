@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Concerns\CustomAuditable;
-use App\Models\Concerns\HasUuids;
 use Database\Factories\ProjectFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -18,7 +17,7 @@ use Korridor\LaravelComputedAttributes\ComputedAttributes;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
- * @property string                         $id
+ * @property int                            $id
  * @property string                         $name
  * @property string                         $color
  * @property string                         $organization_id
@@ -47,8 +46,6 @@ class Project extends Model implements AuditableContract
 
     /** @use HasFactory<ProjectFactory> */
     use HasFactory;
-
-    use HasUuids;
 
     /**
      * The attributes that should be cast.

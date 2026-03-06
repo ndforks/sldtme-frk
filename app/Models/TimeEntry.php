@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Concerns\CustomAuditable;
-use App\Models\Concerns\HasUuids;
 use App\Service\BillableRateService;
 use Carbon\CarbonInterval;
 use Database\Factories\TimeEntryFactory;
@@ -20,7 +19,7 @@ use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 
 /**
- * @property string               $id
+ * @property int                  $id
  * @property string               $description
  * @property Carbon               $start
  * @property Carbon|null          $end
@@ -57,7 +56,6 @@ class TimeEntry extends Model implements AuditableContract
     use HasFactory;
 
     use HasJsonRelationships;
-    use HasUuids;
 
     public const array SELECT_COLUMNS = [
         'id',

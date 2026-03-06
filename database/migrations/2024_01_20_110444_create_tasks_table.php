@@ -18,16 +18,17 @@ return new class () extends Migration {
 
             // Time tracking
             $table->integer('estimated_time')->unsigned()->nullable();
-            $table->bigInteger('spent_time')->unsigned()->default(0);
+            $table->unsignedBigInteger('spent_time')->default(0);
+
+            $table->foreign('organization_id')
+                ->references('id')
+                ->on('organizations')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
 
             $table->foreign('project_id')
                 ->references('id')
                 ->on('projects')
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
-            $table->foreign('organization_id')
-                ->references('id')
-                ->on('organizations')
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
             $table->timestamps();

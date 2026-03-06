@@ -6,8 +6,8 @@ namespace App\Models;
 
 use App\Enums\Weekday;
 use App\Models\Concerns\CustomAuditable;
-use App\Models\Concerns\HasUuids;
 //use App\Models\Passport\Token;
+use App\Traits\HasTeams;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -23,17 +23,17 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Storage;
 //use Laravel\Fortify\TwoFactorAuthenticatable;
 //use Laravel\Jetstream\HasProfilePhoto;
 //use Laravel\Jetstream\HasTeams;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\AuthCode;
 use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\HasApiTokens;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
- * @property string                        $id
+ * @property int                           $id
  * @property string                        $name
  * @property string                        $email
  * @property Carbon|null                   $email_verified_at
@@ -46,7 +46,6 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
  * @property Organization|null             $currentOrganization
  * @property Organization|null             $currentTeam
  * @property string                        $profile_photo_url
- * @property Collection<int, Token>        $tokens
  * @property Carbon|null                   $created_at
  * @property Carbon|null                   $updated_at
  * @property string|null                   $current_team_id
@@ -64,13 +63,9 @@ class User extends Authenticatable implements AuditableContract, FilamentUser, M
 {
     use CustomAuditable;
     use HasApiTokens;
-
-    /** @use HasFactory<UserFactory> */
     use HasFactory;
-
     //use HasProfilePhoto;
-    //use HasTeams;
-    use HasUuids;
+    use HasTeams;
     use Notifiable;
     //use TwoFactorAuthenticatable;
 
@@ -167,14 +162,6 @@ class User extends Authenticatable implements AuditableContract, FilamentUser, M
     public function projectMembers(): HasMany
     {
         return $this->hasMany(ProjectMember::class, 'user_id');
-    }
-
-    /**
-     * @return HasMany<Token, $this>
-     */
-    public function accessTokens(): HasMany
-    {
-        return $this->hasMany(Token::class);
     }
 
     /**
