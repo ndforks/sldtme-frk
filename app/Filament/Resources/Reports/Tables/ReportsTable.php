@@ -49,15 +49,18 @@ class ReportsTable
                     ->searchable(),
             ])
             ->recordActions([
-                \Filament\Actions\Action::make('public-view')
-                    ->label('Public')
-                    ->icon('heroicon-o-eye')
-                    ->color('gray')
-                    ->hidden(fn (Report $record): bool => $record->getShareableLink() === null)
-                    ->url(fn (Report $record): string => $record->getShareableLink(), true),
-                ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make(),
+xt
+\Filament\Actions\ActionGroup::make([
+                    \Filament\Actions\Action::make('public-view')
+                        ->label('Public')
+                        ->icon('heroicon-o-eye')
+                        ->color('gray')
+                        ->hidden(fn (Report $record): bool => $record->getShareableLink() === null)
+                        ->url(fn (Report $record): string => $record->getShareableLink(), true),
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ]),
             ])
             ->toolbarActions([
             ]);

@@ -137,7 +137,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: docker/prod/Dockerfile
+          file: .docker/prod/Dockerfile
           build-args: |
             DOCKER_FILES_BASE_PATH=docker/prod/
           platforms: ${{ matrix.platform }}

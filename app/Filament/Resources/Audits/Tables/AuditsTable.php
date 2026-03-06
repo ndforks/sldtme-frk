@@ -32,7 +32,9 @@ class AuditsTable
             ->filters([
             ])
             ->recordActions([
-                ViewAction::make(),
+                \Filament\Actions\ActionGroup::make([
+                    ViewAction::make(),
+                ]),
             ])
             ->toolbarActions([
             ])
