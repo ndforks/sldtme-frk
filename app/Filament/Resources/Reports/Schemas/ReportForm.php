@@ -42,8 +42,12 @@ class ReportForm
                     ->label('Share Secret')
                     ->nullable(),
                 PrettyJsonField::make('properties')
-                    ->formatStateUsing(function (ReportPropertiesDto $state, Report $record): string {
-                        return $record->getRawOriginal('properties');
+                    ->formatStateUsing(function ($state, $record): string {
+                        if ($state === null || $record === null) {
+                            return '';
+                        }
+                        // If $state is a DTO, get the raw original, otherwise fallback
+                        return $record->getRawOriginal('properties') ?? '';
                     })
                     ->disabled(),
                 DateTimePicker::make('created_at')
