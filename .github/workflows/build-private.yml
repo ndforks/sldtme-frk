@@ -180,7 +180,7 @@ jobs:
           context: .
           build-args: |
             DOCKER_FILES_BASE_PATH=docker/prod/
-          file: docker/prod/Dockerfile
+          file: .docker/prod/Dockerfile
           push: true
           platforms: linux/amd64
           tags: ${{ steps.meta.outputs.tags }}

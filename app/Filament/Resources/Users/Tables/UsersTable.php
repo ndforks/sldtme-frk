@@ -6,6 +6,7 @@ use App\Exceptions\Api\ApiException;
 use App\Models\User;
 use App\Service\DeletionService;
 use Exception;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -72,34 +73,36 @@ class UsersTable
                     ->nullable(),
             ])
             ->recordActions([
-                Impersonate::make()->before(function (User $record): void {
-                    if ($record->currentTeam === null) {
-                        $organization = $record->organizations()->where('personal_team', '=', true)->first();
-                        if ($organization === null) {
-                            $organization = $record->organizations()->first();
-                        }
-                        if ($organization === null) {
-                            throw new Exception('User has no organization');
-                        }
-                        $record->currentTeam()->associate($organization);
-                        $record->save();
-                    }
-                }),
-                EditAction::make(),
-                DeleteAction::make()
-                    ->hidden(fn (User $record) => $record->is(Auth::user()))
-                    ->using(function (User $record): void {
-                        try {
-                            app(DeletionService::class)->deleteUser($record);
-                        } catch (ApiException $exception) {
-                            Notification::make()
-                                ->danger()
-                                ->title('Delete failed')
-                                ->body($exception->getTranslatedMessage())
-                                ->persistent()
-                                ->send();
+                ActionGroup::make([
+                    Impersonate::make()->before(function (User $record): void {
+                        if ($record->currentTeam === null) {
+                            $organization = $record->organizations()->where('personal_team', '=', true)->first();
+                            if ($organization === null) {
+                                $organization = $record->organizations()->first();
+                            }
+                            if ($organization === null) {
+                                throw new Exception('User has no organization');
+                            }
+                            $record->currentTeam()->associate($organization);
+                            $record->save();
                         }
                     }),
+                    EditAction::make(),
+                    DeleteAction::make()
+                        ->hidden(fn (User $record) => $record->is(Auth::user()))
+                        ->using(function (User $record): void {
+                            try {
+                                app(DeletionService::class)->deleteUser($record);
+                            } catch (ApiException $exception) {
+                                Notification::make()
+                                    ->danger()
+                                    ->title('Delete failed')
+                                    ->body($exception->getTranslatedMessage())
+                                    ->persistent()
+                                    ->send();
+                            }
+                        }),
+                ]),
             ])
             ->toolbarActions([
                 BulkAction::make('Resend verification email')

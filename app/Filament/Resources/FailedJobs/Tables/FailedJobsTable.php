@@ -48,19 +48,21 @@ class FailedJobsTable
                 \Filament\Actions\DeleteBulkAction::make(),
             ])
             ->recordActions([
-                \Filament\Actions\DeleteAction::make(),
-                \Filament\Actions\ViewAction::make(),
-                \Filament\Actions\Action::make('retry')
-                    ->icon('heroicon-o-arrow-path')
-                    ->label('Retry')
-                    ->requiresConfirmation()
-                    ->action(function (FailedJob $record): void {
-                        Artisan::call("queue:retry {$record->uuid}");
-                        Notification::make()
-                            ->title("The job with uuid '{$record->uuid}' has been pushed back onto the queue.")
-                            ->success()
-                            ->send();
-                    }),
+                \Filament\Actions\ActionGroup::make([
+                    \Filament\Actions\DeleteAction::make(),
+                    \Filament\Actions\ViewAction::make(),
+                    \Filament\Actions\Action::make('retry')
+                        ->icon('heroicon-o-arrow-path')
+                        ->label('Retry')
+                        ->requiresConfirmation()
+                        ->action(function (FailedJob $record): void {
+                            Artisan::call("queue:retry {$record->uuid}");
+                            Notification::make()
+                                ->title("The job with uuid '{$record->uuid}' has been pushed back onto the queue.")
+                                ->success()
+                                ->send();
+                        }),
+                ]),
             ]);
     }
 }

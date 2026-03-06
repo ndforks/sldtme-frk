@@ -59,7 +59,9 @@ class ProjectMembersTable
             ->filters([
             ])
             ->recordActions([
-                EditAction::make(),
+                \Filament\Actions\ActionGroup::make([
+                    EditAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -1,0 +1,2 @@
+Class App\Filament\Resources\ProjectMembers\ProjectMembersTable located in ./app/Filament/Resources/ProjectMembers/Tables/ProjectMembersTable.php does not comply with psr-4 autoloading standard (rule: App\ => ./app). Skipping.
+Class App\Filament\Resources\Audits\AuditForm located in ./app/Filament/Resources/Audits/Schemas/AuditForm.php does not comply with psr-4 autoloading standard (rule: App\ => ./app). Skipping.
