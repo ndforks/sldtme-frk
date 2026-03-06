@@ -10,26 +10,26 @@ class UserMembershipEndpointTest extends ApiEndpointTestAbstract
 {
     public function test_my_members_fails_when_not_authenticated(): void
     {
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.users.memberships.my-memberships'));
 
-        // Assert
+        /* Assert */
         $response->assertUnauthorized();
         $response->assertJson(['message' => 'Unauthenticated.']);
     }
 
     public function test_my_members_returns_information_about_the_organization_membership_of_the_current_user(): void
     {
-        // Arrange
+        /* Arrange */
         $data              = $this->createUserWithPermission();
         $otherOrganization = Organization::factory()->create();
         $otherMember       = Member::factory()->forOrganization($otherOrganization)->forUser($data->user)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.users.memberships.my-memberships'));
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertJsonCount(2, 'data');
         $otherMemberResponse = collect($response->json('data'))->where('id', '=', $otherMember->getKey())->first();

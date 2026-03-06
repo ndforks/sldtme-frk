@@ -24,18 +24,18 @@ class HarvestTimeEntriesImporterTest extends ImporterTestAbstract
 {
     public function test_import_of_test_file_succeeds(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $timezone     = 'Europe/Vienna';
         $importer     = new HarvestTimeEntriesImporter();
         $importer->init($organization);
         $data = Storage::disk('testfiles')->get('harvest_time_entries_import_test_1.csv');
 
-        // Act
+        /* Act */
         $importer->importData($data, $timezone);
         $report = $importer->getReport();
 
-        // Assert
+        /* Assert */
         $users = User::all();
         $this->assertCount(2, $users);
         $user1 = $users->firstWhere('name', 'Peter Tester');

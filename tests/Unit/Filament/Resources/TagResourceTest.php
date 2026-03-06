@@ -26,26 +26,26 @@ class TagResourceTest extends FilamentTestCase
 
     public function test_can_list_tags(): void
     {
-        // Arrange
+        /* Arrange */
         $tags = Tag::factory()->createMany(5);
 
-        // Act
+        /* Act */
         $response = Livewire::test(Tags\Pages\ListTags::class);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertCanSeeTableRecords($tags);
     }
 
     public function test_can_see_edit_page_of_tag(): void
     {
-        // Arrange
+        /* Arrange */
         $tag = Tag::factory()->create();
 
-        // Act
+        /* Act */
         $response = Livewire::test(Tags\Pages\EditTag::class, ['record' => $tag->getKey()]);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
     }
 }

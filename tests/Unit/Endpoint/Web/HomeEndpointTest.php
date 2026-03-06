@@ -15,38 +15,38 @@ class HomeEndpointTest extends EndpointTestAbstract
 {
     public function test_index_redirects_to_dashboard_if_user_is_logged_in(): void
     {
-        // Arrange
+        /* Arrange */
         $user = User::factory()->withPersonalOrganization()->create();
         $this->actingAs($user);
 
-        // Act
+        /* Act */
         $response = $this->get('/');
 
-        // Assert
+        /* Assert */
         $response->assertRedirect('/dashboard');
     }
 
     public function test_index_redirects_to_login_if_user_is_not_logged_in(): void
     {
-        // Arrange
+        /* Arrange */
 
-        // Act
+        /* Act */
         $response = $this->get('/');
 
-        // Assert
+        /* Assert */
         $response->assertRedirect('/login');
     }
 
     public function test_login_redirects_to_dashboard_if_user_is_logged_in(): void
     {
-        // Arrange
+        /* Arrange */
         $user = User::factory()->withPersonalOrganization()->create();
         $this->actingAs($user);
 
-        // Act
+        /* Act */
         $response = $this->get('/login');
 
-        // Assert
+        /* Assert */
         $response->assertRedirect('/dashboard');
     }
 }

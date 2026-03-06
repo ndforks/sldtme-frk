@@ -27,26 +27,26 @@ class FailedJobResourceTest extends FilamentTestCase
 
     public function test_can_list_failed_jobs(): void
     {
-        // Arrange
+        /* Arrange */
         $failedJobs = FailedJob::factory()->createMany(5);
 
-        // Act
+        /* Act */
         $response = Livewire::test(FailedJobs\Pages\ListFailedJobs::class);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertCanSeeTableRecords($failedJobs);
     }
 
     public function test_can_see_view_page_of_failed_job(): void
     {
-        // Arrange
+        /* Arrange */
         $failedJob = FailedJob::factory()->create();
 
-        // Act
+        /* Act */
         $response = Livewire::test(ViewFailedJobs::class, ['record' => $failedJob->getKey()]);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
     }
 }

@@ -17,30 +17,30 @@ class InvitationEndpointTest extends ApiEndpointTestAbstract
 {
     public function test_index_fails_if_user_has_no_permission_to_view_invitations(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.invitations.index', $data->organization->id));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(403);
     }
 
     public function test_index_returns_invitations_of_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'invitations:view',
         ]);
         $invitation1 = OrganizationInvitation::factory()->forOrganization($data->organization)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.invitations.index', $data->organization->getKey()));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $response->assertJson([
             'data' => [
@@ -55,7 +55,7 @@ class InvitationEndpointTest extends ApiEndpointTestAbstract
 
     public function test_index_returns_invitations_ordered_by_created_at_descending(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'invitations:view',
         ]);
@@ -70,10 +70,10 @@ class InvitationEndpointTest extends ApiEndpointTestAbstract
         ]);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.invitations.index', $data->organization->getKey()));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $ids = collect($response->json('data'))->pluck('id')->values()->toArray();
         $this->assertSame([$invitationNewest->getKey(), $invitationMiddle->getKey(), $invitationOldest->getKey()], $ids);
@@ -81,81 +81,81 @@ class InvitationEndpointTest extends ApiEndpointTestAbstract
 
     public function test_store_fails_if_user_has_no_permission_to_create_invitations(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.invitations.store', $data->organization->getKey()), [
             'email' => 'test@mail.test',
             'role'  => Role::Employee->value,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(403);
     }
 
     public function test_store_fails_if_user_invites_with_role_owner(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'invitations:create',
         ]);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.invitations.store', $data->organization->getKey()), [
             'email' => 'test@asdf.at',
             'role'  => Role::Owner->value,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(422);
         $response->assertJsonPath('message', 'The selected role is invalid.');
     }
 
     public function test_store_fails_if_user_invites_with_role_placeholder(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'invitations:create',
         ]);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.invitations.store', $data->organization->getKey()), [
             'email' => 'test@asdf.at',
             'role'  => Role::Placeholder->value,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(422);
         $response->assertJsonPath('message', 'The selected role is invalid.');
     }
 
     public function test_store_fails_if_user_invites_user_who_is_already_member_of_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'invitations:create',
         ]);
         Passport::actingAs($data->user);
         $member = Member::factory()->forOrganization($data->organization)->create();
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.invitations.store', $data->organization->getKey()), [
             'email' => $member->user->email,
             'role'  => Role::Employee->value,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(400);
         $response->assertJsonPath('message', 'User is already a member of the organization');
     }
 
     public function test_store_fails_if_an_invitation_with_the_same_email_already_exists(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'invitations:create',
         ]);
@@ -165,13 +165,13 @@ class InvitationEndpointTest extends ApiEndpointTestAbstract
             'email' => $email,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.invitations.store', $data->organization->getKey()), [
             'email' => $email,
             'role'  => Role::Employee->value,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(400);
         $response->assertExactJson([
             'error'   => true,
@@ -182,7 +182,7 @@ class InvitationEndpointTest extends ApiEndpointTestAbstract
 
     public function test_store_works_if_user_invites_user_who_is_also_a_placeholder(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'invitations:create',
         ]);
@@ -190,13 +190,13 @@ class InvitationEndpointTest extends ApiEndpointTestAbstract
         $member = Member::factory()->forOrganization($data->organization)->forUser($user)->role(Role::Placeholder)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.invitations.store', $data->organization->getKey()), [
             'email' => $user->email,
             'role'  => Role::Employee->value,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(204);
         $invitation = OrganizationInvitation::first();
         $this->assertNotNull($invitation);
@@ -208,19 +208,19 @@ class InvitationEndpointTest extends ApiEndpointTestAbstract
 
     public function test_store_invites_user_to_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'invitations:create',
         ]);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.invitations.store', $data->organization->getKey()), [
             'email' => 'test@asdf.at',
             'role'  => Role::Employee->value,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(204);
         $invitation = OrganizationInvitation::first();
         $this->assertNotNull($invitation);
@@ -232,18 +232,18 @@ class InvitationEndpointTest extends ApiEndpointTestAbstract
 
     public function test_resend_fails_if_user_has_no_permission_to_resend_the_invitation(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission();
         Passport::actingAs($data->user);
         $invitation = OrganizationInvitation::factory()->forOrganization($data->organization)->create();
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.invitations.resend', [
             $data->organization->getKey(),
             $invitation->getKey(),
         ]));
 
-        // Assert
+        /* Assert */
         Mail::assertNothingSent();
         Mail::assertNothingQueued();
         $response->assertStatus(403);
@@ -251,17 +251,17 @@ class InvitationEndpointTest extends ApiEndpointTestAbstract
 
     public function test_resend_fails_if_invitation_belongs_to_different_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'invitations:resend',
         ]);
         Passport::actingAs($data->user);
         $invitation = OrganizationInvitation::factory()->create();
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.invitations.resend', [$data->organization->getKey(), $invitation->getKey()]));
 
-        // Assert
+        /* Assert */
         Mail::assertNothingSent();
         Mail::assertNothingQueued();
         $response->assertStatus(403);
@@ -269,20 +269,20 @@ class InvitationEndpointTest extends ApiEndpointTestAbstract
 
     public function test_resend_resends_invitation_email(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'invitations:resend',
         ]);
         Passport::actingAs($data->user);
         $invitation = OrganizationInvitation::factory()->forOrganization($data->organization)->create();
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.invitations.resend', [
             $data->organization->getKey(),
             $invitation->getKey(),
         ]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(204);
         Mail::assertQueued(fn (OrganizationInvitationMail $mail): bool => $mail->invitation->is($invitation));
         Mail::assertNothingSent();
@@ -290,47 +290,47 @@ class InvitationEndpointTest extends ApiEndpointTestAbstract
 
     public function test_delete_fails_if_user_has_no_permission_to_remove_invitations(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission();
         Passport::actingAs($data->user);
         $invitation = OrganizationInvitation::factory()->forOrganization($data->organization)->create();
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.invitations.destroy', [$data->organization->getKey(), $invitation->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(403);
     }
 
     public function test_delete_fails_if_invitation_belongs_to_different_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'invitations:remove',
         ]);
         Passport::actingAs($data->user);
         $invitation = OrganizationInvitation::factory()->create();
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.invitations.destroy', [$data->organization->getKey(), $invitation->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(403);
     }
 
     public function test_delete_removes_invitation(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'invitations:remove',
         ]);
         Passport::actingAs($data->user);
         $invitation = OrganizationInvitation::factory()->forOrganization($data->organization)->create();
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.invitations.destroy', [$data->organization->getKey(), $invitation->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(204);
         $this->assertNull(OrganizationInvitation::find($invitation->getKey()));
     }

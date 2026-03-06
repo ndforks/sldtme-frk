@@ -26,15 +26,15 @@ class ServerOverviewWidgetTest extends FilamentTestCase
 
     public function test_shows_version_and_build_it_no_information_about_the_current_version_exists(): void
     {
-        // Arrange
+        /* Arrange */
         Config::set('app.version', '1.0.0');
         Config::set('app.build', 'ABC123');
         Cache::forget('latest_version');
 
-        // Act
+        /* Act */
         $response = Livewire::test(ServerOverview::class);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertSee('1.0.0');
         $response->assertSee('ABC123');
@@ -44,15 +44,15 @@ class ServerOverviewWidgetTest extends FilamentTestCase
 
     public function test_show_version_is_current_when_the_latest_version_is_the_same_as_the_current_version(): void
     {
-        // Arrange
+        /* Arrange */
         Config::set('app.version', '1.0.0');
         Config::set('app.build', 'ABC123');
         Cache::put('latest_version', '1.0.0');
 
-        // Act
+        /* Act */
         $response = Livewire::test(ServerOverview::class);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertSee('1.0.0');
         $response->assertSee('ABC123');
@@ -62,15 +62,15 @@ class ServerOverviewWidgetTest extends FilamentTestCase
 
     public function test_shows_update_available(): void
     {
-        // Arrange
+        /* Arrange */
         Config::set('app.version', '1.0.0');
         Config::set('app.build', 'ABC123');
         Cache::put('latest_version', '1.0.1');
 
-        // Act
+        /* Act */
         $response = Livewire::test(ServerOverview::class);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertSee('1.0.0');
         $response->assertSee('ABC123');

@@ -12,30 +12,30 @@ class UpdateTeamTest extends TestCase
 
     public function test_team_update_page_shows_not_found_if_id_is_not_uuid(): void
     {
-        // Arrange
+        /* Arrange */
         $user = User::factory()->withPersonalOrganization()->create();
         $this->actingAs($user);
 
-        // Act
+        /* Act */
         $response = $this->get('/teams/1');
 
-        // Assert
+        /* Assert */
         $response->assertStatus(404);
     }
 
     public function test_team_names_can_be_updated(): void
     {
-        // Arrange
+        /* Arrange */
         $user = User::factory()->withPersonalOrganization()->create();
         $this->actingAs($user);
 
-        // Act
+        /* Act */
         $response = $this->put('/teams/' . $user->currentTeam->id, [
             'name'     => 'Test Organization',
             'currency' => 'USD',
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertValid(errorBag: 'updateTeamName');
         $this->assertCount(1, $user->fresh()->ownedTeams);
         $organization = $user->currentTeam->fresh();

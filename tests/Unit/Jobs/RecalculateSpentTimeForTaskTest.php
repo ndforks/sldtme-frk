@@ -12,7 +12,7 @@ class RecalculateSpentTimeForTaskTest extends TestCaseWithDatabase
 {
     public function test_recalculates_spent_time_for_task(): void
     {
-        // Arrange
+        /* Arrange */
         $task = Task::factory()->create([
             'spent_time' => 0,
         ]);
@@ -23,10 +23,10 @@ class RecalculateSpentTimeForTaskTest extends TestCaseWithDatabase
         $recalculateSpentTimeForTask = new RecalculateSpentTimeForTask($task);
         DB::enableQueryLog();
 
-        // Act
+        /* Act */
         $recalculateSpentTimeForTask->handle();
 
-        // Assert
+        /* Assert */
         self::assertCount(2, DB::getQueryLog());
         $task->refresh();
         self::assertEquals(21, $task->spent_time);
@@ -34,7 +34,7 @@ class RecalculateSpentTimeForTaskTest extends TestCaseWithDatabase
 
     public function test_does_not_save_task_if_value_is_already_correct(): void
     {
-        // Arrange
+        /* Arrange */
         $task = Task::factory()->create([
             'spent_time' => 21,
         ]);
@@ -45,10 +45,10 @@ class RecalculateSpentTimeForTaskTest extends TestCaseWithDatabase
         $recalculateSpentTimeForTask = new RecalculateSpentTimeForTask($task);
         DB::enableQueryLog();
 
-        // Act
+        /* Act */
         $recalculateSpentTimeForTask->handle();
 
-        // Assert
+        /* Assert */
         self::assertCount(1, DB::getQueryLog());
         $task->refresh();
         self::assertEquals(21, $task->spent_time);

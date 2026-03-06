@@ -17,17 +17,17 @@ class CorrectionPlaceholderMembersCommandTest extends TestCaseWithDatabase
 {
     public function test_sets_member_role_to_placeholder_if_user_is_placeholder(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $user1        = User::factory()->placeholder()->create();
         $member1      = Member::factory()->forOrganization($organization)->forUser($user1)->role(Role::Admin)->create();
         $user2        = User::factory()->create();
         $member2      = Member::factory()->forOrganization($organization)->forUser($user2)->role(Role::Admin)->create();
 
-        // Act
+        /* Act */
         $exitCode = $this->withoutMockingConsoleOutput()->artisan('correction:placeholder-members');
 
-        // Assert
+        /* Assert */
         $this->assertSame(Command::SUCCESS, $exitCode);
         $output = Artisan::output();
         $member1->refresh();
@@ -40,17 +40,17 @@ class CorrectionPlaceholderMembersCommandTest extends TestCaseWithDatabase
 
     public function test_sets_member_role_to_placeholder_if_user_is_placeholder_dry_run(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $user1        = User::factory()->placeholder()->create();
         $member1      = Member::factory()->forOrganization($organization)->forUser($user1)->role(Role::Admin)->create();
         $user2        = User::factory()->create();
         $member2      = Member::factory()->forOrganization($organization)->forUser($user2)->role(Role::Admin)->create();
 
-        // Act
+        /* Act */
         $exitCode = $this->withoutMockingConsoleOutput()->artisan('correction:placeholder-members --dry-run');
 
-        // Assert
+        /* Assert */
         $this->assertSame(Command::SUCCESS, $exitCode);
         $output = Artisan::output();
         $member1->refresh();

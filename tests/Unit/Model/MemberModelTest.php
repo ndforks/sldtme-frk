@@ -14,48 +14,48 @@ class MemberModelTest extends ModelTestAbstract
 {
     public function test_it_belongs_to_a_user(): void
     {
-        // Arrange
+        /* Arrange */
         $user   = User::factory()->create();
         $member = Member::factory()->forUser($user)->create();
 
-        // Act
+        /* Act */
         $member->refresh();
         $userRel = $member->user;
 
-        // Assert
+        /* Assert */
         $this->assertNotNull($userRel);
         $this->assertTrue($userRel->is($user));
     }
 
     public function test_it_belongs_to_a_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $member       = Member::factory()->forOrganization($organization)->create();
 
-        // Act
+        /* Act */
         $member->refresh();
         $organizationRel = $member->organization;
 
-        // Assert
+        /* Assert */
         $this->assertNotNull($organizationRel);
         $this->assertTrue($organizationRel->is($organization));
     }
 
     public function test_it_has_many_project_members(): void
     {
-        // Arrange
+        /* Arrange */
         $member         = Member::factory()->create();
         $project1       = Project::factory()->create();
         $project2       = Project::factory()->create();
         $projectMember1 = ProjectMember::factory()->forMember($member)->forProject($project1)->create();
         $projectMember2 = ProjectMember::factory()->forMember($member)->forProject($project2)->createMany();
 
-        // Act
+        /* Act */
         $member->refresh();
         $projectMembersRel = $member->projectMembers;
 
-        // Assert
+        /* Assert */
         $this->assertNotNull($projectMembersRel);
         $this->assertCount(2, $projectMembersRel);
         $this->assertEqualsCanonicalizing([

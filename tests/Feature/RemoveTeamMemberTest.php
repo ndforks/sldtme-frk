@@ -12,7 +12,7 @@ class RemoveTeamMemberTest extends TestCase
 
     public function test_team_members_can_no_longer_be_removed_from_teams_over_jetstream_endpoints(): void
     {
-        // Arrange
+        /* Arrange */
         $this->actingAs($user = User::factory()->withPersonalOrganization()->create());
 
         $user->currentTeam->users()->attach(
@@ -20,10 +20,10 @@ class RemoveTeamMemberTest extends TestCase
             ['role' => 'admin']
         );
 
-        // Act
+        /* Act */
         $response = $this->delete('/teams/' . $user->currentTeam->id . '/members/' . $otherUser->id);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(403);
         $response->assertSee('Moved to API');
     }

@@ -26,26 +26,26 @@ class ProjectResourceTest extends FilamentTestCase
 
     public function test_can_list_projects(): void
     {
-        // Arrange
+        /* Arrange */
         $projects = Project::factory()->createMany(5);
 
-        // Act
+        /* Act */
         $response = Livewire::test(Projects\Pages\ListProjects::class);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertCanSeeTableRecords($projects);
     }
 
     public function test_can_see_edit_page_of_project(): void
     {
-        // Arrange
+        /* Arrange */
         $project = Project::factory()->create();
 
-        // Act
+        /* Act */
         $response = Livewire::test(Projects\Pages\EditProject::class, ['record' => $project->getKey()]);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
     }
 }

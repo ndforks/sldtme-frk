@@ -22,31 +22,31 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
 {
     public function test_index_endpoint_fails_if_user_does_not_have_permission_to_view_reports(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission();
         Report::factory()->forOrganization($data->organization)->createMany(4);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.reports.index', ['organization' => $data->organization->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
     }
 
     public function test_index_endpoint_returns_list_of_all_reports_of_organization_ordered_by_created_at_desc_per_default(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:view',
         ]);
         Report::factory()->forOrganization($data->organization)->randomCreatedAt()->createMany(4);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.reports.index', [$data->organization->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $response->assertJsonCount(4, 'data');
         $reports = Report::query()->orderBy('created_at', 'desc')->get();
@@ -65,11 +65,11 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_store_endpoint_fails_if_user_has_no_permission_to_create_report(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.reports.store', [$data->organization->getKey()]), [
             'name'       => 'Test Report',
             'is_public'  => false,
@@ -82,19 +82,19 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
             ],
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
     }
 
     public function test_store_endpoint_creates_new_report_with_minimal_properties(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:create',
         ]);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.reports.store', [$data->organization->getKey()]), [
             'name'       => 'Test Report',
             'is_public'  => false,
@@ -107,7 +107,7 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
             ],
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(201);
         $response->assertJson(
             fn (AssertableJson $json) => $json
@@ -123,13 +123,13 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_store_endpoint_creates_new_report_with_all_properties(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:create',
         ]);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->withoutExceptionHandling()->postJson(route('api.v1.reports.store', [$data->organization->getKey()]), [
             'name'         => 'Test Report',
             'description'  => 'Test description',
@@ -153,7 +153,7 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
             ],
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(201);
         /** @var Report $report */
         $report = Report::query()->findOrFail($response->json('data.id'));
@@ -171,13 +171,13 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_store_endpoint_creates_new_report_with_rounding_properties(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:create',
         ]);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->withoutExceptionHandling()->postJson(route('api.v1.reports.store', [$data->organization->getKey()]), [
             'name'         => 'Test Report with Rounding',
             'description'  => 'Test description',
@@ -203,7 +203,7 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
             ],
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(201);
         /** @var Report $report */
         $report = Report::query()->findOrFail($response->json('data.id'));
@@ -227,70 +227,70 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_update_endpoint_fails_if_user_has_no_permission_to_update_report(): void
     {
-        // Arrange
+        /* Arrange */
         $data   = $this->createUserWithPermission();
         $report = Report::factory()->forOrganization($data->organization)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.reports.update', [$data->organization->getKey(), $report->getKey()]), [
             'name' => 'Updated Report',
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
     }
 
     public function test_update_endpoint_fails_if_report_does_not_exist(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:update',
         ]);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.reports.update', [$data->organization->getKey(), 1]), [
             'name' => 'Updated Report',
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertNotFound();
     }
 
     public function test_update_endpoint_fails_if_report_does_not_belong_to_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:update',
         ]);
         $report = Report::factory()->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.reports.update', [$data->organization->getKey(), $report->getKey()]), [
             'name' => 'Updated Report',
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
     }
 
     public function test_update_endpoint_can_update_only_the_name_of_the_report(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:update',
         ]);
         $report = Report::factory()->forOrganization($data->organization)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.reports.update', [$data->organization->getKey(), $report->getKey()]), [
             'name' => 'Updated Report',
         ]);
 
-        // Assert
+        /* Assert */
         $report->refresh();
         $this->assertSame('Updated Report', $report->name);
         $response->assertStatus(200);
@@ -303,19 +303,19 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_update_endpoint_can_update_only_the_description_of_the_report(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:update',
         ]);
         $report = Report::factory()->forOrganization($data->organization)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.reports.update', [$data->organization->getKey(), $report->getKey()]), [
             'description' => 'Updated description',
         ]);
 
-        // Assert
+        /* Assert */
         $report->refresh();
         $this->assertSame('Updated description', $report->description);
         $response->assertStatus(200);
@@ -328,19 +328,19 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_update_endpoint_can_set_a_report_from_private_to_public_which_generates_a_new_secret(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:update',
         ]);
         $report = Report::factory()->private()->forOrganization($data->organization)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.reports.update', [$data->organization->getKey(), $report->getKey()]), [
             'is_public' => true,
         ]);
 
-        // Assert
+        /* Assert */
         $report->refresh();
         $this->assertTrue($report->is_public);
         $this->assertNotNull($report->share_secret);
@@ -355,19 +355,19 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_update_endpoint_can_set_a_report_from_public_to_private_which_resets_the_secret(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:update',
         ]);
         $report = Report::factory()->public()->forOrganization($data->organization)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.reports.update', [$data->organization->getKey(), $report->getKey()]), [
             'is_public' => false,
         ]);
 
-        // Assert
+        /* Assert */
         $report->refresh();
         $this->assertFalse($report->is_public);
         $this->assertNull($report->share_secret);
@@ -382,7 +382,7 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_update_endpoint_does_not_change_the_secret_of_a_public_report_if_it_is_set_to_public_again(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:update',
         ]);
@@ -390,12 +390,12 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
         $secret = $report->share_secret;
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.reports.update', [$data->organization->getKey(), $report->getKey()]), [
             'is_public' => true,
         ]);
 
-        // Assert
+        /* Assert */
         $report->refresh();
         $this->assertTrue($report->is_public);
         $this->assertSame($secret, $report->share_secret);
@@ -410,14 +410,14 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_update_endpoint_can_update_the_report_all_properties_set(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:update',
         ]);
         $report = Report::factory()->forOrganization($data->organization)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.reports.update', [$data->organization->getKey(), $report->getKey()]), [
             'name'         => 'Updated Report',
             'description'  => 'Updated description',
@@ -425,7 +425,7 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
             'public_until' => Carbon::now()->addDays(30)->toIso8601ZuluString(),
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $response->assertJson(
             fn (AssertableJson $json) => $json
@@ -441,7 +441,7 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_update_endpoint_can_update_public_until_on_already_public_report(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:update',
         ]);
@@ -451,12 +451,12 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
         Passport::actingAs($data->user);
         $newPublicUntil = Carbon::now()->addDays(30);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.reports.update', [$data->organization->getKey(), $report->getKey()]), [
             'public_until' => $newPublicUntil->toIso8601ZuluString(),
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $report->refresh();
         $this->assertTrue($report->is_public);
@@ -466,7 +466,7 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_update_endpoint_can_clear_public_until_on_already_public_report(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:update',
         ]);
@@ -475,12 +475,12 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
         ]);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.reports.update', [$data->organization->getKey(), $report->getKey()]), [
             'public_until' => null,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $report->refresh();
         $this->assertTrue($report->is_public);
@@ -489,62 +489,62 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_show_endpoint_fails_if_user_has_no_permission_to_view_report(): void
     {
-        // Arrange
+        /* Arrange */
         $data   = $this->createUserWithPermission();
         $report = Report::factory()->forOrganization($data->organization)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.reports.show', [$data->organization->getKey(), $report->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
     }
 
     public function test_show_endpoint_fails_if_report_does_not_exist(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:view',
         ]);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.reports.show', [$data->organization->getKey(), 1]));
 
-        // Assert
+        /* Assert */
         $response->assertNotFound();
     }
 
     public function test_show_endpoint_fails_if_report_does_not_belong_to_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:view',
         ]);
         $report = Report::factory()->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.reports.show', [$data->organization->getKey(), $report->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
     }
 
     public function test_show_endpoint_returns_detailed_report(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:view',
         ]);
         $report = Report::factory()->forOrganization($data->organization)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.reports.show', [$data->organization->getKey(), $report->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $response->assertJson(
             fn (AssertableJson $json) => $json
@@ -555,13 +555,13 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_store_endpoint_creates_report_with_none_filter_values(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:create',
         ]);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->withoutExceptionHandling()->postJson(route('api.v1.reports.store', [$data->organization->getKey()]), [
             'name'       => 'Test Report with None Filters',
             'is_public'  => false,
@@ -578,7 +578,7 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
             ],
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(201);
         /** @var Report $report */
         $report = Report::query()->findOrFail($response->json('data.id'));
@@ -590,7 +590,7 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_store_endpoint_creates_report_with_none_combined_with_real_ids(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:create',
         ]);
@@ -600,7 +600,7 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
         $tag     = Tag::factory()->forOrganization($data->organization)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->withoutExceptionHandling()->postJson(route('api.v1.reports.store', [$data->organization->getKey()]), [
             'name'       => 'Test Report with Combined Filters',
             'is_public'  => false,
@@ -617,7 +617,7 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
             ],
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(201);
         /** @var Report $report */
         $report = Report::query()->findOrFail($response->json('data.id'));
@@ -633,62 +633,62 @@ class ReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_destroy_endpoint_fails_if_user_has_no_permission_to_delete_report(): void
     {
-        // Arrange
+        /* Arrange */
         $data   = $this->createUserWithPermission();
         $report = Report::factory()->forOrganization($data->organization)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.reports.destroy', [$data->organization->getKey(), $report->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
     }
 
     public function test_destroy_endpoint_fails_if_report_belongs_to_another_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:delete',
         ]);
         $report = Report::factory()->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.reports.destroy', [$data->organization->getKey(), $report->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
     }
 
     public function test_destroy_endpoint_fails_if_report_does_not_exist(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:delete',
         ]);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.reports.destroy', [$data->organization->getKey(), 1]));
 
-        // Assert
+        /* Assert */
         $response->assertNotFound();
     }
 
     public function test_destroy_endpoint_deletes_a_report(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'reports:delete',
         ]);
         $report = Report::factory()->forOrganization($data->organization)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.reports.destroy', [$data->organization->getKey(), $report->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertNoContent();
         $this->assertDatabaseMissing(Report::class, [
             'id' => $report->getKey(),

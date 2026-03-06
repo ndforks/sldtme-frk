@@ -28,46 +28,46 @@ class OrganizationInvitationResourceTest extends FilamentTestCase
 
     public function test_can_list_organization_invitations(): void
     {
-        // Arrange
+        /* Arrange */
         $user                    = User::factory()->create();
         $organization            = Organization::factory()->withOwner($user)->create();
         $organizationInvitations = OrganizationInvitation::factory()->forOrganization($organization)->createMany(5);
 
-        // Act
+        /* Act */
         $response = Livewire::test(OrganizationInvitations\Pages\ListOrganizationInvitations::class);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertCanSeeTableRecords($organizationInvitations);
     }
 
     public function test_can_see_edit_page_of_organization_invitation(): void
     {
-        // Arrange
+        /* Arrange */
         $organization           = Organization::factory()->create();
         $organizationInvitation = OrganizationInvitation::factory()->forOrganization($organization)->create();
 
-        // Act
+        /* Act */
         $response = Livewire::test(OrganizationInvitations\Pages\EditOrganizationInvitation::class, [
             'record' => $organizationInvitation->getKey(),
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
     }
 
     public function test_can_delete_a_organization_invitation(): void
     {
-        // Arrange
+        /* Arrange */
         $organization           = Organization::factory()->create();
         $organizationInvitation = OrganizationInvitation::factory()->forOrganization($organization)->create();
 
-        // Act
+        /* Act */
         $response = Livewire::test(OrganizationInvitations\Pages\EditOrganizationInvitation::class, [
             'record' => $organizationInvitation->getKey(),
         ])->callAction(DeleteAction::class);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $this->assertDatabaseMissing(OrganizationInvitation::class, [
             'id' => $organizationInvitation->getKey(),

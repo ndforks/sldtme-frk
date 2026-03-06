@@ -13,7 +13,7 @@ class UpdateTeamMemberRoleTest extends TestCase
 
     public function test_team_member_roles_can_no_longer_be_updated_over_jetstream(): void
     {
-        // Arrange
+        /* Arrange */
         $user = User::factory()->withPersonalOrganization()->create();
         $this->actingAs($user);
 
@@ -22,12 +22,12 @@ class UpdateTeamMemberRoleTest extends TestCase
             ['role' => 'admin']
         );
 
-        // Act
+        /* Act */
         $response = $this->put('/teams/' . $user->currentTeam->id . '/members/' . $otherUser->id, [
             'role' => Role::Employee->value,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(403);
         $response->assertSee('Moved to API');
     }

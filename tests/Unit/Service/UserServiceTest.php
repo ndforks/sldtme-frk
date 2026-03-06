@@ -30,7 +30,7 @@ class UserServiceTest extends TestCase
 
     public function test_assign_organization_entities_to_different_user(): void
     {
-        // Arrange
+        /* Arrange */
         $organization    = Organization::factory()->create();
         $project         = Project::factory()->forOrganization($organization)->create();
         $otherUser       = User::factory()->create();
@@ -44,10 +44,10 @@ class UserServiceTest extends TestCase
         ProjectMember::factory()->forProject($project)->forMember($otherUserMember)->create();
         ProjectMember::factory()->forProject($project)->forMember($fromUserMember)->create();
 
-        // Act
+        /* Act */
         $this->userService->assignOrganizationEntitiesToDifferentUser($organization, $fromUser, $toUser);
 
-        // Assert
+        /* Assert */
         $this->assertSame(3, TimeEntry::query()->whereBelongsTo($toUser, 'user')->count());
         $this->assertSame(3, TimeEntry::query()->whereBelongsTo($otherUser, 'user')->count());
         $this->assertSame(0, TimeEntry::query()->whereBelongsTo($fromUser, 'user')->count());
@@ -58,7 +58,7 @@ class UserServiceTest extends TestCase
 
     public function test_change_ownership_changes_ownership_of_organization_to_new_user(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $newOwner     = User::factory()->create();
         $oldOwner     = User::factory()->create();
@@ -69,10 +69,10 @@ class UserServiceTest extends TestCase
             'role' => Role::Admin->value,
         ]);
 
-        // Act
+        /* Act */
         $this->userService->changeOwnership($organization, $newOwner);
 
-        // Assert
+        /* Assert */
         $this->assertSame($newOwner->getKey(), $organization->refresh()->user_id);
         $this->assertSame(Role::Owner->value, Member::whereBelongsTo($newOwner)->whereBelongsTo($organization)->firstOrFail()->role);
         $this->assertSame(Role::Admin->value, Member::whereBelongsTo($oldOwner)->whereBelongsTo($organization)->firstOrFail()->role);
@@ -80,7 +80,7 @@ class UserServiceTest extends TestCase
 
     public function test_change_ownership_fails_if_new_user_is_not_member_of_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $newOwner     = User::factory()->create();
         $oldOwner     = User::factory()->create();
@@ -88,7 +88,7 @@ class UserServiceTest extends TestCase
             'role' => Role::Owner->value,
         ]);
 
-        // Act
+        /* Act */
         try {
             $this->userService->changeOwnership($organization, $newOwner);
         } catch (InvalidArgumentException $e) {
@@ -98,7 +98,7 @@ class UserServiceTest extends TestCase
 
     public function test_make_sure_user_has_current_organization_sets_current_organization_for_user_if_null(): void
     {
-        // Arrange
+        /* Arrange */
         $user              = User::factory()->create();
         $organization      = Organization::factory()->create();
         $otherOrganization = Organization::factory()->create();
@@ -106,23 +106,23 @@ class UserServiceTest extends TestCase
         $user->current_team_id = null;
         $user->save();
 
-        // Act
+        /* Act */
         $this->userService->makeSureUserHasCurrentOrganization($user);
 
-        // Assert
+        /* Assert */
         $this->assertSame($organization->getKey(), $user->refresh()->currentOrganization->getKey());
     }
 
     public function make_sure_user_has_at_least_one_organization_creates_organization_for_user_if_there_are_not_member_of_one(): void
     {
-        // Arrange
+        /* Arrange */
         $user         = User::factory()->create();
         $organization = Organization::factory()->create();
 
-        // Act
+        /* Act */
         $this->userService->makeSureUserHasAtLeastOneOrganization($user);
 
-        // Assert
+        /* Assert */
         $user->refresh();
         $this->assertSame(1, $user->organizations()->count());
         $newOrganization = $user->organizations()->first();

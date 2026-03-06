@@ -17,17 +17,17 @@ class InviteTeamMemberTest extends TestCase
 
     public function test_team_members_can_no_longer_be_invited_to_team_over_jetstream(): void
     {
-        // Arrange
+        /* Arrange */
         Mail::fake();
         $this->actingAs($user = User::factory()->withPersonalOrganization()->create());
 
-        // Act
+        /* Act */
         $response = $this->post('/teams/' . $user->currentTeam->id . '/members', [
             'email' => 'test@example.com',
             'role'  => 'admin',
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(403);
         $response->assertSee('Moved to API');
         Mail::assertNothingSent();
@@ -35,7 +35,7 @@ class InviteTeamMemberTest extends TestCase
 
     public function test_team_member_invitations_can_no_longer_be_cancelled_over_jetstream(): void
     {
-        // Arrange
+        /* Arrange */
         Mail::fake();
 
         $this->actingAs($user = User::factory()->withPersonalOrganization()->create());
@@ -45,17 +45,17 @@ class InviteTeamMemberTest extends TestCase
             'role'  => 'admin',
         ]);
 
-        // Act
+        /* Act */
         $response = $this->delete('/team-invitations/' . $invitation->id);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(403);
         $this->assertCount(1, $user->currentTeam->fresh()->teamInvitations);
     }
 
     public function test_team_member_invitations_can_be_accepted(): void
     {
-        // Arrange
+        /* Arrange */
         Mail::fake();
         $owner      = User::factory()->withPersonalOrganization()->create();
         $user       = User::factory()->withPersonalOrganization()->create();
@@ -65,7 +65,7 @@ class InviteTeamMemberTest extends TestCase
         ]);
         $this->actingAs($user);
 
-        // Act
+        /* Act */
         $acceptUrl = URL::temporarySignedRoute(
             'team-invitations.accept',
             now()->addMinutes(60),
@@ -73,7 +73,7 @@ class InviteTeamMemberTest extends TestCase
         );
         $response = $this->get($acceptUrl);
 
-        // Assert
+        /* Assert */
         $this->assertCount(0, $owner->currentTeam->fresh()->teamInvitations);
         $user->refresh();
         $this->assertCount(2, $user->organizations);
@@ -82,7 +82,7 @@ class InviteTeamMemberTest extends TestCase
 
     public function test_team_member_invitations_of_placeholder_can_be_accepted_and_migrates_date_to_real_user(): void
     {
-        // Arrange
+        /* Arrange */
         Mail::fake();
         $placeholder       = User::factory()->placeholder()->create();
         $owner             = User::factory()->withPersonalOrganization()->create();
@@ -100,7 +100,7 @@ class InviteTeamMemberTest extends TestCase
         ]);
         $this->actingAs($user);
 
-        // Act
+        /* Act */
         $acceptUrl = URL::temporarySignedRoute(
             'team-invitations.accept',
             now()->addMinutes(60),
@@ -108,7 +108,7 @@ class InviteTeamMemberTest extends TestCase
         );
         $response = $this->get($acceptUrl);
 
-        // Assert
+        /* Assert */
         $response->assertRedirect();
         $user->refresh();
         $this->assertDatabaseMissing(User::class, ['id' => $placeholder->id]);
@@ -120,7 +120,7 @@ class InviteTeamMemberTest extends TestCase
 
     public function test_team_member_accept_fails_if_user_with_that_email_does_not_exist(): void
     {
-        // Arrange
+        /* Arrange */
         Mail::fake();
         $owner      = User::factory()->withPersonalOrganization()->create();
         $user       = User::factory()->withPersonalOrganization()->create();
@@ -130,7 +130,7 @@ class InviteTeamMemberTest extends TestCase
         ]);
         $this->actingAs($user);
 
-        // Act
+        /* Act */
         $acceptUrl = URL::temporarySignedRoute(
             'team-invitations.accept',
             now()->addMinutes(60),
@@ -138,7 +138,7 @@ class InviteTeamMemberTest extends TestCase
         );
         $response = $this->get($acceptUrl);
 
-        // Assert
+        /* Assert */
         $this->assertCount(1, $owner->currentTeam->fresh()->teamInvitations);
         $user->refresh();
         $this->assertCount(1, $user->organizations);

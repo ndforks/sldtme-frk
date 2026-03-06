@@ -26,28 +26,28 @@ class ReportResourceTest extends FilamentTestCase
 
     public function test_can_list_reports(): void
     {
-        // Arrange
+        /* Arrange */
         $reports = Report::factory()->createMany(5);
 
-        // Act
+        /* Act */
         $response = Livewire::test(Reports\Pages\ListReports::class);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertCanSeeTableRecords($reports);
     }
 
     public function test_can_see_edit_page_of_report(): void
     {
-        // Arrange
+        /* Arrange */
         $report = Report::factory()->create();
 
-        // Act
+        /* Act */
         $response = Livewire::test(Reports\Pages\EditReport::class, [
             'record' => $report->getKey(),
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
     }
 }

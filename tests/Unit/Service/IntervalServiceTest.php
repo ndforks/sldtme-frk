@@ -10,14 +10,14 @@ class IntervalServiceTest extends TestCase
 {
     public function test_format_returns_correctly_formatted_interval(): void
     {
-        // Arrange
+        /* Arrange */
         $intervalService = app(IntervalService::class);
         $interval        = CarbonInterval::seconds(123456789123);
 
-        // Act
+        /* Act */
         $result = $intervalService->format($interval);
 
-        // Assert
+        /* Assert */
         $this->assertEquals('34293552:32:03', $result);
     }
 }

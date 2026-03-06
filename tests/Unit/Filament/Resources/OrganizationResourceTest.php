@@ -29,35 +29,35 @@ class OrganizationResourceTest extends FilamentTestCase
 
     public function test_can_list_organizations(): void
     {
-        // Arrange
+        /* Arrange */
         $user          = User::factory()->create();
         $organizations = Organization::factory()->state([
             'user_id' => $user->getKey(),
         ])->createMany(5);
 
-        // Act
+        /* Act */
         $response = Livewire::test(Organizations\Pages\ListOrganizations::class);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertCanSeeTableRecords($organizations);
     }
 
     public function test_can_see_edit_page_of_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
 
-        // Act
+        /* Act */
         $response = Livewire::test(Organizations\Pages\EditOrganization::class, ['record' => $organization->getKey()]);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
     }
 
     public function test_can_delete_a_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $user = $this->createUserWithPermission();
         $this->mock(DeletionService::class, static function (MockInterface $mock) use ($user): void {
             $mock->shouldReceive('deleteOrganization')
@@ -65,48 +65,48 @@ class OrganizationResourceTest extends FilamentTestCase
                 ->once();
         });
 
-        // Act
+        /* Act */
         $response = Livewire::test(Organizations\Pages\EditOrganization::class, ['record' => $user->organization->getKey()])
             ->callAction('delete')
             ->assertHasNoActionErrors();
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
     }
 
     public function test_can_list_related_users(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $user1        = User::factory()->create();
         $user2        = User::factory()->create();
         $organization->users()->attach($user1);
         $organization->users()->attach($user2);
 
-        // Act
+        /* Act */
         $response = Livewire::test(Organizations\RelationManagers\UsersRelationManager::class, [
             'ownerRecord' => $organization,
             'pageClass'   => Organizations\Pages\EditOrganization::class,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertCanSeeTableRecords($organization->users()->get());
     }
 
     public function test_can_list_related_invitations(): void
     {
-        // Arrange
+        /* Arrange */
         $organization            = Organization::factory()->create();
         $organizationInvitations = OrganizationInvitation::factory()->forOrganization($organization)->createMany(5);
 
-        // Act
+        /* Act */
         $response = Livewire::test(Organizations\RelationManagers\InvitationsRelationManager::class, [
             'ownerRecord' => $organization,
             'pageClass'   => Organizations\Pages\EditOrganization::class,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertCanSeeTableRecords($organizationInvitations);
     }

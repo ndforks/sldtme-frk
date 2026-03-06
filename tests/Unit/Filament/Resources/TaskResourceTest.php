@@ -26,26 +26,26 @@ class TaskResourceTest extends FilamentTestCase
 
     public function test_can_list_tasks(): void
     {
-        // Arrange
+        /* Arrange */
         $tasks = Task::factory()->createMany(5);
 
-        // Act
+        /* Act */
         $response = Livewire::test(Tasks\Pages\ListTasks::class);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertCanSeeTableRecords($tasks);
     }
 
     public function test_can_see_edit_page_of_task(): void
     {
-        // Arrange
+        /* Arrange */
         $task = Task::factory()->create();
 
-        // Act
+        /* Act */
         $response = Livewire::test(Tasks\Pages\EditTask::class, ['record' => $task->getKey()]);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
     }
 }

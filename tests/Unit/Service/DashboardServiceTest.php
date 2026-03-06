@@ -31,7 +31,7 @@ class DashboardServiceTest extends TestCase
 
     public function test_daily_tracked_hours_returns_correct_values(): void
     {
-        // Arrange
+        /* Arrange */
         $this->travelTo(Carbon::create(2024, 1, 1, 12, 0, 0, 'Europe/Vienna'));
         $organization = Organization::factory()->create();
         $user         = User::factory()->create([
@@ -49,10 +49,10 @@ class DashboardServiceTest extends TestCase
             'end'   => Carbon::create(2023, 12, 30, 23, 0, 39, 'UTC'),
         ]);
 
-        // Act
+        /* Act */
         $result = $this->dashboardService->getDailyTrackedHours($user, $organization, 5);
 
-        // Assert
+        /* Assert */
         $this->assertSame([
             [
                 'date'     => '2023-12-28',
@@ -79,7 +79,7 @@ class DashboardServiceTest extends TestCase
 
     public function test_weekly_history_returns_correct_values(): void
     {
-        // Arrange
+        /* Arrange */
         // Note: Is a Monday
         $this->travelTo(Carbon::create(2024, 1, 1, 12, 0, 0, 'Europe/Vienna'));
         $organization = Organization::factory()->create();
@@ -101,10 +101,10 @@ class DashboardServiceTest extends TestCase
             'end'   => Carbon::create(2023, 12, 30, 23, 0, 39, 'UTC'),
         ]);
 
-        // Act
+        /* Act */
         $result = $this->dashboardService->getWeeklyHistory($user, $organization);
 
-        // Assert
+        /* Assert */
         $this->assertSame([
             [
                 'date'     => '2023-12-31',
@@ -139,7 +139,7 @@ class DashboardServiceTest extends TestCase
 
     public function test_total_weekly_time_returns_correct_value(): void
     {
-        // Arrange
+        /* Arrange */
         // Note: Is a Monday
         $this->travelTo(Carbon::create(2024, 1, 1, 12, 0, 0, 'Europe/Vienna'));
         $organization = Organization::factory()->create();
@@ -161,16 +161,16 @@ class DashboardServiceTest extends TestCase
             'end'   => Carbon::create(2023, 12, 30, 23, 0, 39, 'UTC'),
         ]);
 
-        // Act
+        /* Act */
         $result = $this->dashboardService->totalWeeklyTime($user, $organization);
 
-        // Assert
+        /* Assert */
         $this->assertSame(40, $result);
     }
 
     public function test_total_weekly_billable_time_returns_correct_value(): void
     {
-        // Arrange
+        /* Arrange */
         // Note: Is a Monday
         $this->travelTo(Carbon::create(2024, 1, 1, 12, 0, 0, 'Europe/Vienna'));
         $organization = Organization::factory()->create();
@@ -201,16 +201,16 @@ class DashboardServiceTest extends TestCase
             'end'      => Carbon::create(2023, 12, 30, 23, 0, 39, 'UTC'),
         ]);
 
-        // Act
+        /* Act */
         $result = $this->dashboardService->totalWeeklyBillableTime($user, $organization);
 
-        // Assert
+        /* Assert */
         $this->assertSame(40, $result);
     }
 
     public function test_total_weekly_billable_amount_returns_correct_value(): void
     {
-        // Arrange
+        /* Arrange */
         // Note: Is a Monday
         $this->travelTo(Carbon::create(2024, 1, 1, 12, 0, 0, 'Europe/Vienna'));
         $currency     = 'USD';
@@ -246,10 +246,10 @@ class DashboardServiceTest extends TestCase
             'end'           => Carbon::create(2023, 12, 30, 23, 0, 39, 'UTC'),
         ]);
 
-        // Act
+        /* Act */
         $result = $this->dashboardService->totalWeeklyBillableAmount($user, $organization);
 
-        // Assert
+        /* Assert */
         $this->assertSame([
             'value'    => 5000,
             'currency' => $currency,
@@ -258,7 +258,7 @@ class DashboardServiceTest extends TestCase
 
     public function test_weekly_project_overview_returns_correct_value_if_time_entries_for_projects_exist_in_current_week(): void
     {
-        // Arrange
+        /* Arrange */
         // Note: Is a Monday
         $now = Carbon::create(2024, 1, 1, 12, 0, 0, 'Europe/Vienna')->toImmutable();
         $this->travelTo($now);
@@ -306,10 +306,10 @@ class DashboardServiceTest extends TestCase
             'end'   => $now->startOfWeek($user->week_start->carbonWeekDay())->addSeconds(39)->utc(),
         ]);
 
-        // Act
+        /* Act */
         $result = $this->dashboardService->weeklyProjectOverview($user, $organization);
 
-        // Assert
+        /* Assert */
         $this->assertEqualsCanonicalizing([
             [
                 'value' => 80,
@@ -334,7 +334,7 @@ class DashboardServiceTest extends TestCase
 
     public function test_weekly_project_overview_returns_correct_value_if_only_entries_without_project_exist_in_the_week(): void
     {
-        // Arrange
+        /* Arrange */
         // Note: Is a Monday
         $now = Carbon::create(2024, 1, 1, 12, 0, 0, 'Europe/Vienna')->toImmutable();
         $this->travelTo($now);
@@ -360,10 +360,10 @@ class DashboardServiceTest extends TestCase
             'end'   => $now->startOfWeek($user->week_start->carbonWeekDay())->addSeconds(39)->utc(),
         ]);
 
-        // Act
+        /* Act */
         $result = $this->dashboardService->weeklyProjectOverview($user, $organization);
 
-        // Assert
+        /* Assert */
         $this->assertSame([
             [
                 'value' => 80,
@@ -376,7 +376,7 @@ class DashboardServiceTest extends TestCase
 
     public function test_weekly_project_overview_returns_correct_value_if_no_entries_are_in_the_week(): void
     {
-        // Arrange
+        /* Arrange */
         // Note: Is a Monday
         $this->travelTo(Carbon::create(2024, 1, 1, 12, 0, 0, 'Europe/Vienna'));
         $organization = Organization::factory()->create();
@@ -386,10 +386,10 @@ class DashboardServiceTest extends TestCase
         ]);
         $member = Member::factory()->forUser($user)->forOrganization($organization)->create();
 
-        // Act
+        /* Act */
         $result = $this->dashboardService->weeklyProjectOverview($user, $organization);
 
-        // Assert
+        /* Assert */
         $this->assertSame([
             [
                 'value' => 0,
@@ -402,7 +402,7 @@ class DashboardServiceTest extends TestCase
 
     public function test_latest_team_activity_returns_the_most_current_working_users_and_what_they_are_working_on(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $member1      = Member::factory()->forOrganization($organization)->create();
         $member2      = Member::factory()->forOrganization($organization)->create();
@@ -433,10 +433,10 @@ class DashboardServiceTest extends TestCase
             'start'       => now()->subMinutes(60),
         ]);
 
-        // Act
+        /* Act */
         $result = $this->dashboardService->latestTeamActivity($organization);
 
-        // Assert
+        /* Assert */
         $this->assertSame([
             [
                 'member_id'     => $member1->getKey(),
@@ -475,7 +475,7 @@ class DashboardServiceTest extends TestCase
 
     public function test_latest_tasks_returns_the_4_tasks_with_the_latest_time_entries(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $user         = User::factory()->create();
         $member       = Member::factory()->forUser($user)->forOrganization($organization)->create();
@@ -501,10 +501,10 @@ class DashboardServiceTest extends TestCase
             'start' => now()->subMinutes(60),
         ]);
 
-        // Act
+        /* Act */
         $result = $this->dashboardService->latestTasks($user, $organization);
 
-        // Assert
+        /* Assert */
         $this->assertSame([
             [
                 'id'           => $timeEntry1Task1->task->getKey(),
@@ -535,7 +535,7 @@ class DashboardServiceTest extends TestCase
 
     public function test_last_seven_days_returns_spend_time_in_the_last_seven_days_aggregated_in_three_hour_blocks(): void
     {
-        // Arrange
+        /* Arrange */
         $now = Carbon::create(2024, 4, 17, 12, 0, 0, 'Europe/Vienna')->utc();
         $this->travelTo($now);
         $organization = Organization::factory()->create();
@@ -556,10 +556,10 @@ class DashboardServiceTest extends TestCase
             'end'   => now('Europe/Vienna')->subMinutes(20)->utc(),
         ]);
 
-        // Act
+        /* Act */
         $result = $this->dashboardService->lastSevenDays($user, $organization);
 
-        // Assert
+        /* Assert */
         $this->assertSame([
             0 => [
                 'date'     => '2024-04-17',

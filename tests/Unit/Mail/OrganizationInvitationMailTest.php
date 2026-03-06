@@ -13,15 +13,15 @@ class OrganizationInvitationMailTest extends TestCaseWithDatabase
 {
     public function test_mail_renders_content_correctly(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $invitation   = OrganizationInvitation::factory()->forOrganization($organization)->create();
         $mail         = new OrganizationInvitationMail($invitation);
 
-        // Act
+        /* Act */
         $rendered = $mail->render();
 
-        // Assert
+        /* Assert */
         $this->assertStringContainsString('You have been invited to join the ' . $invitation->organization->name . ' organization', $rendered);
     }
 }

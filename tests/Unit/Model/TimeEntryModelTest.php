@@ -16,100 +16,100 @@ class TimeEntryModelTest extends ModelTestAbstract
 {
     public function test_it_belongs_to_a_user(): void
     {
-        // Arrange
+        /* Arrange */
         $user      = User::factory()->create();
         $timeEntry = TimeEntry::factory()->forUser($user)->create();
 
-        // Act
+        /* Act */
         $timeEntry->refresh();
         $userRel = $timeEntry->user;
 
-        // Assert
+        /* Assert */
         $this->assertNotNull($userRel);
         $this->assertTrue($userRel->is($user));
     }
 
     public function test_it_belongs_to_a_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $timeEntry    = TimeEntry::factory()->forOrganization($organization)->create();
 
-        // Act
+        /* Act */
         $timeEntry->refresh();
         $organizationRel = $timeEntry->organization;
 
-        // Assert
+        /* Assert */
         $this->assertNotNull($organizationRel);
         $this->assertTrue($organizationRel->is($organization));
     }
 
     public function test_it_can_belong_to_a_project(): void
     {
-        // Arrange
+        /* Arrange */
         $project   = Project::factory()->create();
         $timeEntry = TimeEntry::factory()->forProject($project)->create();
 
-        // Act
+        /* Act */
         $timeEntry->refresh();
         $projectRel = $timeEntry->project;
 
-        // Assert
+        /* Assert */
         $this->assertNotNull($projectRel);
         $this->assertTrue($projectRel->is($project));
     }
 
     public function test_it_can_belong_to_no_project(): void
     {
-        // Arrange
+        /* Arrange */
         $timeEntry = TimeEntry::factory()->forProject(null)->create();
 
-        // Act
+        /* Act */
         $timeEntry->refresh();
         $project = $timeEntry->project;
 
-        // Assert
+        /* Assert */
         $this->assertNull($project);
     }
 
     public function test_it_can_belong_to_a_task(): void
     {
-        // Arrange
+        /* Arrange */
         $task      = Task::factory()->create();
         $timeEntry = TimeEntry::factory()->forTask($task)->create();
 
-        // Act
+        /* Act */
         $timeEntry->refresh();
         $taskRel = $timeEntry->task;
 
-        // Assert
+        /* Assert */
         $this->assertNotNull($taskRel);
         $this->assertTrue($taskRel->is($task));
     }
 
     public function test_it_can_belong_to_no_task(): void
     {
-        // Arrange
+        /* Arrange */
         $timeEntry = TimeEntry::factory()->forTask(null)->create();
 
-        // Act
+        /* Act */
         $timeEntry->refresh();
         $taskRel = $timeEntry->task;
 
-        // Assert
+        /* Assert */
         $this->assertNull($taskRel);
     }
 
     public function test_eloquent_datetime_columns_remove_timezone_information_during_save(): void
     {
-        // Arrange
+        /* Arrange */
         $timeEntry = TimeEntry::factory()->forTask(null)->create();
 
-        // Act
+        /* Act */
         $timeEntry->start = Carbon::create(2021, 1, 1, 12, 0, 0, 'UTC')->timezone('+1');
         $timeEntry->save();
 
-        // Assert
+        /* Assert */
         $timeEntry->refresh();
         $this->assertSame('UTC', $timeEntry->start->getTimezone()->toRegionName());
         $this->assertSame('2021-01-01 13:00:00', $timeEntry->start->toDateTimeString());
@@ -121,7 +121,7 @@ class TimeEntryModelTest extends ModelTestAbstract
 
     public function test_scope_has_tag_filter_by_tag(): void
     {
-        // Arrange
+        /* Arrange */
         $tag1       = Tag::factory()->create();
         $tag2       = Tag::factory()->create();
         $timeEntry1 = TimeEntry::factory()->create([
@@ -137,59 +137,59 @@ class TimeEntryModelTest extends ModelTestAbstract
             'tags' => null,
         ]);
 
-        // Act
+        /* Act */
         $result = TimeEntry::hasTag($tag1)->get();
 
-        // Assert
+        /* Assert */
         $this->assertCount(1, $result);
         $this->assertTrue($result->first()->is($timeEntry1));
     }
 
     public function test_computed_client_id_returns_null_when_no_project_is_assigned(): void
     {
-        // Arrange
+        /* Arrange */
         $timeEntry            = TimeEntry::factory()->forProject(null)->create();
         $timeEntry->client_id = null;
         $timeEntry->save();
 
-        // Act
+        /* Act */
         $timeEntry->setComputedAttributeValue('client_id');
         $clientId = $timeEntry->client_id;
 
-        // Assert
+        /* Assert */
         $this->assertNull($clientId);
     }
 
     public function test_computed_client_id_returns_project_client_id(): void
     {
-        // Arrange
+        /* Arrange */
         $project              = Project::factory()->create();
         $timeEntry            = TimeEntry::factory()->forProject($project)->create();
         $timeEntry->client_id = null;
         $timeEntry->save();
 
-        // Act
+        /* Act */
         $timeEntry->setComputedAttributeValue('client_id');
         $clientId = $timeEntry->client_id;
 
-        // Assert
+        /* Assert */
         $this->assertSame($project->client_id, $clientId);
     }
 
     public function test_has_many_tags_via_json_relation(): void
     {
-        // Arrange
+        /* Arrange */
         $tag1      = Tag::factory()->create();
         $tag2      = Tag::factory()->create();
         $timeEntry = TimeEntry::factory()->create([
             'tags' => [$tag1->getKey(), $tag2->getKey()],
         ]);
 
-        // Act
+        /* Act */
         $timeEntry->refresh();
         $tags = $timeEntry->tagsRelation;
 
-        // Assert
+        /* Assert */
         $this->assertCount(2, $tags);
         $this->assertTrue($tags->contains($tag1));
         $this->assertTrue($tags->contains($tag2));
@@ -197,7 +197,7 @@ class TimeEntryModelTest extends ModelTestAbstract
 
     public function test_has_many_tags_via_json_relation_eager_loaded(): void
     {
-        // Arrange
+        /* Arrange */
         $tag1       = Tag::factory()->create();
         $tag2       = Tag::factory()->create();
         $timeEntry1 = TimeEntry::factory()->create([
@@ -209,12 +209,12 @@ class TimeEntryModelTest extends ModelTestAbstract
             'created_at' => Carbon::now()->subDays(2),
         ]);
 
-        // Act
+        /* Act */
         $timeEntries = TimeEntry::with('tagsRelation')->orderBy('created_at', 'desc')->get();
         $tags1       = $timeEntries->get(0)->tagsRelation;
         $tags2       = $timeEntries->get(1)->tagsRelation;
 
-        // Assert
+        /* Assert */
         $this->assertCount(2, $tags1);
         $this->assertTrue($tags1->contains($tag1));
         $this->assertTrue($tags1->contains($tag2));

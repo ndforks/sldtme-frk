@@ -17,19 +17,19 @@ class CreateOrganizationTest extends TestCase
 
     public function test_organizations_can_be_created(): void
     {
-        // Arrange
+        /* Arrange */
         $user = User::factory()->withPersonalOrganization()->create();
         $this->actingAs($user);
         Event::fake([
             AfterCreateOrganization::class,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->post('/teams', [
             'name' => 'Test Organization',
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(302);
         /** @var Organization|null $newOrganization */
         $ownedTeams = $user->fresh()->ownedTeams;

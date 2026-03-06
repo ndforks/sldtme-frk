@@ -13,38 +13,38 @@ class ProjectMemberModelTest extends ModelTestAbstract
 {
     public function test_it_belongs_to_a_project(): void
     {
-        // Arrange
+        /* Arrange */
         $project       = Project::factory()->create();
         $member        = Member::factory()->create();
         $projectMember = ProjectMember::factory()->forProject($project)->forMember($member)->create();
 
-        // Act
+        /* Act */
         $projectMember->refresh();
         $projectRel = $projectMember->project;
 
-        // Assert
+        /* Assert */
         $this->assertNotNull($projectRel);
         $this->assertTrue($projectRel->is($project));
     }
 
     public function test_it_belongs_to_a_member(): void
     {
-        // Arrange
+        /* Arrange */
         $member        = Member::factory()->create();
         $projectMember = ProjectMember::factory()->forMember($member)->create();
 
-        // Act
+        /* Act */
         $projectMember->refresh();
         $memberRel = $projectMember->member;
 
-        // Assert
+        /* Assert */
         $this->assertNotNull($memberRel);
         $this->assertTrue($memberRel->is($member));
     }
 
     public function test_scope_where_belongs_to_organization_filters_project_members_to_only_retrieve_project_members_that_belong_to_a_project_of_the_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $organization                            = Organization::factory()->create();
         $otherOrganization                       = Organization::factory()->create();
         $project                                 = Project::factory()->forOrganization($organization)->create();
@@ -52,10 +52,10 @@ class ProjectMemberModelTest extends ModelTestAbstract
         $projectMember                           = ProjectMember::factory()->forProject($project)->create();
         $projectMemberNotBelongingToOrganization = ProjectMember::factory()->for($projectNotBelongingToOrganization)->create();
 
-        // Act
+        /* Act */
         $projectMembers = ProjectMember::whereBelongsToOrganization($organization)->get();
 
-        // Assert
+        /* Assert */
         $this->assertCount(1, $projectMembers);
         $this->assertTrue($projectMembers->first()->is($projectMember));
     }

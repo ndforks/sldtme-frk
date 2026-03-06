@@ -22,63 +22,63 @@ class PublicReportEndpointTest extends ApiEndpointTestAbstract
 {
     public function test_show_fails_with_not_found_if_secret_is_incorrect(): void
     {
-        // Arrange
+        /* Arrange */
         Report::factory()->public()->create();
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.public.reports.show'), [
             'X-Api-Key' => 'incorrect-secret',
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertNotFound();
     }
 
     public function test_show_fails_with_not_found_if_no_secret_is_provided(): void
     {
-        // Arrange
+        /* Arrange */
         Report::factory()->public()->create();
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.public.reports.show'));
 
-        // Assert
+        /* Assert */
         $response->assertNotFound();
     }
 
     public function test_show_fails_with_not_found_if_report_is_not_public(): void
     {
-        // Arrange
+        /* Arrange */
         $report = Report::factory()->private()->create();
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.public.reports.show'), [
             'X-Api-Key' => $report->share_secret,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertNotFound();
     }
 
     public function test_show_fails_with_not_found_if_report_is_expired(): void
     {
-        // Arrange
+        /* Arrange */
         $report = Report::factory()->public()->create([
             'public_until' => now()->subDay(),
         ]);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.public.reports.show'), [
             'X-Api-Key' => $report->share_secret,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertNotFound();
     }
 
     public function test_show_returns_detailed_information_about_the_report(): void
     {
-        // Arrange
+        /* Arrange */
         $timezone                = 'Europe/Vienna';
         $reportDto               = new ReportPropertiesDto();
         $organization            = Organization::factory()->create();
@@ -106,12 +106,12 @@ class PublicReportEndpointTest extends ApiEndpointTestAbstract
 
         $currencyService = app(CurrencyService::class);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.public.reports.show'), [
             'X-Api-Key' => $report->share_secret,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertOk();
         $response->assertExactJson([
             'name'            => $report->name,
@@ -224,17 +224,17 @@ class PublicReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_show_returns_detailed_information_about_the_report_with_not_expired_expiration_date(): void
     {
-        // Arrange
+        /* Arrange */
         $report = Report::factory()->public()->create([
             'public_until' => now()->addDay(),
         ]);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.public.reports.show'), [
             'X-Api-Key' => $report->share_secret,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertOk();
         $response->assertJsonFragment([
             'name'         => $report->name,
@@ -245,7 +245,7 @@ class PublicReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_show_returns_detailed_information_about_the_report_with_all_available_filters(): void
     {
-        // Arrange
+        /* Arrange */
         $organization           = Organization::factory()->create();
         $client                 = Client::factory()->forOrganization($organization)->create();
         $otherClient            = Client::factory()->forOrganization($organization)->create();
@@ -295,12 +295,12 @@ class PublicReportEndpointTest extends ApiEndpointTestAbstract
             'properties'   => $reportDto,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.public.reports.show'), [
             'X-Api-Key' => $report->share_secret,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertOk();
         $response->assertJson([
             'name'         => $report->name,
@@ -328,7 +328,7 @@ class PublicReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_if_the_resources_behind_the_filters_no_longer_exist_the_report_ignores_those_filters_but_this_does_not_increase_the_visible_data(): void
     {
-        // Arrange
+        /* Arrange */
         $timezone     = 'Europe/Vienna';
         $organization = Organization::factory()->create();
         $client       = Client::factory()->forOrganization($organization)->create();
@@ -362,12 +362,12 @@ class PublicReportEndpointTest extends ApiEndpointTestAbstract
             'properties'   => $reportDto,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.public.reports.show'), [
             'X-Api-Key' => $report->share_secret,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertOk();
         $response->assertJson([
             'name'         => $report->name,
@@ -425,7 +425,7 @@ class PublicReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_show_returns_only_entries_without_project_when_none_project_filter_is_set(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $project      = Project::factory()->forOrganization($organization)->create();
 
@@ -453,12 +453,12 @@ class PublicReportEndpointTest extends ApiEndpointTestAbstract
             'properties'   => $reportDto,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.public.reports.show'), [
             'X-Api-Key' => $report->share_secret,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertOk();
         $response->assertJson([
             'data' => [
@@ -471,7 +471,7 @@ class PublicReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_show_returns_entries_with_and_without_project_when_none_and_real_id_combined(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $projectA     = Project::factory()->forOrganization($organization)->create();
         $projectB     = Project::factory()->forOrganization($organization)->create();
@@ -505,12 +505,12 @@ class PublicReportEndpointTest extends ApiEndpointTestAbstract
             'properties'   => $reportDto,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.public.reports.show'), [
             'X-Api-Key' => $report->share_secret,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertOk();
         $response->assertJson([
             'data' => [
@@ -523,7 +523,7 @@ class PublicReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_show_returns_only_entries_without_task_when_none_task_filter_is_set(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $project      = Project::factory()->forOrganization($organization)->create();
         $task         = Task::factory()->forOrganization($organization)->forProject($project)->create();
@@ -553,12 +553,12 @@ class PublicReportEndpointTest extends ApiEndpointTestAbstract
             'properties'   => $reportDto,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.public.reports.show'), [
             'X-Api-Key' => $report->share_secret,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertOk();
         $response->assertJson([
             'data' => [
@@ -571,7 +571,7 @@ class PublicReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_show_returns_only_entries_without_client_when_none_client_filter_is_set(): void
     {
-        // Arrange
+        /* Arrange */
         $organization      = Organization::factory()->create();
         $client            = Client::factory()->forOrganization($organization)->create();
         $projectWithClient = Project::factory()->forClient($client)->forOrganization($organization)->create();
@@ -600,12 +600,12 @@ class PublicReportEndpointTest extends ApiEndpointTestAbstract
             'properties'   => $reportDto,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.public.reports.show'), [
             'X-Api-Key' => $report->share_secret,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertOk();
         $response->assertJson([
             'data' => [
@@ -618,7 +618,7 @@ class PublicReportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_show_returns_only_entries_without_tags_when_none_tag_filter_is_set(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $tag          = Tag::factory()->forOrganization($organization)->create();
 
@@ -647,12 +647,12 @@ class PublicReportEndpointTest extends ApiEndpointTestAbstract
             'properties'   => $reportDto,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.public.reports.show'), [
             'X-Api-Key' => $report->share_secret,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertOk();
         $response->assertJson([
             'data' => [

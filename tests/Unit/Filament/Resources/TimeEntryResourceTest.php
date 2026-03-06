@@ -28,41 +28,41 @@ class TimeEntryResourceTest extends FilamentTestCase
 
     public function test_can_list_time_entry(): void
     {
-        // Arrange
+        /* Arrange */
         $timeEntry = TimeEntry::factory()->createMany(5);
 
-        // Act
+        /* Act */
         $response = Livewire::test(TimeEntries\Pages\ListTimeEntries::class);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertCanSeeTableRecords($timeEntry);
     }
 
     public function test_can_see_edit_page_of_time_entry(): void
     {
-        // Arrange
+        /* Arrange */
         $timeEntry = TimeEntry::factory()->create();
 
-        // Act
+        /* Act */
         $response = Livewire::test(TimeEntries\Pages\EditTimeEntry::class, ['record' => $timeEntry->getKey()]);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
     }
 
     public function test_can_see_create_page_of_time_entry(): void
     {
-        // Act
+        /* Act */
         $response = Livewire::test(TimeEntries\Pages\CreateTimeEntry::class);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
     }
 
     public function test_can_create_time_entry(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $user         = User::factory()->create();
         $member       = Member::factory()
@@ -70,7 +70,7 @@ class TimeEntryResourceTest extends FilamentTestCase
             ->forUser($user)
             ->create();
 
-        // Act
+        /* Act */
         $response = Livewire::test(TimeEntries\Pages\CreateTimeEntry::class)
             ->fillForm([
                 'description' => 'Test time entry',
@@ -82,7 +82,7 @@ class TimeEntryResourceTest extends FilamentTestCase
             ->call('create')
             ->assertHasNoFormErrors();
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $timeEntry = TimeEntry::where('description', 'Test time entry')->first();
         $this->assertNotNull($timeEntry);
@@ -94,7 +94,7 @@ class TimeEntryResourceTest extends FilamentTestCase
 
     public function test_can_create_time_entry_and_derives_user_and_organization_from_member(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $user         = User::factory()->create();
         $member       = Member::factory()
@@ -104,7 +104,7 @@ class TimeEntryResourceTest extends FilamentTestCase
         $otherUser         = User::factory()->create();
         $otherOrganization = Organization::factory()->create();
 
-        // Act
+        /* Act */
         $response = Livewire::test(TimeEntries\Pages\CreateTimeEntry::class)
             ->fillForm([
                 'description'     => 'Derived fields test',
@@ -118,7 +118,7 @@ class TimeEntryResourceTest extends FilamentTestCase
             ->call('create')
             ->assertHasNoFormErrors();
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $timeEntry = TimeEntry::where('description', 'Derived fields test')->first();
         $this->assertNotNull($timeEntry);
@@ -128,7 +128,7 @@ class TimeEntryResourceTest extends FilamentTestCase
 
     public function test_can_update_time_entry(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $user         = User::factory()->create();
         $member       = Member::factory()
@@ -137,7 +137,7 @@ class TimeEntryResourceTest extends FilamentTestCase
             ->create();
         $timeEntry = TimeEntry::factory()->forMember($member)->create();
 
-        // Act
+        /* Act */
         $response = Livewire::test(TimeEntries\Pages\EditTimeEntry::class, ['record' => $timeEntry->getKey()])
             ->fillForm([
                 'description' => 'Updated description',
@@ -149,7 +149,7 @@ class TimeEntryResourceTest extends FilamentTestCase
             ->call('save')
             ->assertHasNoFormErrors();
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $timeEntry->refresh();
         $this->assertSame('Updated description', $timeEntry->description);
@@ -160,7 +160,7 @@ class TimeEntryResourceTest extends FilamentTestCase
 
     public function test_update_time_entry_derives_user_and_organization_from_new_member(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $user         = User::factory()->create();
         $member       = Member::factory()
@@ -176,7 +176,7 @@ class TimeEntryResourceTest extends FilamentTestCase
             ->forUser($newUser)
             ->create();
 
-        // Act
+        /* Act */
         $response = Livewire::test(TimeEntries\Pages\EditTimeEntry::class, ['record' => $timeEntry->getKey()])
             ->fillForm([
                 'description' => 'Reassigned entry',
@@ -188,7 +188,7 @@ class TimeEntryResourceTest extends FilamentTestCase
             ->call('save')
             ->assertHasNoFormErrors();
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $timeEntry->refresh();
         $this->assertSame($newMember->getKey(), $timeEntry->member_id);

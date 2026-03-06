@@ -30,56 +30,56 @@ class UserResourceTest extends FilamentTestCase
 
     public function test_can_list_users(): void
     {
-        // Arrange
+        /* Arrange */
         $users = User::factory()->createMany(5);
 
-        // Act
+        /* Act */
         $response = Livewire::test(Users\Pages\ListUsers::class);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertCanSeeTableRecords($users);
     }
 
     public function test_can_see_edit_page_of_user(): void
     {
-        // Arrange
+        /* Arrange */
         $user = User::factory()->create();
 
-        // Act
+        /* Act */
         $response = Livewire::test(Users\Pages\EditUser::class, ['record' => $user->getKey()]);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
     }
 
     public function test_can_see_view_page_of_user(): void
     {
-        // Arrange
+        /* Arrange */
         $user = User::factory()->create();
 
-        // Act
+        /* Act */
         $response = Livewire::test(Users\Pages\ViewUser::class, ['record' => $user->getKey()]);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
     }
 
     public function test_can_see_create_page_of_user(): void
     {
-        // Act
+        /* Act */
         $response = Livewire::test(Users\Pages\CreateUser::class);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
     }
 
     public function test_can_create_user(): void
     {
-        // Arrange
+        /* Arrange */
         $userFake = User::factory()->make();
 
-        // Act
+        /* Act */
         $response = Livewire::test(Users\Pages\CreateUser::class)
             ->fillForm([
                 'name'            => $userFake->name,
@@ -92,7 +92,7 @@ class UserResourceTest extends FilamentTestCase
             ->call('create')
             ->assertHasNoFormErrors();
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $user = User::where('email', $userFake->email)->first();
         $this->assertNotNull($user);
@@ -108,7 +108,7 @@ class UserResourceTest extends FilamentTestCase
 
     public function test_can_delete_a_user(): void
     {
-        // Arrange
+        /* Arrange */
         $user = $this->createUserWithPermission();
         $this->mock(DeletionService::class, static function (MockInterface $mock) use ($user): void {
             $mock->shouldReceive('deleteUser')
@@ -116,18 +116,18 @@ class UserResourceTest extends FilamentTestCase
                 ->once();
         });
 
-        // Act
+        /* Act */
         $response = Livewire::test(Users\Pages\EditUser::class, ['record' => $user->user->getKey()])
             ->callAction('delete');
 
-        // Assert
+        /* Assert */
         $response->assertHasNoActionErrors();
         $response->assertSuccessful();
     }
 
     public function test_delete_user_shows_error_notification_on_failure(): void
     {
-        // Arrange
+        /* Arrange */
         $user = $this->createUserWithPermission();
         $this->mock(DeletionService::class, static function (MockInterface $mock) use ($user): void {
             $mock->shouldReceive('deleteUser')
@@ -135,29 +135,29 @@ class UserResourceTest extends FilamentTestCase
                 ->andThrow(new CanNotDeleteUserWhoIsOwnerOfOrganizationWithMultipleMembers());
         });
 
-        // Act
+        /* Act */
         $response = Livewire::test(Users\Pages\EditUser::class, ['record' => $user->user->getKey()])
             ->callAction('delete');
 
-        // Assert
+        /* Assert */
         $response->assertNotified(__('exceptions.api.can_not_delete_user_who_is_owner_of_organization_with_multiple_members'));
         $response->assertSuccessful();
     }
 
     public function test_can_list_related_organizations(): void
     {
-        // Arrange
+        /* Arrange */
         $user              = User::factory()->create();
         $ownedOrganization = Organization::factory()->withOwner($user)->create();
         $organization      = Organization::factory()->create();
 
-        // Act
+        /* Act */
         $response = Livewire::test(Users\RelationManagers\OrganizationsRelationManager::class, [
             'ownerRecord' => $user,
             'pageClass'   => Users\Pages\EditUser::class,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertCanSeeTableRecords($user->organizations()->get());
         $response->assertCanNotSeeTableRecords($user->ownedTeams()->get());
@@ -165,18 +165,18 @@ class UserResourceTest extends FilamentTestCase
 
     public function test_can_list_related_owned_organizations(): void
     {
-        // Arrange
+        /* Arrange */
         $user              = User::factory()->create();
         $ownedOrganization = Organization::factory()->withOwner($user)->create();
         $organization      = Organization::factory()->create();
 
-        // Act
+        /* Act */
         $response = Livewire::test(Users\RelationManagers\OwnedOrganizationsRelationManager::class, [
             'ownerRecord' => $user,
             'pageClass'   => Users\Pages\EditUser::class,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertCanSeeTableRecords($user->ownedTeams()->get());
         $response->assertCanNotSeeTableRecords($user->organizations()->get());

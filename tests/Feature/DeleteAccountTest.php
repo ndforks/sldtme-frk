@@ -15,38 +15,38 @@ class DeleteAccountTest extends TestCase
 
     public function test_user_accounts_can_be_deleted(): void
     {
-        // Arrange
+        /* Arrange */
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        // Act
+        /* Act */
         $response = $this->delete('/user', [
             'password' => 'password',
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(302);
         $this->assertNull($user->fresh());
     }
 
     public function test_correct_password_must_be_provided_before_account_can_be_deleted(): void
     {
-        // Arrange
+        /* Arrange */
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        // Act
+        /* Act */
         $response = $this->delete('/user', [
             'password' => 'wrong-password',
         ]);
 
-        // Assert
+        /* Assert */
         $this->assertNotNull($user->fresh());
     }
 
     public function test_user_account_can_not_be_deleted_if_attached_to_a_organization_with_multiple_users(): void
     {
-        // Arrange
+        /* Arrange */
         $user         = User::factory()->create();
         $organization = Organization::factory()->withOwner($user)->create();
         $userMember   = Member::factory()->forOrganization($organization)->forUser($user)->role(Role::Owner)->create();
@@ -54,12 +54,12 @@ class DeleteAccountTest extends TestCase
         $otherMember  = Member::factory()->forOrganization($organization)->forUser($otherUser)->role(Role::Admin)->create();
         $this->actingAs($user);
 
-        // Act
+        /* Act */
         $response = $this->delete('/user', [
             'password' => 'password',
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertInvalid(['password']);
         $this->assertNotNull($user->fresh());
     }

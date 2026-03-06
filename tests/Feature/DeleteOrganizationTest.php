@@ -15,7 +15,7 @@ class DeleteOrganizationTest extends TestCase
 
     public function test_organizations_can_be_deleted_and_users_of_the_organization_that_have_no_organization_get_a_new_one(): void
     {
-        // Arrange
+        /* Arrange */
         $user = User::factory()->withPersonalOrganization()->create();
         $this->actingAs($user);
 
@@ -30,10 +30,10 @@ class DeleteOrganizationTest extends TestCase
             ['role' => 'test-role']
         );
 
-        // Act
+        /* Act */
         $response = $this->delete('/teams/' . $organization->getKey());
 
-        // Assert
+        /* Assert */
         $this->assertNull($organization->fresh());
         $this->assertCount(1, $otherUser->fresh()->teams);
         $this->assertFalse($otherUser->fresh()->teams->first()->is($organization));
@@ -41,15 +41,15 @@ class DeleteOrganizationTest extends TestCase
 
     public function test_personal_organizations_can_be_deleted_but_user_gets_an_new_one_if_this_is_the_only_one_left(): void
     {
-        // Arrange
+        /* Arrange */
         $user         = User::factory()->withPersonalOrganization()->create();
         $organization = $user->currentTeam;
         $this->actingAs($user);
 
-        // Act
+        /* Act */
         $response = $this->delete('/teams/' . $organization->getKey());
 
-        // Assert
+        /* Assert */
         $user->refresh();
         $this->assertDatabaseMissing(Organization::class, [
             'id' => $organization->getKey(),
@@ -59,7 +59,7 @@ class DeleteOrganizationTest extends TestCase
 
     public function test_organization_can_not_be_deleted_if_user_is_not_owner(): void
     {
-        // Arrange
+        /* Arrange */
         $user         = User::factory()->withPersonalOrganization()->create();
         $organization = Organization::factory()->withOwner($user)->create([
             'personal_team' => false,
@@ -72,10 +72,10 @@ class DeleteOrganizationTest extends TestCase
             ['role' => Role::Admin->value]
         );
 
-        // Act
+        /* Act */
         $response = $this->delete('/teams/' . $organization->getKey());
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
         $this->assertDatabaseHas(Organization::class, [
             'id' => $organization->getKey(),

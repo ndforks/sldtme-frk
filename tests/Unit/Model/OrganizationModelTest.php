@@ -11,15 +11,15 @@ class OrganizationModelTest extends ModelTestAbstract
 {
     public function test_it_has_many_members(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $members      = Member::factory()->forOrganization($organization)->createMany(3);
 
-        // Act
+        /* Act */
         $organization->refresh();
         $membersRel = $organization->members;
 
-        // Assert
+        /* Assert */
         $this->assertNotNull($membersRel);
         $this->assertCount(3, $membersRel);
     }

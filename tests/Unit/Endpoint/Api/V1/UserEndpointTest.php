@@ -8,24 +8,24 @@ class UserEndpointTest extends ApiEndpointTestAbstract
 {
     public function test_me_fails_when_not_authenticated(): void
     {
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.users.me'));
 
-        // Assert
+        /* Assert */
         $response->assertUnauthorized();
         $response->assertJson(['message' => 'Unauthenticated.']);
     }
 
     public function test_me_returns_information_about_the_current_user(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.users.me'));
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertJson([
             'data' => [

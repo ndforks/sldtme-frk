@@ -129,7 +129,7 @@ watch(currentInterval, () => {
     initializeSelectedInterval();
 });
 
-// Active styling similar to ReportingFilterBadge
+/* Act */ive styling similar to ReportingFilterBadge
 const activeClass = computed(() => {
     if (props.enabled) {
         return 'border-accent-300/50 bg-accent-50 hover:bg-accent-100 dark:border-accent-300/50 dark:bg-accent-300/5 dark:hover:bg-accent-300/10';

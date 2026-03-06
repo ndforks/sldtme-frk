@@ -21,82 +21,82 @@ class CurrencyServiceTest extends TestCaseWithDatabase
 
     public function test_get_currency_symbol_for_currency_eur(): void
     {
-        // Arrange
+        /* Arrange */
         $money = Money::of(1, Currency::of('EUR'));
 
-        // Act
+        /* Act */
         $symbol = $this->currencyService->getCurrencySymbolForMoney($money);
 
-        // Assert
+        /* Assert */
         $this->assertSame('€', $symbol);
     }
 
     public function test_get_currency_symbol_for_currency_usd(): void
     {
-        // Arrange
+        /* Arrange */
         $money = Money::of(1, Currency::of('USD'));
 
-        // Act
+        /* Act */
         $symbol = $this->currencyService->getCurrencySymbolForMoney($money);
 
-        // Assert
+        /* Assert */
         $this->assertSame('$', $symbol);
     }
 
     public function test_get_currency_symbol_for_currency_gbp(): void
     {
-        // Arrange
+        /* Arrange */
         $money = Money::of(1, Currency::of('GBP'));
 
-        // Act
+        /* Act */
         $symbol = $this->currencyService->getCurrencySymbolForMoney($money);
 
-        // Assert
+        /* Assert */
         $this->assertSame('£', $symbol);
     }
 
     public function test_get_currency_symbol_for_currency_cad(): void
     {
-        // Arrange
+        /* Arrange */
         $money = Money::of(1, Currency::of('CAD'));
 
-        // Act
+        /* Act */
         $symbol = $this->currencyService->getCurrencySymbolForMoney($money);
 
-        // Assert
+        /* Assert */
         $this->assertSame('$', $symbol);
     }
 
     public function test_get_currency_symbol_for_currency_cop(): void
     {
-        // Arrange
+        /* Arrange */
         $money = Money::of(1, Currency::of('COP'));
 
-        // Act
+        /* Act */
         $symbol = $this->currencyService->getCurrencySymbolForMoney($money);
 
-        // Assert
+        /* Assert */
         $this->assertSame('$', $symbol);
     }
 
     public function test_get_currency_symbol_for_currency_without_known_symbol(): void
     {
-        // Arrange
+        /* Arrange */
         $currency = 'XXX';
 
-        // Act
+        /* Act */
         $symbol = $this->currencyService->getCurrencySymbol($currency);
 
-        // Assert
+        /* Assert */
         $this->assertSame('XXX', $symbol);
     }
 
     public function test_get_random_currency_code(): void
     {
-        // Act
+        /* Act */
         $currencyCode = $this->currencyService->getRandomCurrencyCode();
 
-        // Assert
+        /* Assert */
         $this->assertNotEmpty($currencyCode);
         $this->assertIsString($currencyCode);
         $this->assertNotNull(Currency::of($currencyCode));

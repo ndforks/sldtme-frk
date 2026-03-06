@@ -16,18 +16,18 @@ class GenericTimeEntriesImporterTest extends ImporterTestAbstract
 {
     public function test_import_of_test_file_succeeds(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $timezone     = 'Europe/Vienna';
         $importer     = new GenericTimeEntriesImporter();
         $importer->init($organization);
         $data = Storage::disk('testfiles')->get('generic_time_entries_import_test_1.csv');
 
-        // Act
+        /* Act */
         $importer->importData($data, $timezone);
         $report = $importer->getReport();
 
-        // Assert
+        /* Assert */
         $testScenario = $this->checkTestScenarioAfterImportExcludingTimeEntries();
         $this->checkTimeEntries($testScenario);
         $this->assertSame(2, $report->timeEntriesCreated);
@@ -40,7 +40,7 @@ class GenericTimeEntriesImporterTest extends ImporterTestAbstract
 
     public function test_import_of_test_file_twice_succeeds(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $timezone     = 'Europe/Vienna';
         $importer     = new GenericTimeEntriesImporter();
@@ -50,11 +50,11 @@ class GenericTimeEntriesImporterTest extends ImporterTestAbstract
         $importer = new GenericTimeEntriesImporter();
         $importer->init($organization);
 
-        // Act
+        /* Act */
         $importer->importData($data, $timezone);
         $report = $importer->getReport();
 
-        // Assert
+        /* Assert */
         $testScenario = $this->checkTestScenarioAfterImportExcludingTimeEntries();
         $this->checkTimeEntries($testScenario, true);
         $this->assertSame(2, $report->timeEntriesCreated);

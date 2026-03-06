@@ -41,16 +41,16 @@ class DeletionServiceTest extends TestCaseWithDatabase
 
     public function test_delete_organization_resets_the_current_organization_of_users_that_had_the_deleted_organization_as_current_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $userOwner    = User::factory()->create();
         $organization = Organization::factory()->withOwner($userOwner)->create();
         $userOwner->currentOrganization()->associate($organization);
         $userOwner->save();
 
-        // Act
+        /* Act */
         $this->deletionService->deleteOrganization($organization);
 
-        // Assert
+        /* Assert */
         $this->assertOrganizationDeleted($organization);
         $userOwner->refresh();
         $this->assertNull($userOwner->current_team_id);
@@ -59,14 +59,14 @@ class DeletionServiceTest extends TestCaseWithDatabase
 
     public function test_delete_organization_deletes_all_resources_of_the_organization_but_does_not_delete_other_resources(): void
     {
-        // Arrange
+        /* Arrange */
         $organization      = $this->createOrganizationWithAllRelations();
         $otherOrganization = $this->createOrganizationWithAllRelations();
 
-        // Act
+        /* Act */
         $this->deletionService->deleteOrganization($organization->organization);
 
-        // Assert
+        /* Assert */
         $this->assertOrganizationDeleted($organization->organization);
         $this->assertOrganizationNothingDeleted($otherOrganization->organization);
         Log::assertLoggedTimes(
@@ -85,12 +85,12 @@ class DeletionServiceTest extends TestCaseWithDatabase
 
     public function test_delete_organization_rolls_back_on_error_if_transaction_is_active(): void
     {
-        // Arrange
+        /* Arrange */
         $organization      = $this->createOrganizationWithAllRelations();
         $otherOrganization = $this->createOrganizationWithAllRelations();
         $brokenTimeEntry   = TimeEntry::factory()->forOrganization($otherOrganization->organization)->forProject($organization->projects->get(0))->create();
 
-        // Act
+        /* Act */
         try {
             $this->deletionService->deleteOrganization($organization->organization);
             $this->fail();
@@ -98,7 +98,7 @@ class DeletionServiceTest extends TestCaseWithDatabase
             $this->assertTrue(true);
         }
 
-        // Assert
+        /* Assert */
         Event::assertNotDispatched(function (BeforeOrganizationDeletion $event) use ($otherOrganization): bool {
             return $event->organization->is($otherOrganization->organization);
         });
@@ -122,23 +122,23 @@ class DeletionServiceTest extends TestCaseWithDatabase
 
     public function test_delete_user_fails_if_user_is_owner_of_an_organization_with_multiple_members(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = $this->createOrganizationWithAllRelations();
         $memberOwner  = $organization->owner;
 
-        // Act
+        /* Act */
         try {
             $this->deletionService->deleteUser($memberOwner);
             $this->fail();
         } catch (CanNotDeleteUserWhoIsOwnerOfOrganizationWithMultipleMembers $exception) {
-            // Assert
+            /* Assert */
             $this->assertTrue(true);
         }
     }
 
     public function test_delete_user_rolls_back_on_error_if_transaction_is_active(): void
     {
-        // Arrange
+        /* Arrange */
         $user              = User::factory()->create();
         $organization      = Organization::factory()->create();
         $memberOwner       = Member::factory()->forUser($user)->forOrganization($organization)->role(Role::Owner)->create();
@@ -146,7 +146,7 @@ class DeletionServiceTest extends TestCaseWithDatabase
 
         $brokenTimeEntry = TimeEntry::factory()->forMember($memberOwner)->forOrganization($otherOrganization)->create();
 
-        // Act
+        /* Act */
         try {
             $this->deletionService->deleteUser($user);
             $this->fail();
@@ -154,7 +154,7 @@ class DeletionServiceTest extends TestCaseWithDatabase
             $this->assertTrue(true);
         }
 
-        // Assert
+        /* Assert */
         $this->assertDatabaseHas(User::class, [
             'id' => $user->getKey(),
         ]);
@@ -182,17 +182,17 @@ class DeletionServiceTest extends TestCaseWithDatabase
 
     public function test_delete_user_deletes_all_resources_of_the_user_but_does_not_delete_other_resources(): void
     {
-        // Arrange
+        /* Arrange */
         $this->mockPublicStorage();
         $user      = User::factory()->withProfilePicture()->withPersonalOrganization()->create();
         $otherUser = User::factory()->withProfilePicture()->withPersonalOrganization()->create();
         Storage::disk(config('filesystems.public'))->assertExists($user->profile_photo_path);
         Storage::disk(config('filesystems.public'))->assertExists($otherUser->profile_photo_path);
 
-        // Act
+        /* Act */
         $this->deletionService->deleteUser($user);
 
-        // Assert
+        /* Assert */
         $this->assertDatabaseMissing(User::class, [
             'id' => $user->getKey(),
         ]);
@@ -229,7 +229,7 @@ class DeletionServiceTest extends TestCaseWithDatabase
 
     public function test_delete_user_deletes_owned_organizations_that_have_only_one_member_and_makes_makes_the_user_placeholder_in_not_owned_organizations(): void
     {
-        // Arrange
+        /* Arrange */
         $user                 = User::factory()->create();
         $otherUser            = User::factory()->create();
         $organizationOwned    = Organization::factory()->withOwner($user)->create();
@@ -240,10 +240,10 @@ class DeletionServiceTest extends TestCaseWithDatabase
         TimeEntry::factory()->forOrganization($organizationNotOwned)->forMember($memberNotOwned)->createMany(2);
         $this->assertDatabaseCount(User::class, 2);
 
-        // Act
+        /* Act */
         $this->deletionService->deleteUser($user);
 
-        // Assert
+        /* Assert */
         $this->assertDatabaseCount(Organization::class, 1);
         $this->assertDatabaseCount(User::class, 2);
         $this->assertDatabaseMissing(User::class, [
@@ -286,7 +286,7 @@ class DeletionServiceTest extends TestCaseWithDatabase
 
     public function test_delete_user_with_current_organization_set_to_owned_org_that_will_be_deleted_does_not_cause_foreign_key_violation(): void
     {
-        // Arrange
+        /* Arrange */
         // User A creates an organization and invites User B
         $userA           = User::factory()->create();
         $userB           = User::factory()->create();
@@ -300,10 +300,10 @@ class DeletionServiceTest extends TestCaseWithDatabase
         // User B's current_organization_id points to their own org (the one that will be deleted)
         $userB->update(['current_team_id' => $organizationOfB->getKey()]);
 
-        // Act
+        /* Act */
         $this->deletionService->deleteUser($userB);
 
-        // Assert
+        /* Assert */
         $this->assertDatabaseMissing(User::class, [
             'id' => $userB->getKey(),
         ]);

@@ -14,25 +14,25 @@ class ProfileInformationTest extends TestCase
 
     public function test_show_profile_information_succeeds(): void
     {
-        // Arrange
+        /* Arrange */
         $user = User::factory()->withPersonalOrganization()->create();
         $this->actingAs($user);
 
-        // Act
+        /* Act */
         $response = $this->get('/user/profile');
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
     }
 
     public function test_profile_information_can_be_updated(): void
     {
-        // Arrange
+        /* Arrange */
         $user     = User::factory()->create();
         $timezone = app(TimezoneService::class)->getTimezones()[0];
         $this->actingAs($user);
 
-        // Act
+        /* Act */
         $response = $this->put('/user/profile-information', [
             'name'       => 'Test Name',
             'email'      => 'test@example.com',
@@ -40,7 +40,7 @@ class ProfileInformationTest extends TestCase
             'week_start' => Weekday::Sunday->value,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertValid(errorBag: 'updateProfileInformation');
         $user = $user->fresh();
         $this->assertEquals('Test Name', $user->name);

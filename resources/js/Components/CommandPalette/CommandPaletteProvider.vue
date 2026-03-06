@@ -78,7 +78,7 @@ const page = usePage<{
 
 const availableRoles = computed(() => page.props.availableRoles ?? []);
 
-// Active clients for dropdowns
+/* Act */ive clients for dropdowns
 const activeClients = computed(() => clients.value.filter((c) => !c.is_archived));
 
 // Keyboard shortcut handler

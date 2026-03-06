@@ -15,17 +15,17 @@ class UserCreateCommandCommandTest extends TestCaseWithDatabase
 {
     public function test_it_creates_user(): void
     {
-        // Arrange
+        /* Arrange */
         $email = 'mail@testuser.test';
         $name  = 'Test User';
 
-        // Act
+        /* Act */
         $exitCode = $this->withoutMockingConsoleOutput()->artisan('admin:user:create', [
             'name'  => $name,
             'email' => $email,
         ]);
 
-        // Assert
+        /* Assert */
         $this->assertSame(Command::SUCCESS, $exitCode);
         $output = Artisan::output();
         $this->assertStringContainsString('Created user "' . $name . '" ("' . $email . '")', $output);
@@ -38,18 +38,18 @@ class UserCreateCommandCommandTest extends TestCaseWithDatabase
 
     public function test_created_user_is_verified_if_option_is_set(): void
     {
-        // Arrange
+        /* Arrange */
         $email = 'mail@testuser.test';
         $name  = 'Test User';
 
-        // Act
+        /* Act */
         $exitCode = $this->withoutMockingConsoleOutput()->artisan('admin:user:create', [
             'name'           => $name,
             'email'          => $email,
             '--verify-email' => true,
         ]);
 
-        // Assert
+        /* Assert */
         $this->assertSame(Command::SUCCESS, $exitCode);
         $output = Artisan::output();
         $this->assertStringContainsString('Created user "' . $name . '" ("' . $email . '")', $output);
@@ -63,7 +63,7 @@ class UserCreateCommandCommandTest extends TestCaseWithDatabase
 
     public function test_it_fails_if_user_with_email_already_exists(): void
     {
-        // Arrange
+        /* Arrange */
         $email = 'mail@testuser.test';
         $name  = 'Test User';
 
@@ -71,13 +71,13 @@ class UserCreateCommandCommandTest extends TestCaseWithDatabase
             'email' => $email,
         ]);
 
-        // Act
+        /* Act */
         $exitCode = $this->withoutMockingConsoleOutput()->artisan('admin:user:create', [
             'name'  => $name,
             'email' => $email,
         ]);
 
-        // Assert
+        /* Assert */
         $this->assertSame(Command::FAILURE, $exitCode);
         $output = Artisan::output();
         $this->assertStringContainsString('User with email "' . $email . '" already exists.', $output);
@@ -85,11 +85,11 @@ class UserCreateCommandCommandTest extends TestCaseWithDatabase
 
     public function test_it_asks_for_password_if_option_is_set(): void
     {
-        // Arrange
+        /* Arrange */
         $email = 'mail@testuser.test';
         $name  = 'Test User';
 
-        // Act
+        /* Act */
         $this->artisan('admin:user:create', [
             'name'               => $name,
             'email'              => $email,

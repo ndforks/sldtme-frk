@@ -14,29 +14,29 @@ class DashboardEndpointTest extends EndpointTestAbstract
 {
     public function test_showing_dashboard_succeeds_for_empty_user(): void
     {
-        // Arrange
+        /* Arrange */
         $user = User::factory()->withPersonalOrganization()->create();
         $this->actingAs($user);
 
-        // Act
+        /* Act */
         $response = $this->get('/dashboard');
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
     }
 
     public function test_showing_dashboard_succeeds_for_user_with_employee_role(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $user         = User::factory()->forCurrentOrganization($organization)->create();
         $organization->users()->attach($user, ['role' => Role::Employee->value]);
         $this->actingAs($user);
 
-        // Act
+        /* Act */
         $response = $this->get('/dashboard');
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
     }
 }

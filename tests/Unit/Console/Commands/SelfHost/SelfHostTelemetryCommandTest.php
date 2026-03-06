@@ -17,15 +17,15 @@ class SelfHostTelemetryCommandTest extends TestCase
 {
     public function test_telemetry_sends_data_to_telemetry_endpoint_of_solidtime_cloud(): void
     {
-        // Arrange
+        /* Arrange */
         Http::fake([
             'https://app.solidtime.io/api/v1/ping/telemetry' => Http::response(['success' => true], 200),
         ]);
 
-        // Act
+        /* Act */
         $exitCode = $this->withoutMockingConsoleOutput()->artisan('self-host:telemetry');
 
-        // Assert
+        /* Assert */
         $this->assertSame(Command::SUCCESS, $exitCode);
         $output = Artisan::output();
         $this->assertSame('', $output);
@@ -33,15 +33,15 @@ class SelfHostTelemetryCommandTest extends TestCase
 
     public function test_telemetry_sends_fails_gracefully_if_response_has_error_status_code(): void
     {
-        // Arrange
+        /* Arrange */
         Http::fake([
             'https://app.solidtime.io/api/v1/ping/telemetry' => Http::response(null, 500),
         ]);
 
-        // Act
+        /* Act */
         $exitCode = $this->withoutMockingConsoleOutput()->artisan('self-host:telemetry');
 
-        // Assert
+        /* Assert */
         $this->assertSame(Command::FAILURE, $exitCode);
         $output = Artisan::output();
         $this->assertStringContainsString('Failed to send telemetry data, check the logs for more information.', $output);
@@ -49,17 +49,17 @@ class SelfHostTelemetryCommandTest extends TestCase
 
     public function test_telemetry_sends_fails_gracefully_if_timeout_happens(): void
     {
-        // Arrange
+        /* Arrange */
         Http::fake([
             'https://app.solidtime.io/api/v1/ping/telemetry' => function (): void {
                 throw new ConnectionException('Connection timed out');
             },
         ]);
 
-        // Act
+        /* Act */
         $exitCode = $this->withoutMockingConsoleOutput()->artisan('self-host:telemetry');
 
-        // Assert
+        /* Assert */
         $this->assertSame(Command::FAILURE, $exitCode);
         $output = Artisan::output();
         $this->assertStringContainsString('Failed to send telemetry data, check the logs for more information.', $output);
