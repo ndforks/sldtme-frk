@@ -16,7 +16,7 @@ class TimeEntryFilterTest extends TestCaseWithDatabase
 {
     public function test_add_tag_ids_filter_is_or(): void
     {
-        // Arrange
+        /* Arrange */
         $builder           = TimeEntry::query();
         $filter            = new TimeEntryFilter($builder);
         $timEntryNoTag     = TimeEntry::factory()->create();
@@ -32,17 +32,17 @@ class TimeEntryFilterTest extends TestCaseWithDatabase
             'tags' => [$tag1->getKey(), $tag2->getKey()],
         ]);
 
-        // Act
+        /* Act */
         $filter->addTagIdsFilter([$tag1->getKey(), $tag2->getKey()]);
 
-        // Assert
+        /* Assert */
         $timeEntries = $builder->get();
         $this->assertCount(3, $timeEntries);
     }
 
     public function test_add_project_ids_filter_with_none_returns_entries_without_project(): void
     {
-        // Arrange
+        /* Arrange */
         $project              = Project::factory()->create();
         $timeEntryWithProject = TimeEntry::factory()->create([
             'project_id'      => $project->getKey(),
@@ -55,10 +55,10 @@ class TimeEntryFilterTest extends TestCaseWithDatabase
         $builder = TimeEntry::query();
         $filter  = new TimeEntryFilter($builder);
 
-        // Act
+        /* Act */
         $filter->addProjectIdsFilter([TimeEntryFilter::NONE_VALUE]);
 
-        // Assert
+        /* Assert */
         $timeEntries = $builder->get();
         $this->assertCount(1, $timeEntries);
         $this->assertTrue($timeEntries->contains($timeEntryWithoutProject));
@@ -67,7 +67,7 @@ class TimeEntryFilterTest extends TestCaseWithDatabase
 
     public function test_add_project_ids_filter_with_none_and_ids_returns_both(): void
     {
-        // Arrange
+        /* Arrange */
         $project              = Project::factory()->create();
         $timeEntryWithProject = TimeEntry::factory()->create([
             'project_id'      => $project->getKey(),
@@ -85,10 +85,10 @@ class TimeEntryFilterTest extends TestCaseWithDatabase
         $builder = TimeEntry::query();
         $filter  = new TimeEntryFilter($builder);
 
-        // Act
+        /* Act */
         $filter->addProjectIdsFilter([$project->getKey(), TimeEntryFilter::NONE_VALUE]);
 
-        // Assert
+        /* Assert */
         $timeEntries = $builder->get();
         $this->assertCount(2, $timeEntries);
         $this->assertTrue($timeEntries->contains($timeEntryWithProject));
@@ -98,7 +98,7 @@ class TimeEntryFilterTest extends TestCaseWithDatabase
 
     public function test_add_task_ids_filter_with_none_returns_entries_without_task(): void
     {
-        // Arrange
+        /* Arrange */
         $task              = Task::factory()->create();
         $timeEntryWithTask = TimeEntry::factory()->create([
             'task_id'         => $task->getKey(),
@@ -111,10 +111,10 @@ class TimeEntryFilterTest extends TestCaseWithDatabase
         $builder = TimeEntry::query();
         $filter  = new TimeEntryFilter($builder);
 
-        // Act
+        /* Act */
         $filter->addTaskIdsFilter([TimeEntryFilter::NONE_VALUE]);
 
-        // Assert
+        /* Assert */
         $timeEntries = $builder->get();
         $this->assertCount(1, $timeEntries);
         $this->assertTrue($timeEntries->contains($timeEntryWithoutTask));
@@ -123,7 +123,7 @@ class TimeEntryFilterTest extends TestCaseWithDatabase
 
     public function test_add_client_ids_filter_with_none_returns_entries_without_client(): void
     {
-        // Arrange
+        /* Arrange */
         $client              = Client::factory()->create();
         $timeEntryWithClient = TimeEntry::factory()->create([
             'client_id'       => $client->getKey(),
@@ -136,10 +136,10 @@ class TimeEntryFilterTest extends TestCaseWithDatabase
         $builder = TimeEntry::query();
         $filter  = new TimeEntryFilter($builder);
 
-        // Act
+        /* Act */
         $filter->addClientIdsFilter([TimeEntryFilter::NONE_VALUE]);
 
-        // Assert
+        /* Assert */
         $timeEntries = $builder->get();
         $this->assertCount(1, $timeEntries);
         $this->assertTrue($timeEntries->contains($timeEntryWithoutClient));
@@ -148,7 +148,7 @@ class TimeEntryFilterTest extends TestCaseWithDatabase
 
     public function test_add_tag_ids_filter_with_none_returns_entries_without_tags(): void
     {
-        // Arrange
+        /* Arrange */
         $tag              = Tag::factory()->create();
         $timeEntryWithTag = TimeEntry::factory()->create([
             'tags' => [$tag->getKey()],
@@ -163,10 +163,10 @@ class TimeEntryFilterTest extends TestCaseWithDatabase
         $builder = TimeEntry::query();
         $filter  = new TimeEntryFilter($builder);
 
-        // Act
+        /* Act */
         $filter->addTagIdsFilter([TimeEntryFilter::NONE_VALUE]);
 
-        // Assert
+        /* Assert */
         $timeEntries = $builder->get();
         $this->assertCount(2, $timeEntries);
         $this->assertTrue($timeEntries->contains($timeEntryWithEmptyTags));
@@ -176,7 +176,7 @@ class TimeEntryFilterTest extends TestCaseWithDatabase
 
     public function test_add_tag_ids_filter_with_none_and_ids_returns_both(): void
     {
-        // Arrange
+        /* Arrange */
         $tag1              = Tag::factory()->create();
         $tag2              = Tag::factory()->create();
         $timeEntryWithTag1 = TimeEntry::factory()->create([
@@ -192,10 +192,10 @@ class TimeEntryFilterTest extends TestCaseWithDatabase
         $builder = TimeEntry::query();
         $filter  = new TimeEntryFilter($builder);
 
-        // Act
+        /* Act */
         $filter->addTagIdsFilter([$tag1->getKey(), TimeEntryFilter::NONE_VALUE]);
 
-        // Assert
+        /* Assert */
         $timeEntries = $builder->get();
         $this->assertCount(2, $timeEntries);
         $this->assertTrue($timeEntries->contains($timeEntryWithTag1));

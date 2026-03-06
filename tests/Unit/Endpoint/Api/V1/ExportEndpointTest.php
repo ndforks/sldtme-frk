@@ -17,17 +17,17 @@ class ExportEndpointTest extends ApiEndpointTestAbstract
 {
     public function test_export_fails_if_user_does_not_have_permission(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission();
         $this->mock(ExportService::class, static function (MockInterface $mock): void {
             $mock->shouldNotReceive('export');
         });
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.export.export', ['organization' => $data->organization->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
     }
 
@@ -46,10 +46,10 @@ class ExportEndpointTest extends ApiEndpointTestAbstract
         });
         Passport::actingAs($user->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.export.export', ['organization' => $user->organization->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(400);
         $response->assertExactJson([
             'error'   => true,
@@ -60,7 +60,7 @@ class ExportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_export_calls_export_service_if_user_has_permission(): void
     {
-        // Arrange
+        /* Arrange */
         $user = $this->createUserWithPermission([
             'export',
         ]);
@@ -78,12 +78,12 @@ class ExportEndpointTest extends ApiEndpointTestAbstract
         });
         Passport::actingAs($user->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.export.export', [
             'organization' => $user->organization->getKey(),
         ]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $response->assertJsonPath('success', true);
         $this->assertStringContainsString($filepath, $response->json('download_url'));

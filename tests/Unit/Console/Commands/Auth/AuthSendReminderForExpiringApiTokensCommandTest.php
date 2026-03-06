@@ -19,7 +19,7 @@ class AuthSendReminderForExpiringApiTokensCommandTest extends TestCaseWithDataba
 {
     public function test_sends_mail_for_expired_api_tokens_but_ignores_the_one_where_the_mail_was_already_sent_and_ignores_non_api_tokens(): void
     {
-        // Arrange
+        /* Arrange */
         $user         = $this->createUserWithPermission();
         $apiClient    = Client::factory()->apiClient()->create();
         $otherClient  = Client::factory()->desktopClient()->create();
@@ -39,10 +39,10 @@ class AuthSendReminderForExpiringApiTokensCommandTest extends TestCaseWithDataba
             'expires_at'           => Carbon::now()->subDay(),
         ]);
 
-        // Act
+        /* Act */
         $exitCode = $this->withoutMockingConsoleOutput()->artisan('auth:send-mails-expiring-api-tokens');
 
-        // Assert
+        /* Assert */
         $this->assertSame(Command::SUCCESS, $exitCode);
         $expiredToken->refresh();
         $expiredTokenWithMailSent->refresh();
@@ -70,7 +70,7 @@ class AuthSendReminderForExpiringApiTokensCommandTest extends TestCaseWithDataba
 
     public function test_sends_mail_for_api_tokens_that_expire_soon_but_ignores_the_one_where_the_mail_was_already_sent_and_ignores_non_api_tokens(): void
     {
-        // Arrange
+        /* Arrange */
         $user          = $this->createUserWithPermission();
         $apiClient     = Client::factory()->apiClient()->create();
         $otherClient   = Client::factory()->desktopClient()->create();
@@ -90,10 +90,10 @@ class AuthSendReminderForExpiringApiTokensCommandTest extends TestCaseWithDataba
             'expires_at'           => Carbon::now()->addDays(6),
         ]);
 
-        // Act
+        /* Act */
         $exitCode = $this->withoutMockingConsoleOutput()->artisan('auth:send-mails-expiring-api-tokens');
 
-        // Assert
+        /* Assert */
         $this->assertSame(Command::SUCCESS, $exitCode);
         $expiringToken->refresh();
         $expiringTokenWithMailSent->refresh();

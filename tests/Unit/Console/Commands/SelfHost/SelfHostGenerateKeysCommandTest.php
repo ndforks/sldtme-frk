@@ -13,12 +13,12 @@ class SelfHostGenerateKeysCommandTest extends TestCase
 {
     public function test_generates_app_key_and_passport_keys_per_default_in_env_format(): void
     {
-        // Arrange
+        /* Arrange */
 
-        // Act
+        /* Act */
         $exitCode = $this->withoutMockingConsoleOutput()->artisan('self-host:generate-keys');
 
-        // Assert
+        /* Assert */
         $this->assertSame(Command::SUCCESS, $exitCode);
         $output = Artisan::output();
         $this->assertStringContainsString('APP_KEY="base64:', $output);
@@ -28,12 +28,12 @@ class SelfHostGenerateKeysCommandTest extends TestCase
 
     public function test_generates_app_key_and_passport_keys_in_env_format_in_multiline_if_requested(): void
     {
-        // Arrange
+        /* Arrange */
 
-        // Act
+        /* Act */
         $exitCode = $this->withoutMockingConsoleOutput()->artisan('self-host:generate-keys --multi-line');
 
-        // Assert
+        /* Assert */
         $this->assertSame(Command::SUCCESS, $exitCode);
         $output = Artisan::output();
         $this->assertStringContainsString('APP_KEY="base64:', $output);
@@ -43,12 +43,12 @@ class SelfHostGenerateKeysCommandTest extends TestCase
 
     public function test_generates_app_key_and_passport_keys_in_yaml_format_if_requested(): void
     {
-        // Arrange
+        /* Arrange */
 
-        // Act
+        /* Act */
         $exitCode = $this->withoutMockingConsoleOutput()->artisan('self-host:generate-keys --format=yaml');
 
-        // Assert
+        /* Assert */
         $this->assertSame(Command::SUCCESS, $exitCode);
         $output = Artisan::output();
         $this->assertStringContainsString('APP_KEY: "base64:', $output);
@@ -58,12 +58,12 @@ class SelfHostGenerateKeysCommandTest extends TestCase
 
     public function test_generates_app_fail_if_attribute_format_is_invalid(): void
     {
-        // Arrange
+        /* Arrange */
 
-        // Act
+        /* Act */
         $exitCode = $this->withoutMockingConsoleOutput()->artisan('self-host:generate-keys --format=invalid');
 
-        // Assert
+        /* Assert */
         $this->assertSame(Command::FAILURE, $exitCode);
         $output = Artisan::output();
         $this->assertSame("Invalid format\n", $output);

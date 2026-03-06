@@ -24,35 +24,35 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 {
     public function test_index_fails_if_user_has_no_permission_to_view_members(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.members.index', $data->organization->id));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(403);
     }
 
     public function test_index_returns_members_of_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:view',
         ]);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.members.index', $data->organization->getKey()));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
     }
 
     public function test_index_returns_members_ordered_by_created_at_descending(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:view',
         ]);
@@ -67,10 +67,10 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         ]);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.members.index', $data->organization->getKey()));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $ids = collect($response->json('data'))->pluck('id')->values()->toArray();
         // Verify that the three explicitly created members appear in newest-first order
@@ -84,23 +84,23 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_update_member_fails_if_user_has_no_permission_to_update_members(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.members.update', [$data->organization->getKey(), $data->member->getKey()]), [
             'billable_rate' => 10001,
             'role'          => Role::Employee->value,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(403);
     }
 
     public function test_update_member_fails_if_member_is_not_part_of_org(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:update',
         ]);
@@ -109,19 +109,19 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         ]);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.members.update', [$data->organization->getKey(), $otherData->member->getKey()]), [
             'billable_rate' => 10001,
             'role'          => Role::Employee->value,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(403);
     }
 
     public function test_update_member_succeeds_if_data_is_valid(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:update',
         ]);
@@ -129,13 +129,13 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         $this->assertBillableRateServiceIsUnused();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.members.update', [$data->organization->id, $member]), [
             'billable_rate' => $member->billable_rate,
             'role'          => Role::Employee->value,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $oldBillableRate = $member->billable_rate;
         $member->refresh();
@@ -145,7 +145,7 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_update_member_can_update_billable_rate_of_member_and_update_time_entries(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:update',
         ]);
@@ -156,12 +156,12 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         });
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.members.update', [$data->organization->getKey(), $data->member]), [
             'billable_rate' => 10001,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $member = $data->member;
         $member->refresh();
@@ -170,7 +170,7 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_update_member_can_update_role(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:update',
         ]);
@@ -178,12 +178,12 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         $otherMember = Member::factory()->forUser($otherUser)->forOrganization($data->organization)->role(Role::Employee)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.members.update', [$data->organization->getKey(), $otherMember->getKey()]), [
             'role' => Role::Admin->value,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $otherMember->refresh();
         $this->assertSame(Role::Admin->value, $otherMember->role);
@@ -191,43 +191,43 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_update_member_allows_role_owner_in_request_if_that_would_not_the_role(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:update',
         ]);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.members.update', [$data->organization->getKey(), $data->ownerMember->getKey()]), [
             'role' => Role::Owner->value,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
     }
 
     public function test_update_member_fails_if_user_tries_to_change_role_to_owner(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:update',
         ]);
         $member = Member::factory()->forOrganization($data->organization)->role(Role::Employee)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.members.update', [$data->organization->getKey(), $member->getKey()]), [
             'role' => Role::Owner->value,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(400);
         $response->assertJsonPath('message', 'Only owner can change ownership');
     }
 
     public function test_update_member_fails_if_user_tries_to_change_the_role_of_a_placeholder(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:update',
         ]);
@@ -235,12 +235,12 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         $member = Member::factory()->forOrganization($data->organization)->forUser($user)->role(Role::Placeholder)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.members.update', [$data->organization->getKey(), $member->getKey()]), [
             'role' => Role::Admin->value,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(400);
         $response->assertExactJson([
             'error'   => true,
@@ -251,7 +251,7 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_merge_into_fails_if_url_member_is_not_part_of_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:merge-into',
         ]);
@@ -262,18 +262,18 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         $memberDestination = Member::factory()->forUser($userDestination)->forOrganization($data->organization)->role(Role::Admin)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.members.merge-into', [$data->organization->getKey(), $memberSource->getKey()]), [
             'member_id' => $memberDestination->getKey(),
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
     }
 
     public function test_merge_into_returns_validation_error_if_member_in_body_does_not_belong_to_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:merge-into',
         ]);
@@ -284,12 +284,12 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         $memberDestination = Member::factory()->forUser($userDestination)->role(Role::Admin)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.members.merge-into', [$data->organization->getKey(), $memberSource->getKey()]), [
             'member_id' => $memberDestination->getKey(),
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(422);
         $response->assertExactJson([
             'errors' => [
@@ -303,7 +303,7 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_merge_into_fails_if_from_member_is_not_a_placeholder(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:merge-into',
         ]);
@@ -314,12 +314,12 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         $memberDestination = Member::factory()->forUser($userDestination)->forOrganization($data->organization)->role(Role::Admin)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.members.merge-into', [$data->organization->getKey(), $memberSource->getKey()]), [
             'member_id' => $memberDestination->getKey(),
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(400);
         $response->assertExactJson([
             'error'   => true,
@@ -330,7 +330,7 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_merge_into_fails_if_user_has_no_permission_to_merge_members(): void
     {
-        // Arrange
+        /* Arrange */
         $data         = $this->createUserWithPermission([]);
         $userSource   = User::factory()->placeholder()->create();
         $memberSource = Member::factory()->forUser($userSource)->forOrganization($data->organization)->role(Role::Placeholder)->create();
@@ -339,18 +339,18 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         $memberDestination = Member::factory()->forUser($userDestination)->forOrganization($data->organization)->role(Role::Admin)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.members.merge-into', [$data->organization->getKey(), $memberSource->getKey()]), [
             'member_id' => $memberDestination->getKey(),
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
     }
 
     public function test_merge_into_assigns_resources_of_source_member_to_destination_member_and_deletes_member(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:merge-into',
         ]);
@@ -364,12 +364,12 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         $memberDestination = Member::factory()->forUser($userDestination)->forOrganization($data->organization)->role(Role::Admin)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.members.merge-into', [$data->organization->getKey(), $memberSource->getKey()]), [
             'member_id' => $memberDestination->getKey(),
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(204);
         $this->assertSame('', $response->getContent());
         $this->assertDatabaseMissing(Member::class, [
@@ -390,7 +390,7 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_merge_into_assigns_resources_of_source_member_to_destination_member_and_deletes_member_with_existing_destination_resources(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:merge-into',
         ]);
@@ -410,12 +410,12 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         TimeEntry::factory()->forMember($memberDestination)->createMany(3);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->withoutExceptionHandling()->postJson(route('api.v1.members.merge-into', [$data->organization->getKey(), $memberSource->getKey()]), [
             'member_id' => $memberDestination->getKey(),
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(204);
         $this->assertSame('', $response->getContent());
         $this->assertDatabaseMissing(Member::class, [
@@ -437,38 +437,38 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_update_member_fails_if_user_tries_to_change_role_of_the_current_owner(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:update',
             'members:change-ownership',
         ]);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.members.update', [$data->organization->getKey(), $data->ownerMember->getKey()]), [
             'role' => Role::Admin->value,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(400);
         $response->assertJsonPath('message', 'Organization needs at least one owner');
     }
 
     public function test_update_member_can_change_role_to_everything_expect_owner_with_the_member_update_permission(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:update',
         ]);
         $member = Member::factory()->forOrganization($data->organization)->role(Role::Employee)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.members.update', [$data->organization->getKey(), $member->getKey()]), [
             'role' => Role::Admin->value,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $member->refresh();
         $this->assertSame(Role::Admin->value, $member->role);
@@ -476,7 +476,7 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_update_member_can_change_role_to_owner_if_auth_user_has_change_ownership_permission(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:update',
             'members:change-ownership',
@@ -486,12 +486,12 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         $member       = Member::factory()->forOrganization($data->organization)->role(Role::Employee)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.members.update', [$data->organization->getKey(), $member->getKey()]), [
             'role' => Role::Owner->value,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $member->refresh();
         $organization->refresh();
@@ -503,26 +503,26 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_update_member_role_fails_if_role_is_placeholder(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:update',
         ]);
         $member = Member::factory()->forOrganization($data->organization)->role(Role::Employee)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.members.update', [$data->organization->getKey(), $member->getKey()]), [
             'role' => Role::Placeholder->value,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(400);
         $response->assertJsonPath('message', 'Changing role to placeholder is not allowed');
     }
 
     public function test_invite_placeholder_succeeds_if_data_is_valid(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:invite-placeholder',
         ]);
@@ -532,20 +532,20 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         $member = Member::factory()->forUser($user)->forOrganization($data->organization)->role(Role::Placeholder)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.members.invite-placeholder', [
             'organization' => $data->organization->getKey(),
             'member'       => $member->getKey(),
         ]));
 
-        // Assert
+        /* Assert */
         $response->assertValid();
         $response->assertStatus(204);
     }
 
     public function test_invite_placeholder_fails_if_the_placeholder_has_a_invalid_email_from_an_import(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:invite-placeholder',
         ]);
@@ -560,13 +560,13 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
             ->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.members.invite-placeholder', [
             'organization' => $data->organization->getKey(),
             'member'       => $member->getKey(),
         ]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(400);
         $response->assertExactJson([
             'error'   => true,
@@ -577,24 +577,24 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_destroy_member_fails_if_user_has_no_permission_to_delete_members(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission();
         Passport::actingAs($data->user);
         Event::fake([
             MemberRemoved::class,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.members.destroy', [$data->organization->getKey(), $data->member->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(403);
         Event::assertNotDispatched(MemberRemoved::class);
     }
 
     public function test_destroy_member_fails_if_member_is_owner(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:delete',
         ]);
@@ -604,10 +604,10 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
             MemberRemoved::class,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.members.destroy', [$data->organization->getKey(), $memberToDelete->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(400);
         $response->assertJsonPath('message', 'Can not remove owner from organization');
         Event::assertNotDispatched(MemberRemoved::class);
@@ -615,7 +615,7 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_destroy_member_fails_if_member_is_not_part_of_org(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:delete',
         ]);
@@ -627,17 +627,17 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
             MemberRemoved::class,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.members.destroy', [$data->organization->getKey(), $otherData->member->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(403);
         Event::assertNotDispatched(MemberRemoved::class);
     }
 
     public function test_destroy_endpoint_fails_if_member_is_still_in_use_by_a_time_entry(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:delete',
         ]);
@@ -647,10 +647,10 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
             MemberRemoved::class,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.members.destroy', [$data->organization->getKey(), $data->member->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(400);
         $response->assertJsonPath('message', 'The member is still used by a time entry and can not be deleted.');
         $this->assertDatabaseHas(Member::class, [
@@ -661,7 +661,7 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_destroy_endpoint_fails_if_member_is_still_in_use_by_a_project_member(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:delete',
         ]);
@@ -672,10 +672,10 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
             MemberRemoved::class,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.members.destroy', [$data->organization->getKey(), $data->member->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(400);
         $response->assertJsonPath('message', 'The member is still used by a project member and can not be deleted.');
         $this->assertDatabaseHas(Member::class, [
@@ -686,7 +686,7 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_destroy_endpoint_also_deletes_user_if_member_is_placeholder(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:delete',
         ]);
@@ -697,10 +697,10 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
             MemberRemoved::class,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.members.destroy', [$data->organization->getKey(), $member->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(204);
         $this->assertDatabaseMissing(Member::class, [
             'id' => $member->getKey(),
@@ -716,7 +716,7 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_destroy_endpoint_sets_current_organization_to_organization_the_user_is_still_member_of(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:delete',
         ]);
@@ -728,10 +728,10 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
             MemberRemoved::class,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.members.destroy', [$data->organization->getKey(), $data->member->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(204);
         $this->assertDatabaseMissing(Member::class, [
             'id' => $data->member->getKey(),
@@ -746,7 +746,7 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_destroy_endpoint_creates_new_organization_and_sets_the_current_organization_to_it_if_user_is_not_member_of_any_other_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:delete',
         ]);
@@ -758,10 +758,10 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         ]);
         $this->assertDatabaseCount(Organization::class, 1);
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.members.destroy', [$data->organization->getKey(), $data->member->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(204);
         $this->assertDatabaseCount(Organization::class, 2);
         $newOrganization = Organization::where('id', '!=', $organization->getKey())->first();
@@ -783,7 +783,7 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_destroy_endpoint_succeeds_if_member_is_still_in_use_by_a_project_member_and_delete_related_is_active(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:delete',
         ]);
@@ -796,14 +796,14 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
             MemberRemoved::class,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.members.destroy', [
             'organization'   => $data->organization->getKey(),
             'member'         => $data->member->getKey(),
             'delete_related' => 'true',
         ]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(204);
         $this->assertDatabaseMissing(Member::class, [
             'id' => $data->member->getKey(),
@@ -824,7 +824,7 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_destroy_endpoint_succeeds_if_member_is_still_in_use_by_a_time_entry_and_delete_related_is_active(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:delete',
         ]);
@@ -836,14 +836,14 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
             MemberRemoved::class,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.members.destroy', [
             'organization'   => $data->organization->getKey(),
             'member'         => $data->member->getKey(),
             'delete_related' => 'true',
         ]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(204);
         $this->assertDatabaseMissing(Member::class, [
             'id' => $data->member->getKey(),
@@ -862,7 +862,7 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_destroy_member_succeeds_if_data_is_valid(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:delete',
         ]);
@@ -871,10 +871,10 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
             MemberRemoved::class,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.members.destroy', [$data->organization->getKey(), $data->member->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(204);
         $this->assertDatabaseMissing(Member::class, [
             'id' => $data->member->getKey(),
@@ -887,27 +887,27 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_make_placeholder_fails_if_user_has_no_permission(): void
     {
-        // Arrange
+        /* Arrange */
         Event::fake([
             MemberMadeToPlaceholder::class,
         ]);
         $data = $this->createUserWithPermission();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.members.make-placeholder', [
             'organization' => $data->organization->getKey(),
             'member'       => $data->member->getKey(),
         ]));
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
         Event::assertNotDispatched(MemberMadeToPlaceholder::class);
     }
 
     public function test_make_placeholder_fails_if_user_is_already_a_placeholder(): void
     {
-        // Arrange
+        /* Arrange */
         Event::fake([
             MemberMadeToPlaceholder::class,
         ]);
@@ -918,13 +918,13 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         $member = Member::factory()->forUser($user)->forOrganization($data->organization)->role(Role::Placeholder)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.members.make-placeholder', [
             'organization' => $data->organization->getKey(),
             'member'       => $member->getKey(),
         ]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(400);
         $response->assertExactJson([
             'error'   => true,
@@ -935,7 +935,7 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_make_placeholder_fails_if_member_is_owner(): void
     {
-        // Arrange
+        /* Arrange */
         Event::fake([
             MemberMadeToPlaceholder::class,
         ]);
@@ -945,13 +945,13 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         $member = Member::factory()->forOrganization($data->organization)->role(Role::Owner)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.members.make-placeholder', [
             'organization' => $data->organization->getKey(),
             'member'       => $member->getKey(),
         ]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(400);
         $response->assertJsonPath('message', 'Can not remove owner from organization');
         Event::assertNotDispatched(MemberMadeToPlaceholder::class);
@@ -959,7 +959,7 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_make_placeholder_fails_if_member_is_not_part_of_org(): void
     {
-        // Arrange
+        /* Arrange */
         Event::fake([
             MemberMadeToPlaceholder::class,
         ]);
@@ -971,19 +971,19 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         ]);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.members.make-placeholder', [
             'organization' => $data->organization->getKey(),
             'member'       => $otherData->member->getKey(),
         ]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(403);
     }
 
     public function test_make_placeholder_creates_placeholder_and_attaches_resources_to_the_new_user(): void
     {
-        // Arrange
+        /* Arrange */
         Event::fake([
             MemberMadeToPlaceholder::class,
         ]);
@@ -997,13 +997,13 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         $projectMember = ProjectMember::factory()->forProject($project)->forMember($member)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.members.make-placeholder', [
             'organization' => $data->organization->getKey(),
             'member'       => $member->getKey(),
         ]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(204);
         $member->refresh();
         $this->assertSame(Role::Placeholder->value, $member->role);
@@ -1023,7 +1023,7 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_invite_placeholder_fails_if_user_does_not_have_permission(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission();
         $user = User::factory()->create([
             'is_placeholder' => true,
@@ -1031,19 +1031,19 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         $member = Member::factory()->forUser($user)->forOrganization($data->organization)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.members.invite-placeholder', [
             'organization' => $data->organization->id,
             'member'       => $member->id,
         ]));
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
     }
 
     public function test_invite_placeholder_fails_if_user_is_not_part_of_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:invite-placeholder',
             'invitations:create',
@@ -1055,19 +1055,19 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         $member = Member::factory()->forUser($user)->forOrganization($otherOrganization)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.members.invite-placeholder', [
             'organization' => $data->organization->id,
             'member'       => $member->id,
         ]));
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
     }
 
     public function test_invite_placeholder_fails_if_there_is_already_an_invitation_with_the_same_email(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:invite-placeholder',
             'invitations:create',
@@ -1081,13 +1081,13 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
         ]);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.members.invite-placeholder', [
             'organization' => $data->organization->id,
             'member'       => $placeholderMember->id,
         ]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(400);
         $response->assertExactJson([
             'error'   => true,
@@ -1098,20 +1098,20 @@ class MemberEndpointTest extends ApiEndpointTestAbstract
 
     public function test_invite_placeholder_returns_400_if_user_is_not_placeholder(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'members:invite-placeholder',
             'invitations:create',
         ]);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.members.invite-placeholder', [
             'organization' => $data->organization->id,
             'member'       => $data->member->id,
         ]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(400);
         $response->assertExactJson([
             'error'   => true,

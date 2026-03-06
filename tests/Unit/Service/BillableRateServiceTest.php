@@ -33,7 +33,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
 
     public function test_update_time_entries_billable_rate_for_project_member_updates_time_entries_of_project_member(): void
     {
-        // Arrange
+        /* Arrange */
         $user          = $this->createUserWithPermission();
         $project       = Project::factory()->forOrganization($user->organization)->create();
         $projectMember = ProjectMember::factory()->forMember($user->member)->forProject($project)->create([
@@ -42,10 +42,10 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         $timeEntry = TimeEntry::factory()->forMember($user->member)->forProject($project)->billableRate(1)->create();
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $this->billableRateService->updateTimeEntriesBillableRateForProjectMember($projectMember);
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(1);
         $this->assertDatabaseCount(TimeEntry::class, 1);
         $this->assertDatabaseHas(TimeEntry::class, [
@@ -56,7 +56,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
 
     public function test_update_time_entries_billable_rate_for_project_member_updates_time_entries_of_project_member_even_if_all_other_billable_rates_are_set(): void
     {
-        // Arrange
+        /* Arrange */
         $user                        = $this->createUserWithPermission();
         $organization                = $user->organization;
         $member                      = $user->member;
@@ -73,10 +73,10 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         $timeEntry = TimeEntry::factory()->forMember($user->member)->forProject($project)->billableRate(1)->create();
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $this->billableRateService->updateTimeEntriesBillableRateForProjectMember($projectMember);
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(1);
         $this->assertDatabaseCount(TimeEntry::class, 1);
         $this->assertDatabaseHas(TimeEntry::class, [
@@ -87,7 +87,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
 
     public function test_update_time_entries_billable_rate_for_project_member_ignores_time_entries_of_other_member(): void
     {
-        // Arrange
+        /* Arrange */
         $user          = $this->createUserWithPermission();
         $otherUser     = User::factory()->create();
         $otherMember   = Member::factory()->forUser($otherUser)->forOrganization($user->organization)->create();
@@ -101,10 +101,10 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         $timeEntry = TimeEntry::factory()->forMember($otherMember)->forProject($project)->billableRate(1)->create();
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $this->billableRateService->updateTimeEntriesBillableRateForProjectMember($projectMember);
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(1);
         $this->assertDatabaseCount(TimeEntry::class, 1);
         $this->assertDatabaseHas(TimeEntry::class, [
@@ -119,7 +119,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
 
     public function test_update_time_entries_billable_rate_for_project_updates_time_entries_of_project(): void
     {
-        // Arrange
+        /* Arrange */
         $user    = $this->createUserWithPermission();
         $project = Project::factory()->forOrganization($user->organization)->create([
             'billable_rate' => 321,
@@ -127,10 +127,10 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         $timeEntry = TimeEntry::factory()->forMember($user->member)->forProject($project)->billableRate(1)->create();
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $this->billableRateService->updateTimeEntriesBillableRateForProject($project);
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(1);
         $this->assertDatabaseCount(TimeEntry::class, 1);
         $this->assertDatabaseHas(TimeEntry::class, [
@@ -141,7 +141,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
 
     public function test_update_time_entries_billable_rate_for_project_updates_time_entries_of_project_all_other_billable_rates_null(): void
     {
-        // Arrange
+        /* Arrange */
         $user    = $this->createUserWithPermission();
         $project = Project::factory()->forOrganization($user->organization)->create([
             'billable_rate' => 321,
@@ -152,10 +152,10 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         $timeEntry = TimeEntry::factory()->forMember($user->member)->forProject($project)->billableRate(1)->create();
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $this->billableRateService->updateTimeEntriesBillableRateForProject($project);
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(1);
         $this->assertDatabaseCount(TimeEntry::class, 1);
         $this->assertDatabaseHas(TimeEntry::class, [
@@ -166,7 +166,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
 
     public function test_update_time_entries_billable_rate_for_project_ignores_time_entries_that_are_not_billable(): void
     {
-        // Arrange
+        /* Arrange */
         $user    = $this->createUserWithPermission();
         $project = Project::factory()->forOrganization($user->organization)->create([
             'billable_rate' => 321,
@@ -174,10 +174,10 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         $timeEntry = TimeEntry::factory()->forMember($user->member)->forProject($project)->notBillable()->create();
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $this->billableRateService->updateTimeEntriesBillableRateForProject($project);
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(1);
         $this->assertDatabaseCount(TimeEntry::class, 1);
         $this->assertDatabaseHas(TimeEntry::class, [
@@ -188,7 +188,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
 
     public function test_update_time_entries_billable_rate_for_project_ignores_time_entries_that_have_project_member_with_billable_rate(): void
     {
-        // Arrange
+        /* Arrange */
         $user    = $this->createUserWithPermission();
         $project = Project::factory()->forOrganization($user->organization)->create([
             'billable_rate' => 321,
@@ -199,10 +199,10 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         $timeEntry = TimeEntry::factory()->forMember($user->member)->forProject($project)->billableRate(1)->create();
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $this->billableRateService->updateTimeEntriesBillableRateForProject($project);
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(1);
         $this->assertDatabaseCount(TimeEntry::class, 1);
         $this->assertDatabaseHas(TimeEntry::class, [
@@ -213,7 +213,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
 
     public function test_update_time_entries_billable_rate_for_project_ignores_time_entries_of_that_project_but_are_incorrectly_attached_to_other_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $user            = $this->createUserWithPermission();
         $userInOtherOrga = $this->createUserWithPermission();
         $project         = Project::factory()->forOrganization($user->organization)->create([
@@ -223,10 +223,10 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         $brokenTimeEntryInOtherOrganizationButSameProject = TimeEntry::factory()->forMember($userInOtherOrga->member)->forProject($project)->billableRate(1)->create();
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $this->billableRateService->updateTimeEntriesBillableRateForProject($project);
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(1);
         $this->assertDatabaseCount(TimeEntry::class, 2);
         $this->assertDatabaseHas(TimeEntry::class, [
@@ -245,7 +245,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
 
     public function test_update_time_entries_billable_rate_for_member_updates_time_entries_of_member(): void
     {
-        // Arrange
+        /* Arrange */
         $user                  = $this->createUserWithPermission();
         $member                = $user->member;
         $member->billable_rate = 567;
@@ -253,10 +253,10 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         $timeEntry = TimeEntry::factory()->forMember($member)->billableRate(1)->create();
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $this->billableRateService->updateTimeEntriesBillableRateForMember($member);
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(1);
         $this->assertDatabaseCount(TimeEntry::class, 1);
         $this->assertDatabaseHas(TimeEntry::class, [
@@ -267,7 +267,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
 
     public function test_update_time_entries_billable_rate_for_member_updates_time_entries_of_member_all_other_billable_rates_null(): void
     {
-        // Arrange
+        /* Arrange */
         $user                  = $this->createUserWithPermission();
         $member                = $user->member;
         $member->billable_rate = 110;
@@ -281,10 +281,10 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         $timeEntry = TimeEntry::factory()->forMember($member)->forProject($project)->billableRate(1)->create();
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $this->billableRateService->updateTimeEntriesBillableRateForMember($member);
 
-        // Assert
+        /* Assert */
         $queryLog = DB::getQueryLog();
         $this->assertCount(1, $queryLog);
         $this->assertDatabaseCount(TimeEntry::class, 1);
@@ -296,7 +296,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
 
     public function test_update_time_entries_billable_rate_for_member_ignores_time_entries_that_have_project_member_with_billable_rate(): void
     {
-        // Arrange
+        /* Arrange */
         $user                  = $this->createUserWithPermission();
         $member                = $user->member;
         $member->billable_rate = 110;
@@ -310,10 +310,10 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         $timeEntry = TimeEntry::factory()->forMember($member)->forProject($project)->billableRate(1)->create();
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $this->billableRateService->updateTimeEntriesBillableRateForMember($member);
 
-        // Assert
+        /* Assert */
         $queryLog = DB::getQueryLog();
         $this->assertCount(1, $queryLog);
         $this->assertDatabaseCount(TimeEntry::class, 1);
@@ -325,7 +325,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
 
     public function test_update_time_entries_billable_rate_for_member_ignores_time_entries_that_have_project_with_billable_rate(): void
     {
-        // Arrange
+        /* Arrange */
         $user                  = $this->createUserWithPermission();
         $member                = $user->member;
         $member->billable_rate = 110;
@@ -336,10 +336,10 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         $timeEntry = TimeEntry::factory()->forMember($member)->forProject($project)->billableRate(1)->create();
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $this->billableRateService->updateTimeEntriesBillableRateForMember($member);
 
-        // Assert
+        /* Assert */
         $queryLog = DB::getQueryLog();
         $this->assertCount(1, $queryLog);
         $this->assertDatabaseCount(TimeEntry::class, 1);
@@ -355,7 +355,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
 
     public function test_update_time_entries_billable_rate_for_organization_updates_time_entries_of_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $user = $this->createUserWithPermission();
 
         $organization                = $user->organization;
@@ -364,10 +364,10 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         $timeEntry = TimeEntry::factory()->forMember($user->member)->billableRate(1)->create();
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $this->billableRateService->updateTimeEntriesBillableRateForOrganization($user->organization);
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(1);
         $this->assertDatabaseCount(TimeEntry::class, 1);
         $this->assertDatabaseHas(TimeEntry::class, [
@@ -378,7 +378,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
 
     public function test_update_time_entries_billable_rate_for_organization_updates_time_entries_of_organization_all_other_billable_rates_null(): void
     {
-        // Arrange
+        /* Arrange */
         $user                        = $this->createUserWithPermission();
         $member                      = $user->member;
         $organization                = $user->organization;
@@ -394,10 +394,10 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         $timeEntry = TimeEntry::factory()->forMember($user->member)->forProject($project)->billableRate(1)->create();
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $this->billableRateService->updateTimeEntriesBillableRateForOrganization($user->organization);
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(1);
         $this->assertDatabaseCount(TimeEntry::class, 1);
         $this->assertDatabaseHas(TimeEntry::class, [
@@ -408,7 +408,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
 
     public function test_update_time_entries_billable_rate_for_organization_ignores_time_entries_that_are_not_billable(): void
     {
-        // Arrange
+        /* Arrange */
         $user                        = $this->createUserWithPermission();
         $organization                = $user->organization;
         $organization->billable_rate = 110;
@@ -416,10 +416,10 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         $timeEntry = TimeEntry::factory()->forMember($user->member)->notBillable()->create();
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $this->billableRateService->updateTimeEntriesBillableRateForOrganization($organization);
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(1);
         $this->assertDatabaseCount(TimeEntry::class, 1);
         $this->assertDatabaseHas(TimeEntry::class, [
@@ -430,7 +430,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
 
     public function test_update_time_entries_billable_rate_for_organization_ignores_time_entries_of_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $user                        = $this->createUserWithPermission();
         $organization                = $user->organization;
         $organization->billable_rate = 110;
@@ -439,10 +439,10 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         $timeEntry = TimeEntry::factory()->forMember($otherUser->member)->billableRate(1)->create();
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $this->billableRateService->updateTimeEntriesBillableRateForOrganization($organization);
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(1);
         $this->assertDatabaseCount(TimeEntry::class, 1);
         $this->assertDatabaseHas(TimeEntry::class, [
@@ -453,7 +453,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
 
     public function test_update_time_entries_billable_rate_for_organization_ignores_time_entries_with_member_with_billable_rate(): void
     {
-        // Arrange
+        /* Arrange */
         $user                  = $this->createUserWithPermission();
         $member                = $user->member;
         $member->billable_rate = 120;
@@ -465,10 +465,10 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         $timeEntry = TimeEntry::factory()->forMember($member)->billableRate(1)->create();
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $this->billableRateService->updateTimeEntriesBillableRateForOrganization($organization);
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(1);
         $this->assertDatabaseCount(TimeEntry::class, 1);
         $this->assertDatabaseHas(TimeEntry::class, [
@@ -479,7 +479,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
 
     public function test_update_time_entries_billable_rate_for_organization_ignores_time_entries_with_project_with_billable_rate(): void
     {
-        // Arrange
+        /* Arrange */
         $user                        = $this->createUserWithPermission();
         $member                      = $user->member;
         $organization                = $user->organization;
@@ -492,10 +492,10 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         $timeEntry = TimeEntry::factory()->forMember($member)->forProject($project)->billableRate(1)->create();
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $this->billableRateService->updateTimeEntriesBillableRateForOrganization($organization);
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(1);
         $this->assertDatabaseCount(TimeEntry::class, 1);
         $this->assertDatabaseHas(TimeEntry::class, [
@@ -521,10 +521,10 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         $timeEntry = TimeEntry::factory()->forMember($member)->forProject($project)->billableRate(1)->create();
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $this->billableRateService->updateTimeEntriesBillableRateForOrganization($organization);
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(1);
         $this->assertDatabaseCount(TimeEntry::class, 1);
         $this->assertDatabaseHas(TimeEntry::class, [
@@ -539,7 +539,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
 
     public function test_billable_rate_is_null_if_time_entry_is_not_billable(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create([
             'billable_rate' => 1001,
         ]);
@@ -557,16 +557,16 @@ class BillableRateServiceTest extends TestCaseWithDatabase
             'billable' => false,
         ]);
 
-        // Act
+        /* Act */
         $billableRate = $this->billableRateService->getBillableRateForTimeEntry($timeEntry);
 
-        // Assert
+        /* Assert */
         $this->assertSame(null, $billableRate);
     }
 
     public function test_billable_rate_uses_project_member_rate_as_first_priority(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create([
             'billable_rate' => 1001,
         ]);
@@ -584,16 +584,16 @@ class BillableRateServiceTest extends TestCaseWithDatabase
             'billable' => true,
         ]);
 
-        // Act
+        /* Act */
         $billableRate = $this->billableRateService->getBillableRateForTimeEntry($timeEntry);
 
-        // Assert
+        /* Assert */
         $this->assertSame(4004, $billableRate);
     }
 
     public function test_billable_rate_uses_project_rate_as_second_priority_using_null_values_before(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create([
             'billable_rate' => 1001,
         ]);
@@ -611,16 +611,16 @@ class BillableRateServiceTest extends TestCaseWithDatabase
             'billable' => true,
         ]);
 
-        // Act
+        /* Act */
         $billableRate = $this->billableRateService->getBillableRateForTimeEntry($timeEntry);
 
-        // Assert
+        /* Assert */
         $this->assertSame(3003, $billableRate);
     }
 
     public function test_billable_rate_uses_project_rate_as_second_priority_using_non_existing_entities_before(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create([
             'billable_rate' => 1001,
         ]);
@@ -635,16 +635,16 @@ class BillableRateServiceTest extends TestCaseWithDatabase
             'billable' => true,
         ]);
 
-        // Act
+        /* Act */
         $billableRate = $this->billableRateService->getBillableRateForTimeEntry($timeEntry);
 
-        // Assert
+        /* Assert */
         $this->assertSame(3003, $billableRate);
     }
 
     public function test_billable_rate_uses_organization_member_rate_as_third_priority_using_null_values_before(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create([
             'billable_rate' => 1001,
         ]);
@@ -662,16 +662,16 @@ class BillableRateServiceTest extends TestCaseWithDatabase
             'billable' => true,
         ]);
 
-        // Act
+        /* Act */
         $billableRate = $this->billableRateService->getBillableRateForTimeEntry($timeEntry);
 
-        // Assert
+        /* Assert */
         $this->assertSame(2002, $billableRate);
     }
 
     public function test_billable_rate_uses_organization_member_rate_as_third_priority_using_non_existing_entities_before(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create([
             'billable_rate' => 1001,
         ]);
@@ -683,16 +683,16 @@ class BillableRateServiceTest extends TestCaseWithDatabase
             'billable' => true,
         ]);
 
-        // Act
+        /* Act */
         $billableRate = $this->billableRateService->getBillableRateForTimeEntry($timeEntry);
 
-        // Assert
+        /* Assert */
         $this->assertSame(2002, $billableRate);
     }
 
     public function test_billable_rate_uses_organization_rate_as_fourth_priority_using_null_values_before(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create([
             'billable_rate' => 1001,
         ]);
@@ -710,16 +710,16 @@ class BillableRateServiceTest extends TestCaseWithDatabase
             'billable' => true,
         ]);
 
-        // Act
+        /* Act */
         $billableRate = $this->billableRateService->getBillableRateForTimeEntry($timeEntry);
 
-        // Assert
+        /* Assert */
         $this->assertSame(1001, $billableRate);
     }
 
     public function test_billable_rate_uses_organization_rate_as_fourth_priority_using_non_existing_entities_before(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create([
             'billable_rate' => 1001,
         ]);
@@ -731,16 +731,16 @@ class BillableRateServiceTest extends TestCaseWithDatabase
             'billable' => true,
         ]);
 
-        // Act
+        /* Act */
         $billableRate = $this->billableRateService->getBillableRateForTimeEntry($timeEntry);
 
-        // Assert
+        /* Assert */
         $this->assertSame(1001, $billableRate);
     }
 
     public function test_billable_rate_is_null_if_billable_rate_on_all_levels_are_null(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create([
             'billable_rate' => null,
         ]);
@@ -758,16 +758,16 @@ class BillableRateServiceTest extends TestCaseWithDatabase
             'billable' => true,
         ]);
 
-        // Act
+        /* Act */
         $billableRate = $this->billableRateService->getBillableRateForTimeEntry($timeEntry);
 
-        // Assert
+        /* Assert */
         $this->assertSame(null, $billableRate);
     }
 
     public function test_billable_rate_with_given_relations_returns_null_if_not_billable(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create([
             'billable_rate' => 1001,
         ]);
@@ -786,7 +786,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         ]);
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $billableRate = $this->billableRateService->getBillableRateForTimeEntryWithGivenRelations(
             $timeEntry,
             $projectMember,
@@ -795,14 +795,14 @@ class BillableRateServiceTest extends TestCaseWithDatabase
             $organization
         );
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(0);
         $this->assertSame(null, $billableRate);
     }
 
     public function test_billable_rate_with_given_relations_uses_project_member_rate_as_first_priority(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create([
             'billable_rate' => 1001,
         ]);
@@ -821,7 +821,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         ]);
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $billableRate = $this->billableRateService->getBillableRateForTimeEntryWithGivenRelations(
             $timeEntry,
             $projectMember,
@@ -830,14 +830,14 @@ class BillableRateServiceTest extends TestCaseWithDatabase
             $organization
         );
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(0);
         $this->assertSame(4004, $billableRate);
     }
 
     public function test_billable_rate_with_given_relations_uses_project_rate_as_second_priority_using_null_values_before(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create([
             'billable_rate' => 1001,
         ]);
@@ -856,7 +856,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         ]);
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $billableRate = $this->billableRateService->getBillableRateForTimeEntryWithGivenRelations(
             $timeEntry,
             $projectMember,
@@ -865,14 +865,14 @@ class BillableRateServiceTest extends TestCaseWithDatabase
             $organization
         );
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(0);
         $this->assertSame(3003, $billableRate);
     }
 
     public function test_billable_rate_with_given_relations_uses_project_rate_as_second_priority_using_non_existing_entities_before(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create([
             'billable_rate' => 1001,
         ]);
@@ -888,7 +888,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         ]);
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $billableRate = $this->billableRateService->getBillableRateForTimeEntryWithGivenRelations(
             $timeEntry,
             null,
@@ -897,14 +897,14 @@ class BillableRateServiceTest extends TestCaseWithDatabase
             $organization
         );
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(0);
         $this->assertSame(3003, $billableRate);
     }
 
     public function test_billable_rate_with_given_relations_uses_organization_member_rate_as_third_priority_using_null_values_before(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create([
             'billable_rate' => 1001,
         ]);
@@ -923,7 +923,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         ]);
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $billableRate = $this->billableRateService->getBillableRateForTimeEntryWithGivenRelations(
             $timeEntry,
             $projectMember,
@@ -932,14 +932,14 @@ class BillableRateServiceTest extends TestCaseWithDatabase
             $organization
         );
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(0);
         $this->assertSame(2002, $billableRate);
     }
 
     public function test_billable_rate_with_given_relations_uses_organization_member_rate_as_third_priority_using_non_existing_entities_before(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create([
             'billable_rate' => 1001,
         ]);
@@ -952,7 +952,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         ]);
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $billableRate = $this->billableRateService->getBillableRateForTimeEntryWithGivenRelations(
             $timeEntry,
             null,
@@ -961,14 +961,14 @@ class BillableRateServiceTest extends TestCaseWithDatabase
             $organization
         );
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(0);
         $this->assertSame(2002, $billableRate);
     }
 
     public function test_billable_rate_with_given_relations_uses_organization_rate_as_fourth_priority_using_null_values_before(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create([
             'billable_rate' => 1001,
         ]);
@@ -987,7 +987,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         ]);
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $billableRate = $this->billableRateService->getBillableRateForTimeEntryWithGivenRelations(
             $timeEntry,
             $projectMember,
@@ -996,14 +996,14 @@ class BillableRateServiceTest extends TestCaseWithDatabase
             $organization
         );
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(0);
         $this->assertSame(1001, $billableRate);
     }
 
     public function test_billable_rate_with_given_relations_uses_organization_rate_as_fourth_priority_using_non_existing_entities_before(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create([
             'billable_rate' => 1001,
         ]);
@@ -1016,7 +1016,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         ]);
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $billableRate = $this->billableRateService->getBillableRateForTimeEntryWithGivenRelations(
             $timeEntry,
             null,
@@ -1025,14 +1025,14 @@ class BillableRateServiceTest extends TestCaseWithDatabase
             $organization
         );
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(0);
         $this->assertSame(1001, $billableRate);
     }
 
     public function test_billable_rate_with_given_relations_is_null_if_billable_rate_on_all_levels_are_null(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create([
             'billable_rate' => null,
         ]);
@@ -1051,7 +1051,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
         ]);
         $this->enableQueryLog();
 
-        // Act
+        /* Act */
         $billableRate = $this->billableRateService->getBillableRateForTimeEntryWithGivenRelations(
             $timeEntry,
             $projectMember,
@@ -1060,7 +1060,7 @@ class BillableRateServiceTest extends TestCaseWithDatabase
             $organization
         );
 
-        // Assert
+        /* Assert */
         $this->assertQueryCount(0);
         $this->assertSame(null, $billableRate);
     }

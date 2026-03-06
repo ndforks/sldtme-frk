@@ -18,7 +18,7 @@ class CheckOrganizationBlockedMiddlewareTest extends MiddlewareTestAbstract
 {
     public function test_request_fails_if_organization_is_blocked_by_the_billing_system(): void
     {
-        // Arrange
+        /* Arrange */
         $user = $this->createUserWithPermission();
         $this->createTestRoute();
         $this->mock(BillingContract::class, static function (MockInterface $mock): void {
@@ -26,17 +26,17 @@ class CheckOrganizationBlockedMiddlewareTest extends MiddlewareTestAbstract
         });
         Passport::actingAs($user->user);
 
-        // Act
+        /* Act */
         $response = $this->get('/test-route/' . $user->organization->getKey());
 
-        // Assert
+        /* Assert */
         $response->assertStatus(400);
         $response->assertJson(['message' => 'Organization has no subscription but multiple members']);
     }
 
     public function test_request_fails_if_organization_is_not_found(): void
     {
-        // Arrange
+        /* Arrange */
         $user = $this->createUserWithPermission();
         $this->createTestRoute();
         $this->mock(BillingContract::class, static function (MockInterface $mock): void {
@@ -44,16 +44,16 @@ class CheckOrganizationBlockedMiddlewareTest extends MiddlewareTestAbstract
         });
         Passport::actingAs($user->user);
 
-        // Act
+        /* Act */
         $response = $this->get('/test-route/' . Str::uuid());
 
-        // Assert
+        /* Assert */
         $response->assertStatus(404);
     }
 
     public function test_request_fails_on_route_without_organization_model_binding(): void
     {
-        // Arrange
+        /* Arrange */
         $user  = $this->createUserWithPermission();
         $route = $this->createTestRouteNoModelBinding();
         $this->mock(BillingContract::class, static function (MockInterface $mock): void {
@@ -61,16 +61,16 @@ class CheckOrganizationBlockedMiddlewareTest extends MiddlewareTestAbstract
         });
         Passport::actingAs($user->user);
 
-        // Act
+        /* Act */
         $response = $this->get($route);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(500);
     }
 
     public function test_request_succeeds_if_organization_is_not_blocked_by_the_billing_system(): void
     {
-        // Arrange
+        /* Arrange */
         $user = $this->createUserWithPermission();
         $this->createTestRoute();
         $this->mock(BillingContract::class, static function (MockInterface $mock): void {
@@ -78,10 +78,10 @@ class CheckOrganizationBlockedMiddlewareTest extends MiddlewareTestAbstract
         });
         Passport::actingAs($user->user);
 
-        // Act
+        /* Act */
         $response = $this->get('/test-route/' . $user->organization->getKey());
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $response->assertJson(['message' => 'Test route', 'id' => $user->organization->getKey()]);
     }

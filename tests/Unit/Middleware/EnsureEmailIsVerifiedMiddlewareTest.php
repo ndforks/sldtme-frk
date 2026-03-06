@@ -12,70 +12,70 @@ class EnsureEmailIsVerifiedMiddlewareTest extends MiddlewareTestAbstract
 {
     public function test_guests_are_redirected_to_verification_notice_route(): void
     {
-        // Arrange
+        /* Arrange */
         $route = $this->createTestRoute();
 
-        // Act
+        /* Act */
         $response = $this->get($route);
 
-        // Assert
+        /* Assert */
         $response->assertRedirect(route('verification.notice'));
     }
 
     public function test_users_with_unverified_email_are_redirected_to_verification_notice_route(): void
     {
-        // Arrange
+        /* Arrange */
         $user  = User::factory()->unverified()->create();
         $route = $this->createTestRoute();
         $this->actingAs($user);
 
-        // Act
+        /* Act */
         $response = $this->get($route);
 
-        // Assert
+        /* Assert */
         $response->assertRedirect(route('verification.notice'));
     }
 
     public function test_users_with_unverified_email_get_error_if_the_request_is_json(): void
     {
-        // Arrange
+        /* Arrange */
         $user  = User::factory()->unverified()->create();
         $route = $this->createTestRoute();
         $this->actingAs($user);
 
-        // Act
+        /* Act */
         $response = $this->getJson($route);
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
     }
 
     public function test_users_with_verified_email_can_access_route(): void
     {
-        // Arrange
+        /* Arrange */
         $user  = User::factory()->create();
         $route = $this->createTestRoute();
         $this->actingAs($user);
 
-        // Act
+        /* Act */
         $response = $this->get($route);
 
-        // Assert
+        /* Assert */
         $response->assertOk();
     }
 
     public function test_users_with_unverified_email_can_access_route_in_local_environment(): void
     {
-        // Arrange
+        /* Arrange */
         $user  = User::factory()->unverified()->create();
         $route = $this->createTestRoute();
         $this->actingAs($user);
         $this->app->detectEnvironment(fn () => 'local');
 
-        // Act
+        /* Act */
         $response = $this->get($route);
 
-        // Assert
+        /* Assert */
         $response->assertOk();
     }
 

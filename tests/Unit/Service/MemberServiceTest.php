@@ -29,16 +29,16 @@ class MemberServiceTest extends TestCaseWithDatabase
 
     public function test_change_ownership_fails_if_member_is_not_part_of_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $organization      = Organization::factory()->create();
         $otherOrganization = Organization::factory()->create();
         $newOwner          = Member::factory()->forOrganization($otherOrganization)->create();
 
-        // Act
+        /* Act */
         $this->expectException(InvalidArgumentException::class);
         $this->memberService->changeOwnership($organization, $newOwner);
 
-        // Assert
+        /* Assert */
         $this->assertDatabaseHas(Organization::class, [
             'id'      => $organization->getKey(),
             'user_id' => null,
@@ -53,10 +53,10 @@ class MemberServiceTest extends TestCaseWithDatabase
         $newOwnerMember = Member::factory()->forUser($newOwner)->forOrganization($organization)->role(Role::Admin)->create();
         $oldOwnerMember = Member::factory()->forUser($oldOwner)->forOrganization($organization)->role(Role::Owner)->create();
 
-        // Act
+        /* Act */
         $this->memberService->changeOwnership($organization, $newOwnerMember);
 
-        // Assert
+        /* Assert */
         $this->assertSame($newOwner->getKey(), $organization->refresh()->user_id);
         $this->assertSame(Role::Owner->value, $newOwnerMember->refresh()->role);
         $this->assertSame(Role::Admin->value, $oldOwnerMember->refresh()->role);
@@ -64,7 +64,7 @@ class MemberServiceTest extends TestCaseWithDatabase
 
     public function test_make_member_to_placeholder_creates_new_user_based_on_member_and_changes_member_to_placeholder(): void
     {
-        // Arrange
+        /* Arrange */
         $user          = User::factory()->create();
         $organization  = Organization::factory()->create();
         $member        = Member::factory()->forOrganization($organization)->forUser($user)->role(Role::Employee)->create();
@@ -79,10 +79,10 @@ class MemberServiceTest extends TestCaseWithDatabase
         $otherProject       = Project::factory()->forOrganization($otherOrganization)->create();
         $otherProjectMember = ProjectMember::factory()->forProject($otherProject)->forMember($otherMember)->create();
 
-        // Act
+        /* Act */
         $this->memberService->makeMemberToPlaceholder($member);
 
-        // Assert
+        /* Assert */
         $member->refresh();
         $timeEntry->refresh();
         $projectMember->refresh();
@@ -112,15 +112,15 @@ class MemberServiceTest extends TestCaseWithDatabase
 
     public function test_make_member_to_placeholder_resets_current_organization_of_user_if_user_is_no_longer_member_to_newly_created_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $user         = User::factory()->forCurrentOrganization($organization)->create();
         $member       = Member::factory()->forOrganization($organization)->forUser($user)->role(Role::Employee)->create();
 
-        // Act
+        /* Act */
         $this->memberService->makeMemberToPlaceholder($member);
 
-        // Assert
+        /* Assert */
         $user->refresh();
         $this->assertNotNull($user->current_team_id);
         $this->assertNotSame($organization->id, $user->current_team_id);
@@ -128,7 +128,7 @@ class MemberServiceTest extends TestCaseWithDatabase
 
     public function test_make_member_to_placeholder_resets_current_organization_of_user_if_user_is_no_longer_member_to_already_existing_other_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $user         = User::factory()->forCurrentOrganization($organization)->create();
         $member       = Member::factory()->forOrganization($organization)->forUser($user)->role(Role::Employee)->create();
@@ -136,10 +136,10 @@ class MemberServiceTest extends TestCaseWithDatabase
         $otherOrganization = Organization::factory()->create();
         $otherMember       = Member::factory()->forOrganization($otherOrganization)->forUser($user)->role(Role::Employee)->create();
 
-        // Act
+        /* Act */
         $this->memberService->makeMemberToPlaceholder($member);
 
-        // Assert
+        /* Assert */
         $user->refresh();
         $this->assertNotNull($user->current_team_id);
         $this->assertSame($otherOrganization->id, $user->current_team_id);
@@ -147,7 +147,7 @@ class MemberServiceTest extends TestCaseWithDatabase
 
     public function test_assign_organization_entities_to_different_member_without_any_entries(): void
     {
-        // Arrange
+        /* Arrange */
         $organization    = Organization::factory()->create();
         $project         = Project::factory()->forOrganization($organization)->create();
         $otherUser       = User::factory()->create();
@@ -161,10 +161,10 @@ class MemberServiceTest extends TestCaseWithDatabase
         ProjectMember::factory()->forProject($project)->forMember($otherUserMember)->create();
         ProjectMember::factory()->forProject($project)->forMember($fromUserMember)->create();
 
-        // Act
+        /* Act */
         $this->memberService->assignOrganizationEntitiesToDifferentMember($organization, $fromUserMember, $toUserMember);
 
-        // Assert
+        /* Assert */
         $this->assertSame(3, TimeEntry::query()->whereBelongsTo($toUser, 'user')->count());
         $this->assertSame(3, TimeEntry::query()->whereBelongsTo($otherUser, 'user')->count());
         $this->assertSame(0, TimeEntry::query()->whereBelongsTo($fromUser, 'user')->count());
@@ -182,7 +182,7 @@ class MemberServiceTest extends TestCaseWithDatabase
 
     public function test_assign_organization_entities_to_different_member_with_entries(): void
     {
-        // Arrange
+        /* Arrange */
         $organization    = Organization::factory()->create();
         $project         = Project::factory()->forOrganization($organization)->create();
         $otherUser       = User::factory()->create();
@@ -204,10 +204,10 @@ class MemberServiceTest extends TestCaseWithDatabase
             'billable_rate' => 3,
         ]);
 
-        // Act
+        /* Act */
         $this->memberService->assignOrganizationEntitiesToDifferentMember($organization, $fromUserMember, $toUserMember);
 
-        // Assert
+        /* Assert */
         $this->assertSame(6, TimeEntry::query()->whereBelongsTo($toUser, 'user')->count());
         $this->assertSame(3, TimeEntry::query()->whereBelongsTo($otherUser, 'user')->count());
         $this->assertSame(0, TimeEntry::query()->whereBelongsTo($fromUser, 'user')->count());

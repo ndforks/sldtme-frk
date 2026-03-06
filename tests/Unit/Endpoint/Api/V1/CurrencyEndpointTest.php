@@ -12,12 +12,12 @@ class CurrencyEndpointTest extends ApiEndpointTestAbstract
 {
     public function test_index_return_list_of_available_currencies_incl_symbol(): void
     {
-        // Arrange
+        /* Arrange */
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.currencies.index'));
 
-        // Assert
+        /* Assert */
         $response->assertOk();
         $response->assertJsonCount(166);
         $responseObj = collect($response->json());

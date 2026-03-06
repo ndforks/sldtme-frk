@@ -28,30 +28,30 @@ class AuditResourceTest extends FilamentTestCase
 
     public function test_can_list_audits(): void
     {
-        // Arrange
+        /* Arrange */
         $user      = $this->createUserWithPermission();
         $timeEntry = TimeEntry::factory()->forMember($user->member)->create();
         DB::table((new Audit())->getTable())->delete();
         $audits = Audit::factory()->auditFor($timeEntry)->auditUser($user->user)->createMany(5);
 
-        // Act
+        /* Act */
         $response = Livewire::test(Audits\Pages\ListAudits::class);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertCanSeeTableRecords($audits);
     }
 
     public function test_can_see_view_page_of_audit(): void
     {
-        // Arrange
+        /* Arrange */
         DB::table((new Audit())->getTable())->delete();
         $audit = Audit::factory()->create();
 
-        // Act
+        /* Act */
         $response = Livewire::test(Audits\Pages\ViewAudit::class, ['record' => $audit->getKey()]);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
     }
 }

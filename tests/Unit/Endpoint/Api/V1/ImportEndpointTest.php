@@ -16,30 +16,30 @@ class ImportEndpointTest extends ApiEndpointTestAbstract
 {
     public function test_index_fails_if_user_does_not_have_permission(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission();
 
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.import.index', ['organization' => $data->organization->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
     }
 
     public function test_index_returns_importers_if_user_has_permission(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'import',
         ]);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.import.index', ['organization' => $data->organization->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertOk();
         $response->assertJsonStructure([
             'data' => [
@@ -58,37 +58,37 @@ class ImportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_import_fails_if_user_does_not_have_permission(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission();
 
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.import.import', ['organization' => $data->organization->getKey()]), [
             'type'    => 'toggl_time_entries',
             'data'    => base64_encode('some data'),
             'options' => [],
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
     }
 
     public function test_import_fails_if_data_can_not_be_base64_decoded(): void
     {
-        // Arrange
+        /* Arrange */
         $user = $this->createUserWithPermission([
             'import',
         ]);
         Passport::actingAs($user->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.import.import', ['organization' => $user->organization->getKey()]), [
             'type' => 'toggl_time_entries',
             'data' => 'some invalid data ...',
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(400);
         $response->assertExactJson([
             'message' => 'Invalid base64 encoded data',
@@ -97,7 +97,7 @@ class ImportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_import_return_error_message_if_import_fails(): void
     {
-        // Arrange
+        /* Arrange */
         $user = $this->createUserWithPermission([
             'import',
         ]);
@@ -111,13 +111,13 @@ class ImportEndpointTest extends ApiEndpointTestAbstract
         });
         Passport::actingAs($user->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.import.import', ['organization' => $user->organization->getKey()]), [
             'type' => 'toggl_time_entries',
             'data' => base64_encode('some data'),
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(400);
         $response->assertExactJson([
             'message' => 'This is a test error!',
@@ -126,7 +126,7 @@ class ImportEndpointTest extends ApiEndpointTestAbstract
 
     public function test_import_calls_import_service_if_user_has_permission(): void
     {
-        // Arrange
+        /* Arrange */
         $user = $this->createUserWithPermission([
             'import',
         ]);
@@ -147,13 +147,13 @@ class ImportEndpointTest extends ApiEndpointTestAbstract
         });
         Passport::actingAs($user->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.import.import', ['organization' => $user->organization->getKey()]), [
             'type' => 'toggl_time_entries',
             'data' => base64_encode('some data'),
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $response->assertExactJson([
             'report' => [

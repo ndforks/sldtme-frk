@@ -12,68 +12,68 @@ class ReportModelTest extends ModelTestAbstract
 {
     public function test_it_belongs_to_a_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $report       = Report::factory()->forOrganization($organization)->create();
 
-        // Act
+        /* Act */
         $report->refresh();
         $organizationRel = $report->organization;
 
-        // Assert
+        /* Assert */
         $this->assertNotNull($organizationRel);
         $this->assertTrue($organizationRel->is($organization));
     }
 
     public function test_shareable_link_is_null_when_report_is_private_but_share_secret_exists(): void
     {
-        // Arrange
+        /* Arrange */
         $report = Report::factory()->private()->create([
             'share_secret' => app(ReportService::class)->generateSecret(),
         ]);
 
-        // Act
+        /* Act */
         $report->refresh();
 
-        // Assert
+        /* Assert */
         $this->assertNull($report->getShareableLink());
     }
 
     public function test_shareable_link_is_null_when_report_is_public_but_share_secret_is_null(): void
     {
-        // Arrange
+        /* Arrange */
         $report = Report::factory()->public()->create([
             'share_secret' => null,
         ]);
 
-        // Act
+        /* Act */
         $report->refresh();
 
-        // Assert
+        /* Assert */
         $this->assertNull($report->getShareableLink());
     }
 
     public function test_shareable_link_is_null_when_report_is_public(): void
     {
-        // Arrange
+        /* Arrange */
         $report = Report::factory()->public()->create();
 
-        // Act
+        /* Act */
         $report->refresh();
 
-        // Assert
+        /* Assert */
         $this->assertNotNull($report->getShareableLink());
     }
 
     public function test_shareable_link_is_url_to_web_endpoint_when_report_is_public(): void
     {
-        // Arrange
+        /* Arrange */
         $report = Report::factory()->public()->create();
 
-        // Act
+        /* Act */
         $report->refresh();
 
-        // Assert
+        /* Assert */
         $this->assertSame(url('/shared-report#' . $report->share_secret), $report->getShareableLink());
     }
 }

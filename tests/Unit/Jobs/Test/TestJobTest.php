@@ -13,15 +13,15 @@ class TestJobTest extends TestCaseWithDatabase
 {
     public function test_logs_debug_message(): void
     {
-        // Arrange
+        /* Arrange */
         $user    = User::factory()->create();
         $message = 'Test message';
         $job     = new TestJob($user, $message);
 
-        // Act
+        /* Act */
         $job->handle();
 
-        // Assert
+        /* Assert */
         Log::assertLoggedTimes(
             fn (LogEntry $log) => $log->level === 'debug'
             && $log->message === 'TestJob: ' . $message
@@ -32,16 +32,16 @@ class TestJobTest extends TestCaseWithDatabase
 
     public function test_can_fail_if_parameter_fail_is_true(): void
     {
-        // Arrange
+        /* Arrange */
         $user    = User::factory()->create();
         $message = 'Test message';
         $job     = new TestJob($user, $message, true);
 
-        // Act
+        /* Act */
         try {
             $job->handle();
         } catch (Exception $e) {
-            // Assert
+            /* Assert */
             $this->assertEquals('TestJob failed.', $e->getMessage());
 
             return;

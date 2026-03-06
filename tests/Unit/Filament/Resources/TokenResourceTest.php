@@ -27,31 +27,31 @@ class TokenResourceTest extends FilamentTestCase
 
     public function test_can_list_tokens(): void
     {
-        // Arrange
+        /* Arrange */
         $client = Client::factory()->create();
         $tokens = Token::factory()->forClient($client)->createMany(5);
 
-        // Act
+        /* Act */
         $response = Livewire::test(Tokens\Pages\ListTokens::class);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertCanSeeTableRecords($tokens);
     }
 
     public function test_list_tokens_with_filter_is_personal_access_client_true(): void
     {
-        // Arrange
+        /* Arrange */
         $client               = Client::factory()->create();
         $personalAccessClient = Client::factory()->personalAccessClient()->create();
         $tokens               = Token::factory()->forClient($client)->createMany(5);
         $personalAccessTokens = Token::factory()->forClient($personalAccessClient)->createMany(5);
 
-        // Act
+        /* Act */
         $response = Livewire::test(Tokens\Pages\ListTokens::class)
             ->filterTable('is_personal_access_client', true);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertCountTableRecords(5);
         $response->assertCanSeeTableRecords($personalAccessTokens);
@@ -60,17 +60,17 @@ class TokenResourceTest extends FilamentTestCase
 
     public function test_list_tokens_with_filter_is_personal_access_client_false(): void
     {
-        // Arrange
+        /* Arrange */
         $client               = Client::factory()->create();
         $personalAccessClient = Client::factory()->personalAccessClient()->create();
         $tokens               = Token::factory()->forClient($client)->createMany(5);
         $personalAccessTokens = Token::factory()->forClient($personalAccessClient)->createMany(5);
 
-        // Act
+        /* Act */
         $response = Livewire::test(Tokens\Pages\ListTokens::class)
             ->filterTable('is_personal_access_client', false);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertCountTableRecords(5);
         $response->assertCanSeeTableRecords($tokens);
@@ -79,14 +79,14 @@ class TokenResourceTest extends FilamentTestCase
 
     public function test_can_see_view_page_of_token(): void
     {
-        // Arrange
+        /* Arrange */
         $client = Client::factory()->create();
         $token  = Token::factory()->forClient($client)->create();
 
-        // Act
+        /* Act */
         $response = Livewire::test(Tokens\Pages\ViewToken::class, ['record' => $token->getKey()]);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
     }
 }

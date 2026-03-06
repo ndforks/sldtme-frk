@@ -12,32 +12,32 @@ class ClientModelTest extends ModelTestAbstract
 {
     public function test_it_belongs_to_a_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $client       = Client::factory()->forOrganization($organization)->create();
 
-        // Act
+        /* Act */
         $client->refresh();
         $organizationRel = $client->organization;
 
-        // Assert
+        /* Assert */
         $this->assertNotNull($organizationRel);
         $this->assertTrue($organizationRel->is($organization));
     }
 
     public function test_it_has_many_projects(): void
     {
-        // Arrange
+        /* Arrange */
         $client              = Client::factory()->create();
         $otherClient         = Client::factory()->create();
         $projects            = Project::factory()->forClient($client)->createMany(4);
         $projectsOtherClient = Project::factory()->forClient($otherClient)->createMany(4);
 
-        // Act
+        /* Act */
         $client->refresh();
         $projectsRel = $client->projects;
 
-        // Assert
+        /* Assert */
         $this->assertNotNull($projectsRel);
         $this->assertCount(4, $projectsRel);
         $this->assertTrue($projectsRel->first()->is($projects->first()));
@@ -45,27 +45,27 @@ class ClientModelTest extends ModelTestAbstract
 
     public function test_accessor_is_archived_is_true_if_archived_at_is_not_null(): void
     {
-        // Arrange
+        /* Arrange */
         $client = Client::factory()->archived()->create();
 
-        // Act
+        /* Act */
         $client->refresh();
         $isArchived = $client->is_archived;
 
-        // Assert
+        /* Assert */
         $this->assertTrue($isArchived);
     }
 
     public function test_accessor_is_archived_is_false_if_archived_at_is_null(): void
     {
-        // Arrange
+        /* Arrange */
         $client = Client::factory()->create();
 
-        // Act
+        /* Act */
         $client->refresh();
         $isArchived = $client->is_archived;
 
-        // Assert
+        /* Assert */
         $this->assertFalse($isArchived);
     }
 }

@@ -20,13 +20,13 @@ class SolidtimeImporterTest extends ImporterTestAbstract
 {
     public function test_import_throws_exception_if_data_is_not_zip(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $timezone     = 'Europe/Vienna';
         $importer     = new SolidtimeImporter();
         $importer->init($organization);
 
-        // Act
+        /* Act */
         try {
             $importer->importData('not a zip', $timezone);
         } catch (Exception $e) {
@@ -40,7 +40,7 @@ class SolidtimeImporterTest extends ImporterTestAbstract
 
     public function test_import_of_test_file_succeeds(): void
     {
-        // Arrange
+        /* Arrange */
         $zipPath      = $this->createTestZip('solidtime_import_test_1');
         $timezone     = 'Europe/Vienna';
         $organization = Organization::factory()->create();
@@ -52,14 +52,14 @@ class SolidtimeImporterTest extends ImporterTestAbstract
             RecalculateSpentTimeForTask::class,
         ]);
 
-        // Act
+        /* Act */
         DB::enableQueryLog();
         DB::flushQueryLog();
         $importer->importData($data, $timezone);
         $report   = $importer->getReport();
         $queryLog = DB::getQueryLog();
 
-        // Assert
+        /* Assert */
         $this->assertCount(25, $queryLog);
         $testScenario = $this->checkTestScenarioAfterImportExcludingTimeEntries(true);
         $this->checkTimeEntries($testScenario);
@@ -75,7 +75,7 @@ class SolidtimeImporterTest extends ImporterTestAbstract
 
     public function test_import_of_test_file_twice_succeeds(): void
     {
-        // Arrange
+        /* Arrange */
         $zipPath      = $this->createTestZip('solidtime_import_test_1');
         $timezone     = 'Europe/Vienna';
         $organization = Organization::factory()->create();
@@ -90,14 +90,14 @@ class SolidtimeImporterTest extends ImporterTestAbstract
             RecalculateSpentTimeForTask::class,
         ]);
 
-        // Act
+        /* Act */
         DB::enableQueryLog();
         DB::flushQueryLog();
         $importer->importData($data, $timezone);
         $report   = $importer->getReport();
         $queryLog = DB::getQueryLog();
 
-        // Assert
+        /* Assert */
         $this->assertCount(13, $queryLog);
         $testScenario = $this->checkTestScenarioAfterImportExcludingTimeEntries(true);
         $this->checkTimeEntries($testScenario, true);

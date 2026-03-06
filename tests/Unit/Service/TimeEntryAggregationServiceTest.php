@@ -27,10 +27,10 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
 
     public function test_aggregate_time_entries_empty_state_by_day_and_project_returns_empty_array_if_no_time_entries_given(): void
     {
-        // Arrange
+        /* Arrange */
         $query = TimeEntry::query();
 
-        // Act
+        /* Act */
         $result = $this->service->getAggregatedTimeEntries(
             $query,
             TimeEntryAggregationType::Day,
@@ -45,7 +45,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
             null
         );
 
-        // Assert
+        /* Assert */
         $this->assertSame([
             'seconds'      => 0,
             'cost'         => 0,
@@ -56,7 +56,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
 
     public function test_aggregate_time_entries_by_project_and_description(): void
     {
-        // Arrange
+        /* Arrange */
         $project1 = Project::factory()->create([
             // Note: To ensure deterministic order
             'id' => '5de4e6df-9560-4675-95be-18d42c441bfc',
@@ -79,7 +79,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
         ]);
         $query = TimeEntry::query();
 
-        // Act
+        /* Act */
         $result = $this->service->getAggregatedTimeEntries(
             $query,
             TimeEntryAggregationType::Project,
@@ -94,7 +94,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
             null
         );
 
-        // Assert
+        /* Assert */
         $this->assertSame([
             'seconds'      => 40,
             'cost'         => 0,
@@ -143,7 +143,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
 
     public function test_aggregate_time_entries_without_billable_amounts(): void
     {
-        // Arrange
+        /* Arrange */
         $project1 = Project::factory()->create([
             // Note: To ensure deterministic order
             'id' => '5de4e6df-9560-4675-95be-18d42c441bfc',
@@ -166,7 +166,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
         ]);
         $query = TimeEntry::query();
 
-        // Act
+        /* Act */
         $result = $this->service->getAggregatedTimeEntries(
             $query,
             TimeEntryAggregationType::Project,
@@ -181,7 +181,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
             null
         );
 
-        // Assert
+        /* Assert */
         $this->assertSame([
             'seconds'      => 40,
             'cost'         => null,
@@ -230,11 +230,11 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
 
     public function test_aggregate_time_entries_empty_state_by_day_and_project_with_filled_gaps(): void
     {
-        // Arrange
+        /* Arrange */
         $timezone = 'Europe/Vienna';
         $query    = TimeEntry::query();
 
-        // Act
+        /* Act */
         $result = $this->service->getAggregatedTimeEntries(
             $query,
             TimeEntryAggregationType::Day,
@@ -249,7 +249,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
             null
         );
 
-        // Assert
+        /* Assert */
         $this->assertSame([
             'seconds'      => 0,
             'cost'         => 0,
@@ -275,10 +275,10 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
 
     public function test_aggregate_time_entries_empty_state_by_user_and_project_with_filled_gaps(): void
     {
-        // Arrange
+        /* Arrange */
         $query = TimeEntry::query();
 
-        // Act
+        /* Act */
         $result = $this->service->getAggregatedTimeEntries(
             $query,
             TimeEntryAggregationType::User,
@@ -293,7 +293,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
             null
         );
 
-        // Assert
+        /* Assert */
         $this->assertSame([
             'seconds'      => 0,
             'cost'         => 0,
@@ -304,10 +304,10 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
 
     public function test_aggregate_time_entries_empty_state_by_user_and_day_with_filled_gaps(): void
     {
-        // Arrange
+        /* Arrange */
         $query = TimeEntry::query();
 
-        // Act
+        /* Act */
         $result = $this->service->getAggregatedTimeEntries(
             $query,
             TimeEntryAggregationType::User,
@@ -322,7 +322,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
             null
         );
 
-        // Assert
+        /* Assert */
         $this->assertSame([
             'seconds'      => 0,
             'cost'         => 0,
@@ -333,7 +333,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
 
     public function test_aggregate_time_entries_by_client_and_project(): void
     {
-        // Arrange
+        /* Arrange */
         $client1  = Client::factory()->create();
         $client2  = Client::factory()->create();
         $project1 = Project::factory()->forClient($client1)->create();
@@ -345,7 +345,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
         TimeEntry::factory()->startWithDuration(now(), 10)->create();
         $query = TimeEntry::query();
 
-        // Act
+        /* Act */
         $result = $this->service->getAggregatedTimeEntries(
             $query,
             TimeEntryAggregationType::Client,
@@ -360,7 +360,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
             null
         );
 
-        // Assert
+        /* Assert */
         $this->assertEqualsCanonicalizing([
             'seconds'      => 40,
             'cost'         => 0,
@@ -424,7 +424,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
 
     public function test_aggregate_time_can_round_up_per_time_entry(): void
     {
-        // Arrange
+        /* Arrange */
         $client1  = Client::factory()->create();
         $client2  = Client::factory()->create();
         $project1 = Project::factory()->forClient($client1)->create();
@@ -443,7 +443,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
             ->create();
         $query = TimeEntry::query();
 
-        // Act
+        /* Act */
         $result = $this->service->getAggregatedTimeEntries(
             $query,
             TimeEntryAggregationType::Client,
@@ -458,7 +458,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
             15
         );
 
-        // Assert
+        /* Assert */
         $this->assertEqualsCanonicalizing([
             'seconds'      => 4500,
             'cost'         => 0,
@@ -522,7 +522,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
 
     public function test_aggregate_time_can_round_down_per_time_entry(): void
     {
-        // Arrange
+        /* Arrange */
         $client1  = Client::factory()->create();
         $client2  = Client::factory()->create();
         $project1 = Project::factory()->forClient($client1)->create();
@@ -541,7 +541,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
             ->create();
         $query = TimeEntry::query();
 
-        // Act
+        /* Act */
         $result = $this->service->getAggregatedTimeEntries(
             $query,
             TimeEntryAggregationType::Client,
@@ -556,7 +556,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
             15
         );
 
-        // Assert
+        /* Assert */
         $this->assertEqualsCanonicalizing([
             'seconds'      => 1800,
             'cost'         => 0,
@@ -620,7 +620,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
 
     public function test_aggregate_time_can_round_to_nearest_per_time_entry(): void
     {
-        // Arrange
+        /* Arrange */
         $client1  = Client::factory()->create();
         $client2  = Client::factory()->create();
         $project1 = Project::factory()->forClient($client1)->create();
@@ -639,7 +639,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
             ->create();
         $query = TimeEntry::query();
 
-        // Act
+        /* Act */
         $result = $this->service->getAggregatedTimeEntries(
             $query,
             TimeEntryAggregationType::Client,
@@ -654,7 +654,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
             15
         );
 
-        // Assert
+        /* Assert */
         $this->assertEqualsCanonicalizing([
             'seconds'      => 3600,
             'cost'         => 0,
@@ -720,7 +720,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
 
     public function test_aggregate_time_entries_by_client_and_project_with_filled_gaps(): void
     {
-        // Arrange
+        /* Arrange */
         $client1  = Client::factory()->create();
         $client2  = Client::factory()->create();
         $project1 = Project::factory()->forClient($client1)->create();
@@ -732,7 +732,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
         TimeEntry::factory()->startWithDuration(now(), 10)->create();
         $query = TimeEntry::query();
 
-        // Act
+        /* Act */
         $result = $this->service->getAggregatedTimeEntries(
             $query,
             TimeEntryAggregationType::Client,
@@ -747,7 +747,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
             null
         );
 
-        // Assert
+        /* Assert */
         $this->assertEqualsCanonicalizing([
             'seconds'      => 40,
             'cost'         => 0,
@@ -811,7 +811,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
 
     public function test_aggregated_time_entries_with_descriptions_by_description_and_billable(): void
     {
-        // Arrange
+        /* Arrange */
         TimeEntry::factory()->startWithDuration(now(), 10)->create([
             'description' => 'TEST 1',
             'billable'    => true,
@@ -830,7 +830,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
         ]);
         $query = TimeEntry::query();
 
-        // Act
+        /* Act */
         $result = $this->service->getAggregatedTimeEntriesWithDescriptions(
             $query,
             TimeEntryAggregationType::Description,
@@ -845,7 +845,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
             null,
         );
 
-        // Assert
+        /* Assert */
         $this->assertSame([
             'seconds'      => 40,
             'cost'         => 0,
@@ -904,7 +904,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
 
     public function test_aggregated_time_entries_with_descriptions_by_client_and_project(): void
     {
-        // Arrange
+        /* Arrange */
         $client1  = Client::factory()->create();
         $client2  = Client::factory()->create();
         $project1 = Project::factory()->forClient($client1)->create();
@@ -916,7 +916,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
         TimeEntry::factory()->startWithDuration(now(), 10)->create();
         $query = TimeEntry::query();
 
-        // Act
+        /* Act */
         $result = $this->service->getAggregatedTimeEntriesWithDescriptions(
             $query,
             TimeEntryAggregationType::Client,
@@ -931,7 +931,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
             null,
         );
 
-        // Assert
+        /* Assert */
         $this->assertEqualsCanonicalizing([
             'seconds'      => 40,
             'cost'         => 0,
@@ -1009,7 +1009,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
 
     public function test_aggregate_time_entries_group_by_tag_includes_no_tag_and_avoids_double_counting_overall(): void
     {
-        // Arrange
+        /* Arrange */
         $tag1  = Tag::factory()->create();
         $tag2  = Tag::factory()->create();
         $start = Carbon::now();
@@ -1029,7 +1029,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
 
         $query = TimeEntry::query();
 
-        // Act
+        /* Act */
         $result = $this->service->getAggregatedTimeEntries(
             $query,
             TimeEntryAggregationType::Tag,
@@ -1044,7 +1044,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
             null
         );
 
-        // Assert - overall total should be 175 and groups: null=25, tag1=150, tag2=100
+        /* Assert */ - overall total should be 175 and groups: null=25, tag1=150, tag2=100
         $expected = [
             'seconds'      => 175,
             'cost'         => 0,
@@ -1078,7 +1078,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
 
     public function test_aggregate_time_entries_group_by_project_and_subgroup_tag(): void
     {
-        // Arrange
+        /* Arrange */
         $project = Project::factory()->create();
         $tag1    = Tag::factory()->create();
         $tag2    = Tag::factory()->create();
@@ -1093,7 +1093,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
 
         $query = TimeEntry::query();
 
-        // Act
+        /* Act */
         $result = $this->service->getAggregatedTimeEntries(
             $query,
             TimeEntryAggregationType::Project,
@@ -1108,7 +1108,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
             null
         );
 
-        // Assert
+        /* Assert */
         $expected = [
             'seconds'      => 180,
             'cost'         => 0,
@@ -1143,7 +1143,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
 
     public function test_aggregate_time_entries_group_by_project_and_subgroup_tag_avoids_double_counting(): void
     {
-        // Arrange
+        /* Arrange */
         $project = Project::factory()->create();
         $tag1    = Tag::factory()->create();
         $tag2    = Tag::factory()->create();
@@ -1156,7 +1156,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
 
         $query = TimeEntry::query();
 
-        // Act
+        /* Act */
         $result = $this->service->getAggregatedTimeEntries(
             $query,
             TimeEntryAggregationType::Project,
@@ -1171,7 +1171,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
             null
         );
 
-        // Assert
+        /* Assert */
         $expected = [
             'seconds'      => 100,
             'cost'         => 0,
@@ -1210,7 +1210,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
      */
     public function test_aggregate_time_round_up_does_not_add_time_when_already_on_boundary(): void
     {
-        // Arrange
+        /* Arrange */
         // Create a time entry with duration exactly on a 15-minute boundary (90 minutes = 5400 seconds)
         // This simulates 13:00 - 14:30 (or any 90-minute entry)
         $project = Project::factory()->create();
@@ -1220,7 +1220,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
         )->forProject($project)->create();
         $query = TimeEntry::query();
 
-        // Act
+        /* Act */
         $result = $this->service->getAggregatedTimeEntries(
             $query,
             TimeEntryAggregationType::Project,
@@ -1235,7 +1235,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
             15
         );
 
-        // Assert
+        /* Assert */
         // The entry is already on a 15-minute boundary (90 minutes), so it should stay at 90 minutes (5400 seconds)
         $this->assertEqualsCanonicalizing([
             'seconds'      => 5400, // 90 minutes - should NOT be rounded to 105 minutes (6300 seconds)
@@ -1259,7 +1259,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
      */
     public function test_aggregate_time_round_up_works_when_not_on_boundary(): void
     {
-        // Arrange
+        /* Arrange */
         // Create a time entry with duration NOT on a 15-minute boundary (48 minutes = 2880 seconds)
         $project = Project::factory()->create();
         TimeEntry::factory()->startWithDuration(
@@ -1268,7 +1268,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
         )->forProject($project)->create();
         $query = TimeEntry::query();
 
-        // Act
+        /* Act */
         $result = $this->service->getAggregatedTimeEntries(
             $query,
             TimeEntryAggregationType::Project,
@@ -1283,7 +1283,7 @@ class TimeEntryAggregationServiceTest extends TestCaseWithDatabase
             15
         );
 
-        // Assert
+        /* Assert */
         // 48 minutes rounded up to 15-minute interval = 60 minutes (3600 seconds)
         $this->assertEqualsCanonicalizing([
             'seconds'      => 3600, // 60 minutes

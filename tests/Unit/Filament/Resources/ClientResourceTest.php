@@ -26,26 +26,26 @@ class ClientResourceTest extends FilamentTestCase
 
     public function test_can_list_clients(): void
     {
-        // Arrange
+        /* Arrange */
         $clients = Client::factory()->createMany(5);
 
-        // Act
+        /* Act */
         $response = Livewire::test(Clients\Pages\ListClients::class);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertCanSeeTableRecords($clients);
     }
 
     public function test_can_see_edit_page_of_client(): void
     {
-        // Arrange
+        /* Arrange */
         $client = Client::factory()->create();
 
-        // Act
+        /* Act */
         $response = Livewire::test(Clients\Pages\EditClient::class, ['record' => $client->getKey()]);
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
     }
 }

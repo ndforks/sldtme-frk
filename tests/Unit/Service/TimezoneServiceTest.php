@@ -17,13 +17,13 @@ class TimezoneServiceTest extends TestCase
 
     public function test_get_timezones_returns_all_available_timezones(): void
     {
-        // Arrange
+        /* Arrange */
         $service = app(TimezoneService::class);
 
-        // Act
+        /* Act */
         $result = $service->getTimezones();
 
-        // Assert
+        /* Assert */
         $this->assertIsArray($result);
         $this->assertTrue(in_array(count($result), [418, 419], true));
         $this->assertContains('Europe/Vienna', $result);
@@ -33,7 +33,7 @@ class TimezoneServiceTest extends TestCase
 
     public function test_get_timezone_from_user_returns_timezone_of_user_as_carbon_timezone(): void
     {
-        // Arrange
+        /* Arrange */
         $user = User::factory()->create([
             'timezone' => 'Europe/Berlin',
         ]);
@@ -41,16 +41,16 @@ class TimezoneServiceTest extends TestCase
         /** @var TimezoneService $service */
         $service = app(TimezoneService::class);
 
-        // Act
+        /* Act */
         $result = $service->getTimezoneFromUser($user);
 
-        // Assert
+        /* Assert */
         $this->assertEquals('Europe/Berlin', $result->getName());
     }
 
     public function test_get_timezone_from_user_falls_back_to_utc_and_logs_this_failure_if_timezone_in_db_is_corrupt(): void
     {
-        // Arrange
+        /* Arrange */
         $corruptTimezone = 'Invalid/Timezone';
         $user            = User::factory()->create([
             'timezone' => $corruptTimezone,
@@ -59,10 +59,10 @@ class TimezoneServiceTest extends TestCase
         /** @var TimezoneService $service */
         $service = app(TimezoneService::class);
 
-        // Act
+        /* Act */
         $result = $service->getTimezoneFromUser($user);
 
-        // Assert
+        /* Assert */
         $this->assertEquals('UTC', $result->getName());
         Log::assertLogged(
             fn (LogEntry $log) => $log->level === 'error'

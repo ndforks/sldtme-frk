@@ -15,21 +15,21 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
 {
     public function test_index_endpoint_fails_if_user_has_no_permission_to_view_clients(): void
     {
-        // Arrange
+        /* Arrange */
         $data    = $this->createUserWithPermission();
         $clients = Client::factory()->forOrganization($data->organization)->createMany(4);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.clients.index', [$data->organization->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
     }
 
     public function test_index_endpoint_returns_list_of_all_clients_of_organization_ordered_by_created_at_desc_per_default(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'clients:view',
             'clients:view:all',
@@ -37,10 +37,10 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
         $clients = Client::factory()->forOrganization($data->organization)->randomCreatedAt()->createMany(4);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.clients.index', [$data->organization->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $response->assertJsonCount(4, 'data');
         $clients = Client::query()->orderBy('created_at', 'desc')->get();
@@ -59,7 +59,7 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
 
     public function test_index_endpoint_returns_list_of_clients_assigned_to_employee_user(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'clients:view',
         ]);
@@ -72,10 +72,10 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
         $projectWithoutMembership = Project::factory()->forOrganization($data->organization)->forClient($otherClients->get(0))->isPrivate()->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.clients.index', [$data->organization->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $response->assertJsonCount(2, 'data');
         $response->assertJson(
@@ -91,7 +91,7 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
 
     public function test_index_endpoint_without_filter_archived_returns_only_non_archived_clients(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'clients:view',
             'clients:view:all',
@@ -100,10 +100,10 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
         $nonArchivedClients = Client::factory()->forOrganization($data->organization)->createMany(2);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.clients.index', [$data->organization->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $response->assertJsonCount(2, 'data');
         $this->assertEqualsCanonicalizing($nonArchivedClients->pluck('id')->toArray(), $response->json('data.*.id'));
@@ -111,7 +111,7 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
 
     public function test_index_endpoint_with_filter_archived_true_returns_only_archived_clients(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'clients:view',
             'clients:view:all',
@@ -120,13 +120,13 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
         $nonArchivedClients = Client::factory()->forOrganization($data->organization)->createMany(2);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.clients.index', [
             $data->organization->getKey(),
             'archived' => 'true',
         ]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $response->assertJsonCount(2, 'data');
         $this->assertEqualsCanonicalizing($archivedClients->pluck('id')->toArray(), $response->json('data.*.id'));
@@ -134,7 +134,7 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
 
     public function test_index_endpoint_with_filter_archived_false_returns_only_non_archived_clients(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'clients:view',
             'clients:view:all',
@@ -143,13 +143,13 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
         $nonArchivedClients = Client::factory()->forOrganization($data->organization)->createMany(2);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.clients.index', [
             $data->organization->getKey(),
             'archived' => 'false',
         ]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $response->assertJsonCount(2, 'data');
         $this->assertEqualsCanonicalizing($nonArchivedClients->pluck('id')->toArray(), $response->json('data.*.id'));
@@ -157,7 +157,7 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
 
     public function test_index_endpoint_with_filter_archived_all_returns_all_clients(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'clients:view',
             'clients:view:all',
@@ -166,13 +166,13 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
         $nonArchivedClients = Client::factory()->forOrganization($data->organization)->createMany(2);
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->getJson(route('api.v1.clients.index', [
             $data->organization->getKey(),
             'archived' => 'all',
         ]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $response->assertJsonCount(4, 'data');
         $this->assertEqualsCanonicalizing($archivedClients->merge($nonArchivedClients)->pluck('id')->toArray(), $response->json('data.*.id'));
@@ -180,34 +180,34 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
 
     public function test_store_endpoint_fails_if_user_has_no_permission_to_create_clients(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.clients.store', [$data->organization->getKey()]), [
             'name' => 'Test Client',
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
     }
 
     public function test_store_endpoint_fails_if_client_with_same_name_already_exists(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'clients:create',
         ]);
         $client = Client::factory()->forOrganization($data->organization)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.clients.store', [$data->organization->getKey()]), [
             'name' => $client->name,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(422);
         $response->assertJsonValidationErrors([
             'name' => 'A client with the same name already exists in the organization.',
@@ -217,7 +217,7 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
 
     public function test_store_endpoint_fails_if_client_with_same_name_exists_in_different_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'clients:create',
         ]);
@@ -225,31 +225,31 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
         $client            = Client::factory()->forOrganization($otherOrganization)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.clients.store', [$data->organization->getKey()]), [
             'name' => $client->name,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(201);
         $this->assertDatabaseCount(Client::class, 2);
     }
 
     public function test_store_endpoint_creates_new_client(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'clients:create',
         ]);
         $clientFake = Client::factory()->make();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->postJson(route('api.v1.clients.store', [$data->organization->getKey()]), [
             'name' => $clientFake->name,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(201);
         $response->assertJson(
             fn (AssertableJson $json) => $json
@@ -260,24 +260,24 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
 
     public function test_update_endpoint_fails_if_user_has_no_permission_to_update_clients(): void
     {
-        // Arrange
+        /* Arrange */
         $data       = $this->createUserWithPermission();
         $client     = Client::factory()->forOrganization($data->organization)->create();
         $clientFake = Client::factory()->make();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.clients.update', [$data->organization->getKey(), $client->getKey()]), [
             'name' => $clientFake->name,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
     }
 
     public function test_update_endpoint_fails_if_user_is_not_part_of_client_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'clients:update',
         ]);
@@ -286,12 +286,12 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
         $clientFake        = Client::factory()->make();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.clients.update', [$data->organization->getKey(), $client->getKey()]), [
             'name' => $clientFake->name,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
         $this->assertDatabaseHas(Client::class, [
             'id'              => $client->getKey(),
@@ -302,7 +302,7 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
 
     public function test_update_endpoint_fails_if_client_if_client_with_same_name_already_exists(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'clients:update',
         ]);
@@ -310,12 +310,12 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
         $clientFake = Client::factory()->forOrganization($data->organization)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.clients.update', [$data->organization->getKey(), $client->getKey()]), [
             'name' => $clientFake->name,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(422);
         $response->assertJsonValidationErrors([
             'name' => 'A client with the same name already exists in the organization.',
@@ -329,7 +329,7 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
 
     public function test_update_endpoint_updates_client_name_even_if_client_with_same_name_exists_in_different_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'clients:update',
         ]);
@@ -338,12 +338,12 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
         $clientSameName    = Client::factory()->forOrganization($otherOrganization)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.clients.update', [$data->organization->getKey(), $client->getKey()]), [
             'name' => $clientSameName->name,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $this->assertDatabaseHas(Client::class, [
             'id'              => $client->getKey(),
@@ -354,7 +354,7 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
 
     public function test_update_endpoint_updates_client(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'clients:update',
         ]);
@@ -362,12 +362,12 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
         $clientFake = Client::factory()->make();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.clients.update', [$data->organization->getKey(), $client->getKey()]), [
             'name' => $clientFake->name,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $response->assertJson(
             fn (AssertableJson $json) => $json
@@ -382,7 +382,7 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
 
     public function test_update_endpoint_can_archive_a_client(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'clients:update',
         ]);
@@ -390,13 +390,13 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
         $clientFake = Client::factory()->make();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.clients.update', [$data->organization->getKey(), $client->getKey()]), [
             'name'        => $clientFake->name,
             'is_archived' => true,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $response->assertJson(
             fn (AssertableJson $json) => $json
@@ -409,7 +409,7 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
 
     public function test_update_endpoint_can_unarchive_a_client(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'clients:update',
         ]);
@@ -417,13 +417,13 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
         $clientFake = Client::factory()->make();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->putJson(route('api.v1.clients.update', [$data->organization->getKey(), $client->getKey()]), [
             'name'        => $clientFake->name,
             'is_archived' => false,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertStatus(200);
         $response->assertJson(
             fn (AssertableJson $json) => $json
@@ -436,21 +436,21 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
 
     public function test_destroy_endpoint_fails_if_user_has_no_permission_to_delete_clients(): void
     {
-        // Arrange
+        /* Arrange */
         $data   = $this->createUserWithPermission();
         $client = Client::factory()->forOrganization($data->organization)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.clients.destroy', [$data->organization->getKey(), $client->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
     }
 
     public function test_destroy_endpoint_fails_if_user_is_not_part_of_client_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'clients:delete',
         ]);
@@ -458,10 +458,10 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
         $client            = Client::factory()->forOrganization($otherOrganization)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.clients.destroy', [$data->organization->getKey(), $client->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertForbidden();
         $this->assertDatabaseHas(Client::class, [
             'id'              => $client->getKey(),
@@ -472,7 +472,7 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
 
     public function test_destroy_endpoint_fails_if_client_is_still_in_use_by_project(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'clients:delete',
         ]);
@@ -480,10 +480,10 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
         $project = Project::factory()->forOrganization($data->organization)->forClient($client)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.clients.destroy', [$data->organization->getKey(), $client->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(400);
         $response->assertJsonPath('message', 'The client is still used by a project and can not be deleted.');
         $this->assertDatabaseHas(Client::class, [
@@ -493,17 +493,17 @@ class ClientEndpointTest extends ApiEndpointTestAbstract
 
     public function test_destroy_endpoint_deletes_client(): void
     {
-        // Arrange
+        /* Arrange */
         $data = $this->createUserWithPermission([
             'clients:delete',
         ]);
         $client = Client::factory()->forOrganization($data->organization)->create();
         Passport::actingAs($data->user);
 
-        // Act
+        /* Act */
         $response = $this->deleteJson(route('api.v1.clients.destroy', [$data->organization->getKey(), $client->getKey()]));
 
-        // Assert
+        /* Assert */
         $response->assertStatus(204);
         $response->assertNoContent();
         $this->assertDatabaseMissing(Client::class, [

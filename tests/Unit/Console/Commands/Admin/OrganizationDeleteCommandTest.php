@@ -15,7 +15,7 @@ class OrganizationDeleteCommandTest extends TestCaseWithDatabase
 {
     public function test_it_calls_the_deletion_service_with_the_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $this->mock(DeletionService::class, static function (MockInterface $mock) use ($organization): void {
             $mock->shouldReceive('deleteOrganization')
@@ -23,10 +23,10 @@ class OrganizationDeleteCommandTest extends TestCaseWithDatabase
                 ->once();
         });
 
-        // Act
+        /* Act */
         $command = $this->artisan('admin:organization:delete', ['organization' => $organization->getKey()]);
 
-        // Assert
+        /* Assert */
         $command->expectsOutput("Deleting organization with ID {$organization->getKey()}")
             ->expectsOutput("Organization with ID {$organization->getKey()} has been deleted.")
             ->assertExitCode(0);
@@ -34,26 +34,26 @@ class OrganizationDeleteCommandTest extends TestCaseWithDatabase
 
     public function test_it_fails_if_organization_does_not_exist(): void
     {
-        // Arrange
+        /* Arrange */
         $organizationId = Str::uuid()->toString();
 
-        // Act
+        /* Act */
         $command = $this->artisan('admin:organization:delete', ['organization' => $organizationId]);
 
-        // Assert
+        /* Assert */
         $command->expectsOutput('Organization with ID ' . $organizationId . ' not found.');
         $command->assertExitCode(1);
     }
 
     public function test_it_fails_if_organization_id_is_not_a_valid_uuid(): void
     {
-        // Arrange
+        /* Arrange */
         $organizationId = 'invalid-uuid';
 
-        // Act
+        /* Act */
         $command = $this->artisan('admin:organization:delete', ['organization' => $organizationId]);
 
-        // Assert
+        /* Assert */
         $command->expectsOutput('Organization ID must be a valid UUID.')
             ->assertExitCode(1);
     }

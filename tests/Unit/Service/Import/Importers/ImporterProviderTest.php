@@ -12,26 +12,26 @@ class ImporterProviderTest extends TestCase
 {
     public function test_register_importer_can_register_a_new_importer_for_example_in_an_extension(): void
     {
-        // Arrange
+        /* Arrange */
         $provider = new ImporterProvider();
 
-        // Act
+        /* Act */
         $provider->registerImporter('some_provider_importer', ClockifyProjectsImporter::class);
 
-        // Assert
+        /* Assert */
         $importer = $provider->getImporter('some_provider_importer');
         $this->assertSame(ClockifyProjectsImporter::class, $importer::class);
     }
 
     public function test_get_importer_keys_return_the_keys_of_the_available_importers(): void
     {
-        // Arrange
+        /* Arrange */
         $provider = new ImporterProvider();
 
-        // Act
+        /* Act */
         $keys = $provider->getImporterKeys();
 
-        // Assert
+        /* Assert */
         $this->assertSame([
             'toggl_time_entries',
             'toggl_data_importer',

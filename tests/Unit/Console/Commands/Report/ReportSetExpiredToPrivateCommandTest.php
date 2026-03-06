@@ -14,7 +14,7 @@ class ReportSetExpiredToPrivateCommandTest extends TestCaseWithDatabase
 {
     public function test_command_sets_expired_reports_to_private(): void
     {
-        // Arrange
+        /* Arrange */
         $reportPrivateExpired = Report::factory()->private()->create([
             'public_until' => now()->subDay(),
         ]);
@@ -34,10 +34,10 @@ class ReportSetExpiredToPrivateCommandTest extends TestCaseWithDatabase
             'public_until' => now()->addDay(),
         ]);
 
-        // Act
+        /* Act */
         $exitCode = $this->withoutMockingConsoleOutput()->artisan('report:set-expired-to-private');
 
-        // Assert
+        /* Assert */
         $this->assertSame(Command::SUCCESS, $exitCode);
         $output = Artisan::output();
         $this->assertStringContainsString('Makes public reports private if the public_until date has passed...', $output);
@@ -66,7 +66,7 @@ class ReportSetExpiredToPrivateCommandTest extends TestCaseWithDatabase
 
     public function test_command_sets_expired_reports_to_private_in_dry_run_mode(): void
     {
-        // Arrange
+        /* Arrange */
         $reportPrivateExpired = Report::factory()->private()->create([
             'public_until' => now()->subDay(),
         ]);
@@ -86,10 +86,10 @@ class ReportSetExpiredToPrivateCommandTest extends TestCaseWithDatabase
             'public_until' => now()->addDay(),
         ]);
 
-        // Act
+        /* Act */
         $exitCode = $this->withoutMockingConsoleOutput()->artisan('report:set-expired-to-private', ['--dry-run' => true]);
 
-        // Assert
+        /* Assert */
         $this->assertSame(Command::SUCCESS, $exitCode);
         $output = Artisan::output();
         $this->assertStringContainsString('Makes public reports private if the public_until date has passed...', $output);

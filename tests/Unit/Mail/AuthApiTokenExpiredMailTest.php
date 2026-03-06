@@ -14,7 +14,7 @@ class AuthApiTokenExpiredMailTest extends TestCaseWithDatabase
 {
     public function test_mail_renders_content_correctly(): void
     {
-        // Arrange
+        /* Arrange */
         $user   = User::factory()->create();
         $client = Client::factory()->apiClient()->create();
         $token  = Token::factory()->forClient($client)->forUser($user)->create([
@@ -22,10 +22,10 @@ class AuthApiTokenExpiredMailTest extends TestCaseWithDatabase
         ]);
         $mail = new AuthApiTokenExpiredMail($token, $user);
 
-        // Act
+        /* Act */
         $rendered = $mail->render();
 
-        // Assert
+        /* Assert */
         $this->assertStringContainsString('The API token "TEST" will expire in 7 days!', $rendered);
     }
 }

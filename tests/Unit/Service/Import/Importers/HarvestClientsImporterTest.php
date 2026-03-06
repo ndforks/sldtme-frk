@@ -17,17 +17,17 @@ class HarvestClientsImporterTest extends ImporterTestAbstract
 {
     public function test_import_of_test_file_succeeds(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $timezone     = 'Europe/Vienna';
         $importer     = new HarvestClientsImporter();
         $importer->init($organization);
         $data = Storage::disk('testfiles')->get('harvest_clients_import_test_1.csv');
 
-        // Act
+        /* Act */
         $importer->importData($data, $timezone);
 
-        // Assert
+        /* Assert */
         $clients = Client::query()->whereBelongsTo($organization, 'organization')->get();
         $this->assertCount(2, $clients);
         $client1 = $clients->where('name', 'Example Client')->first();

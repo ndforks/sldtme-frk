@@ -11,12 +11,12 @@ class KernelTest extends TestCase
 {
     public function test_self_host_commands_schedule_time_is_consistent_with_app_key(): void
     {
-        // Arrange
+        /* Arrange */
         config([
             'app.key' => 'base64:cOXN4GLMXYjcdG0fKosnFogofXw1pNoXkLAViRH+a5Y=',
         ]);
 
-        // Act
+        /* Act */
         $schedule1      = app()->make(Kernel::class)->resolveConsoleSchedule();
         $firstRunEvents = collect($schedule1->events())->filter(
             fn ($event) => str_contains($event->command, 'self-host:check-for-update')
@@ -37,7 +37,7 @@ class KernelTest extends TestCase
             || str_contains($event->command, 'self-host:telemetry')
         );
 
-        // Assert
+        /* Assert */
         $this->assertCount(2, $firstRunEvents);
         $this->assertCount(2, $secondRunEvents);
         $this->assertCount(2, $thirdRunEvents);
@@ -51,69 +51,69 @@ class KernelTest extends TestCase
 
     public function test_self_hosting_telemetry_can_be_activated(): void
     {
-        // Arrange
+        /* Arrange */
         config([
             'scheduling.tasks.self_hosting_telemetry' => true,
         ]);
 
-        // Act
+        /* Act */
         $schedule = app()->make(Kernel::class)->resolveConsoleSchedule();
         $events   = collect($schedule->events())->filter(
             fn ($event) => str_contains($event->command, 'self-host:telemetry')
         );
 
-        // Assert
+        /* Assert */
         $this->assertCount(1, $events);
     }
 
     public function test_self_hosting_telemetry_can_be_deactivated(): void
     {
-        // Arrange
+        /* Arrange */
         config([
             'scheduling.tasks.self_hosting_telemetry' => false,
         ]);
 
-        // Act
+        /* Act */
         $schedule = app()->make(Kernel::class)->resolveConsoleSchedule();
         $events   = collect($schedule->events())->filter(
             fn ($event) => str_contains($event->command, 'self-host:telemetry')
         );
 
-        // Assert
+        /* Assert */
         $this->assertCount(0, $events);
     }
 
     public function test_self_hosting_check_for_update_can_be_activated(): void
     {
-        // Arrange
+        /* Arrange */
         config([
             'scheduling.tasks.self_hosting_check_for_update' => true,
         ]);
 
-        // Act
+        /* Act */
         $schedule = app()->make(Kernel::class)->resolveConsoleSchedule();
         $events   = collect($schedule->events())->filter(
             fn ($event) => str_contains($event->command, 'self-host:check-for-update')
         );
 
-        // Assert
+        /* Assert */
         $this->assertCount(1, $events);
     }
 
     public function test_self_hosting_check_for_update_can_be_deactivated(): void
     {
-        // Arrange
+        /* Arrange */
         config([
             'scheduling.tasks.self_hosting_check_for_update' => false,
         ]);
 
-        // Act
+        /* Act */
         $schedule = app()->make(Kernel::class)->resolveConsoleSchedule();
         $events   = collect($schedule->events())->filter(
             fn ($event) => str_contains($event->command, 'self-host:check-for-update')
         );
 
-        // Assert
+        /* Assert */
         $this->assertCount(0, $events);
     }
 }

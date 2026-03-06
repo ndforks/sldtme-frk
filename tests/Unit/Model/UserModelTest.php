@@ -21,22 +21,22 @@ class UserModelTest extends ModelTestAbstract
 {
     public function test_normal_user_can_not_access_admin_panel(): void
     {
-        // Arrange
+        /* Arrange */
         Config::set('auth.super_admins', ['some@email.test', 'other@email.test']);
         $user          = User::factory()->create();
         $panelProvider = new AdminPanelProvider(app());
         $mainPanel     = $panelProvider->panel(Panel::make());
 
-        // Act
+        /* Act */
         $canAccess = $user->canAccessPanel($mainPanel);
 
-        // Assert
+        /* Assert */
         $this->assertFalse($canAccess);
     }
 
     public function test_user_in_super_admin_config_can_access_admin_panel(): void
     {
-        // Arrange
+        /* Arrange */
         Config::set('auth.super_admins', ['some@email.test', 'other@email.test']);
         $user = User::factory()->create([
             'email' => 'some@email.test',
@@ -44,16 +44,16 @@ class UserModelTest extends ModelTestAbstract
         $panelProvider = new AdminPanelProvider(app());
         $mainPanel     = $panelProvider->panel(Panel::make());
 
-        // Act
+        /* Act */
         $canAccess = $user->canAccessPanel($mainPanel);
 
-        // Assert
+        /* Assert */
         $this->assertTrue($canAccess);
     }
 
     public function test_scope_belongs_to_organization_returns_only_users_of_organization_including_owners(): void
     {
-        // Arrange
+        /* Arrange */
         $owner        = User::factory()->create();
         $organization = Organization::factory()->withOwner($owner)->create();
         $user         = User::factory()->create();
@@ -66,12 +66,12 @@ class UserModelTest extends ModelTestAbstract
             'role' => Role::Employee->value,
         ]);
 
-        // Act
+        /* Act */
         $users = User::query()
             ->belongsToOrganization($organization)
             ->get();
 
-        // Assert
+        /* Assert */
         $this->assertCount(2, $users);
         $userIds = $users->pluck('id')->toArray();
         $this->assertContains($user->getKey(), $userIds);
@@ -80,15 +80,15 @@ class UserModelTest extends ModelTestAbstract
 
     public function test_it_has_many_time_entries(): void
     {
-        // Arrange
+        /* Arrange */
         $user        = User::factory()->create();
         $timeEntries = TimeEntry::factory()->forUser($user)->createMany(3);
 
-        // Act
+        /* Act */
         $user->refresh();
         $timeEntriesRel = $user->timeEntries;
 
-        // Assert
+        /* Assert */
         $this->assertNotNull($timeEntriesRel);
         $this->assertCount(3, $timeEntriesRel);
         $this->assertEqualsCanonicalizing(
@@ -99,7 +99,7 @@ class UserModelTest extends ModelTestAbstract
 
     public function test_it_has_many_project_members(): void
     {
-        // Arrange
+        /* Arrange */
         $user                = User::factory()->create();
         $otherUser           = User::factory()->create();
         $member              = Member::factory()->forUser($user)->create();
@@ -107,11 +107,11 @@ class UserModelTest extends ModelTestAbstract
         $projectMembers      = ProjectMember::factory()->forMember($member)->createMany(3);
         $otherProjectMembers = ProjectMember::factory()->forMember($otherMember)->createMany(3);
 
-        // Act
+        /* Act */
         $user->refresh();
         $projectMembersRel = $user->projectMembers;
 
-        // Assert
+        /* Assert */
         $this->assertNotNull($projectMembersRel);
         $this->assertCount(3, $projectMembersRel);
         $this->assertEqualsCanonicalizing(
@@ -122,7 +122,7 @@ class UserModelTest extends ModelTestAbstract
 
     public function test_scope_active_returns_only_non_placeholder_users(): void
     {
-        // Arrange
+        /* Arrange */
         $placeholder = User::factory()->create([
             'is_placeholder' => true,
         ]);
@@ -130,17 +130,17 @@ class UserModelTest extends ModelTestAbstract
             'is_placeholder' => false,
         ]);
 
-        // Act
+        /* Act */
         $activeUsers = User::query()->active()->get();
 
-        // Assert
+        /* Assert */
         $this->assertCount(1, $activeUsers);
         $this->assertTrue($activeUsers->first()->is($user));
     }
 
     public function test_it_has_many_access_tokens(): void
     {
-        // Arrange
+        /* Arrange */
         $user                  = User::factory()->create();
         $client                = new Client();
         $client->name          = 'desktop';
@@ -155,11 +155,11 @@ class UserModelTest extends ModelTestAbstract
         $token->revoked   = false;
         $token->save();
 
-        // Act
+        /* Act */
         $user->refresh();
         $tokensRel = $user->accessTokens;
 
-        // Assert
+        /* Assert */
         $this->assertNotNull($tokensRel);
         $this->assertCount(1, $tokensRel);
         $this->assertEqualsCanonicalizing(
@@ -170,7 +170,7 @@ class UserModelTest extends ModelTestAbstract
 
     public function test_it_has_many_auth_codes(): void
     {
-        // Arrange
+        /* Arrange */
         $user                  = User::factory()->create();
         $client                = new Client();
         $client->name          = 'desktop';
@@ -185,11 +185,11 @@ class UserModelTest extends ModelTestAbstract
         $authCode->revoked   = false;
         $authCode->save();
 
-        // Act
+        /* Act */
         $user->refresh();
         $authCodesRel = $user->authCodes;
 
-        // Assert
+        /* Assert */
         $this->assertNotNull($authCodesRel);
         $this->assertCount(1, $authCodesRel);
         $this->assertEqualsCanonicalizing(

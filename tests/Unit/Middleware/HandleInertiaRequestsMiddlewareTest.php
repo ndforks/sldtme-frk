@@ -18,7 +18,7 @@ class HandleInertiaRequestsMiddlewareTest extends MiddlewareTestAbstract
 {
     public function test_adds_billing_information_to_shared_data_of_inertia_requests(): void
     {
-        // Arrange
+        /* Arrange */
         $user  = $this->createUserWithPermission();
         $route = $this->createTestRoute();
         $this->mock(BillingContract::class, static function (MockInterface $mock): void {
@@ -29,10 +29,10 @@ class HandleInertiaRequestsMiddlewareTest extends MiddlewareTestAbstract
         });
         Passport::actingAs($user->user);
 
-        // Act
+        /* Act */
         $response = $this->get($route);
 
-        // Assert
+        /* Assert */
         $response->assertInertia(
             fn (Assert $page) => $page
                 ->where('billing.has_subscription', false)
@@ -44,7 +44,7 @@ class HandleInertiaRequestsMiddlewareTest extends MiddlewareTestAbstract
 
     public function test_adds_billing_information_to_shared_data_of_inertia_requests_with_active_trial(): void
     {
-        // Arrange
+        /* Arrange */
         $user       = $this->createUserWithPermission();
         $route      = $this->createTestRoute();
         $trialUntil = Carbon::now()->addDays(10);
@@ -56,10 +56,10 @@ class HandleInertiaRequestsMiddlewareTest extends MiddlewareTestAbstract
         });
         Passport::actingAs($user->user);
 
-        // Act
+        /* Act */
         $response = $this->get($route);
 
-        // Assert
+        /* Assert */
         $response->assertInertia(
             fn (Assert $page) => $page
                 ->where('billing.has_subscription', false)

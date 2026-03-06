@@ -12,7 +12,7 @@ class RecalculateSpentTimeForProjectTest extends TestCaseWithDatabase
 {
     public function test_recalculates_spent_time_for_project(): void
     {
-        // Arrange
+        /* Arrange */
         $project = Project::factory()->create([
             'spent_time' => 0,
         ]);
@@ -23,10 +23,10 @@ class RecalculateSpentTimeForProjectTest extends TestCaseWithDatabase
         $recalculateSpentTimeForProject = new RecalculateSpentTimeForProject($project);
         DB::enableQueryLog();
 
-        // Act
+        /* Act */
         $recalculateSpentTimeForProject->handle();
 
-        // Assert
+        /* Assert */
         self::assertCount(2, DB::getQueryLog());
         $project->refresh();
         self::assertEquals(21, $project->spent_time);
@@ -34,7 +34,7 @@ class RecalculateSpentTimeForProjectTest extends TestCaseWithDatabase
 
     public function test_does_not_save_project_if_value_is_already_correct(): void
     {
-        // Arrange
+        /* Arrange */
         $project = Project::factory()->create([
             'spent_time' => 21,
         ]);
@@ -45,10 +45,10 @@ class RecalculateSpentTimeForProjectTest extends TestCaseWithDatabase
         $recalculateSpentTimeForProject = new RecalculateSpentTimeForProject($project);
         DB::enableQueryLog();
 
-        // Act
+        /* Act */
         $recalculateSpentTimeForProject->handle();
 
-        // Assert
+        /* Assert */
         self::assertCount(1, DB::getQueryLog());
         $project->refresh();
         self::assertEquals(21, $project->spent_time);

@@ -21,7 +21,7 @@ class TogglTimeEntriesImporterTest extends ImporterTestAbstract
 {
     public function test_import_of_test_file_succeeds(): void
     {
-        // Arrange
+        /* Arrange */
         Queue::fake([
             RecalculateSpentTimeForProject::class,
             RecalculateSpentTimeForTask::class,
@@ -32,14 +32,14 @@ class TogglTimeEntriesImporterTest extends ImporterTestAbstract
         $importer->init($organization);
         $data = Storage::disk('testfiles')->get('toggl_time_entries_import_test_1.csv');
 
-        // Act
+        /* Act */
         DB::enableQueryLog();
         DB::flushQueryLog();
         $importer->importData($data, $timezone);
         $report   = $importer->getReport();
         $queryLog = DB::getQueryLog();
 
-        // Assert
+        /* Assert */
         $this->assertCount(22, $queryLog);
         $testScenario = $this->checkTestScenarioAfterImportExcludingTimeEntries();
         $this->checkTimeEntries($testScenario);
@@ -55,7 +55,7 @@ class TogglTimeEntriesImporterTest extends ImporterTestAbstract
 
     public function test_import_of_test_with_special_characters_description_succeeds(): void
     {
-        // Arrange
+        /* Arrange */
         Queue::fake([
             RecalculateSpentTimeForProject::class,
             RecalculateSpentTimeForTask::class,
@@ -67,11 +67,11 @@ class TogglTimeEntriesImporterTest extends ImporterTestAbstract
         // Description: \\ 🔥 Special characters  """`!@#$%^&*()_+\-=\[\]{};':"\\|,.''<>\/?~ \\\
         $data = Storage::disk('testfiles')->get('toggl_time_entries_import_test_2.csv');
 
-        // Act
+        /* Act */
         $importer->importData($data, $timezone);
         $report = $importer->getReport();
 
-        // Assert
+        /* Assert */
         $timeEntry = TimeEntry::first();
         $this->assertSame('\\\\ 🔥 Special characters  """`!@#$%^&*()_+\-=\[\]{};\':"\\\\|,.\'\'<>\/?~ \\\\\\', $timeEntry->description);
         $this->assertSame(1, $report->timeEntriesCreated);
@@ -84,7 +84,7 @@ class TogglTimeEntriesImporterTest extends ImporterTestAbstract
 
     public function test_import_of_test_file_twice_succeeds(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $timezone     = 'Europe/Vienna';
         $importer     = new TogglTimeEntriesImporter();
@@ -98,14 +98,14 @@ class TogglTimeEntriesImporterTest extends ImporterTestAbstract
             RecalculateSpentTimeForTask::class,
         ]);
 
-        // Act
+        /* Act */
         DB::enableQueryLog();
         DB::flushQueryLog();
         $importer->importData($data, $timezone);
         $report   = $importer->getReport();
         $queryLog = DB::getQueryLog();
 
-        // Assert
+        /* Assert */
         $this->assertCount(14, $queryLog);
         $testScenario = $this->checkTestScenarioAfterImportExcludingTimeEntries();
         $this->checkTimeEntries($testScenario, true);

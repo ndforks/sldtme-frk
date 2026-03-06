@@ -22,16 +22,16 @@ class ExportServiceTest extends TestCaseWithDatabase
 {
     public function test_export_creates_zip_with_all_the_data_of_the_organization(): void
     {
-        // Arrange
+        /* Arrange */
         $this->mockPrivateStorage();
         $organization1 = $this->getFullOrganization();
         $organization2 = $this->getFullOrganization();
 
-        // Act
+        /* Act */
         $exportService = app(ExportService::class);
         $zip           = $exportService->export($organization1);
 
-        // Assert
+        /* Assert */
         Storage::disk(config('filesystems.default'))->assertExists($zip);
     }
 

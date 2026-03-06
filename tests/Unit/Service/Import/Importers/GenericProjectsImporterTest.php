@@ -20,18 +20,18 @@ class GenericProjectsImporterTest extends ImporterTestAbstract
 {
     public function test_import_of_test_file_succeeds(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $timezone     = 'Europe/Vienna';
         $importer     = new GenericProjectsImporter();
         $importer->init($organization);
         $data = Storage::disk('testfiles')->get('generic_projects_import_test_1.csv');
 
-        // Act
+        /* Act */
         $importer->importData($data, $timezone);
         $report = $importer->getReport();
 
-        // Assert
+        /* Assert */
         $clients = Client::all();
         $this->assertCount(2, $clients);
         $client1 = $clients->firstWhere('name', 'Big Company');

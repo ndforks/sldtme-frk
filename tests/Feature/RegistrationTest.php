@@ -34,12 +34,12 @@ class RegistrationTest extends TestCase
 
     public function test_new_users_can_register(): void
     {
-        // Arrange
+        /* Arrange */
         Event::fake([
             NewsletterRegistered::class,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->post('/register', [
             'name'                  => 'Test User',
             'email'                 => 'test@example.com',
@@ -48,7 +48,7 @@ class RegistrationTest extends TestCase
             'terms'                 => Jetstream::hasTermsAndPrivacyPolicyFeature(),
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertValid();
         $this->assertAuthenticated();
         $response->assertRedirect(RouteServiceProvider::HOME);
@@ -64,13 +64,13 @@ class RegistrationTest extends TestCase
 
     public function test_user_registration_fails_if_registration_is_deactivated(): void
     {
-        // Arrange
+        /* Arrange */
         Event::fake([
             NewsletterRegistered::class,
         ]);
         Config::set('app.enable_registration', false);
 
-        // Act
+        /* Act */
         $response = $this->post('/register', [
             'name'                  => 'Test User',
             'email'                 => 'test@example.com',
@@ -79,7 +79,7 @@ class RegistrationTest extends TestCase
             'terms'                 => Jetstream::hasTermsAndPrivacyPolicyFeature(),
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertInvalid([
             'email' => 'Registration is disabled.',
         ]);
@@ -89,7 +89,7 @@ class RegistrationTest extends TestCase
 
     public function test_new_user_can_not_register_with_likely_invalid_domain(): void
     {
-        // Act
+        /* Act */
         $response = $this->post('/register', [
             'name'                  => 'Test User',
             'email'                 => 'peter.test@gmail',
@@ -98,13 +98,13 @@ class RegistrationTest extends TestCase
             'terms'                 => Jetstream::hasTermsAndPrivacyPolicyFeature(),
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertInvalid(['email']);
     }
 
     public function test_new_user_can_register_with_uppercase_email(): void
     {
-        // Act
+        /* Act */
         $response = $this->post('/register', [
             'name'                  => 'Test User',
             'email'                 => 'PETER.test@gmail.com ',
@@ -113,18 +113,18 @@ class RegistrationTest extends TestCase
             'terms'                 => Jetstream::hasTermsAndPrivacyPolicyFeature(),
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertValid(['email']);
     }
 
     public function test_new_users_can_consent_to_newsletter_during_registration(): void
     {
-        // Arrange
+        /* Arrange */
         Event::fake([
             NewsletterRegistered::class,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->post('/register', [
             'name'                  => 'Test User',
             'email'                 => 'test@example.com',
@@ -134,7 +134,7 @@ class RegistrationTest extends TestCase
             'newsletter_consent'    => true,
         ]);
 
-        // Assert
+        /* Assert */
         $response->assertValid();
         $this->assertAuthenticated();
         $response->assertRedirect(RouteServiceProvider::HOME);
@@ -146,7 +146,7 @@ class RegistrationTest extends TestCase
 
     public function test_new_users_can_register_and_frontend_can_send_timezone_for_user(): void
     {
-        // Act
+        /* Act */
         $response = $this->post('/register', [
             'name'                  => 'Test User',
             'email'                 => 'test@example.com',
@@ -156,7 +156,7 @@ class RegistrationTest extends TestCase
             'timezone'              => 'Europe/Berlin',
         ]);
 
-        // Assert
+        /* Assert */
         $this->assertAuthenticated();
         $response->assertRedirect(RouteServiceProvider::HOME);
         $user = User::where('email', 'test@example.com')->firstOrFail();
@@ -165,7 +165,7 @@ class RegistrationTest extends TestCase
 
     public function test_new_users_can_register_and_uses_ip_lookup_service_to_get_information_about_currency_and_start_of_week(): void
     {
-        // Arrange
+        /* Arrange */
         $this->mock(IpLookupServiceContract::class, static function ($mock): void {
             $mock->shouldReceive('lookup')->andReturn(new IpLookupResponseDto(
                 'America/New_York',
@@ -174,7 +174,7 @@ class RegistrationTest extends TestCase
             ));
         });
 
-        // Act
+        /* Act */
         $response = $this->post('/register', [
             'name'                  => 'Test User',
             'email'                 => 'test@example.com',
@@ -184,7 +184,7 @@ class RegistrationTest extends TestCase
             'timezone'              => 'Europe/Berlin',
         ]);
 
-        // Assert
+        /* Assert */
         $this->assertAuthenticated();
         $response->assertRedirect(RouteServiceProvider::HOME);
         /** @var User $user */
@@ -196,7 +196,7 @@ class RegistrationTest extends TestCase
 
     public function test_new_users_can_register_and_uses_ip_lookup_service_to_get_information_about_timezone_if_client_did_not_send_one(): void
     {
-        // Arrange
+        /* Arrange */
         $this->mock(IpLookupServiceContract::class, static function ($mock): void {
             $mock->shouldReceive('lookup')->andReturn(new IpLookupResponseDto(
                 'America/New_York',
@@ -205,7 +205,7 @@ class RegistrationTest extends TestCase
             ));
         });
 
-        // Act
+        /* Act */
         $response = $this->post('/register', [
             'name'                  => 'Test User',
             'email'                 => 'test@example.com',
@@ -215,7 +215,7 @@ class RegistrationTest extends TestCase
             'timezone'              => null,
         ]);
 
-        // Assert
+        /* Assert */
         $this->assertAuthenticated();
         $response->assertRedirect(RouteServiceProvider::HOME);
         /** @var User $user */
@@ -227,7 +227,7 @@ class RegistrationTest extends TestCase
 
     public function test_new_users_can_register_and_uses_ip_lookup_service_to_get_information_about_timezone_if_client_sends_invalid_one(): void
     {
-        // Arrange
+        /* Arrange */
         $this->mock(IpLookupServiceContract::class, static function ($mock): void {
             $mock->shouldReceive('lookup')->andReturn(new IpLookupResponseDto(
                 'America/New_York',
@@ -236,7 +236,7 @@ class RegistrationTest extends TestCase
             ));
         });
 
-        // Act
+        /* Act */
         $response = $this->post('/register', [
             'name'                  => 'Test User',
             'email'                 => 'test@example.com',
@@ -246,7 +246,7 @@ class RegistrationTest extends TestCase
             'timezone'              => 'Unknown timezone',
         ]);
 
-        // Assert
+        /* Assert */
         $this->assertAuthenticated();
         $response->assertRedirect(RouteServiceProvider::HOME);
         /** @var User $user */
@@ -258,7 +258,7 @@ class RegistrationTest extends TestCase
 
     public function test_new_users_can_register_and_legacy_timezone_from_client_is_mapped_to_new_timezone(): void
     {
-        // Arrange
+        /* Arrange */
         $this->mock(IpLookupServiceContract::class, static function ($mock): void {
             $mock->shouldReceive('lookup')->andReturn(new IpLookupResponseDto(
                 'America/New_York',
@@ -267,7 +267,7 @@ class RegistrationTest extends TestCase
             ));
         });
 
-        // Act
+        /* Act */
         $response = $this->post('/register', [
             'name'                  => 'Test User',
             'email'                 => 'test@example.com',
@@ -277,7 +277,7 @@ class RegistrationTest extends TestCase
             'timezone'              => 'Asia/Calcutta',
         ]);
 
-        // Assert
+        /* Assert */
         $this->assertAuthenticated();
         $response->assertRedirect(RouteServiceProvider::HOME);
         /** @var User $user */
@@ -306,12 +306,12 @@ class RegistrationTest extends TestCase
 
     public function test_new_users_can_not_register_if_user_with_email_already_exists(): void
     {
-        // Arrange
+        /* Arrange */
         $user = User::factory()->create([
             'email' => 'test@example.com',
         ]);
 
-        // Act
+        /* Act */
         $response = $this->post('/register', [
             'name'                  => 'Test User',
             'email'                 => 'test@example.com',
@@ -326,13 +326,13 @@ class RegistrationTest extends TestCase
 
     public function test_new_users_can_register_if_placeholder_user_with_email_already_exists(): void
     {
-        // Arrange
+        /* Arrange */
         $user = User::factory()->create([
             'email'          => 'test@example.com',
             'is_placeholder' => true,
         ]);
 
-        // Act
+        /* Act */
         $response = $this->post('/register', [
             'name'                  => 'Test User',
             'email'                 => 'test@example.com',

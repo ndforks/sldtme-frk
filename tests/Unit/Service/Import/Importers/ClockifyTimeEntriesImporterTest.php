@@ -17,18 +17,18 @@ class ClockifyTimeEntriesImporterTest extends ImporterTestAbstract
 {
     public function test_import_of_test_file_succeeds(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $timezone     = 'Europe/Vienna';
         $importer     = new ClockifyTimeEntriesImporter();
         $importer->init($organization);
         $data = Storage::disk('testfiles')->get('clockify_time_entries_import_test_1.csv');
 
-        // Act
+        /* Act */
         $importer->importData($data, $timezone);
         $report = $importer->getReport();
 
-        // Assert
+        /* Assert */
         $testScenario = $this->checkTestScenarioAfterImportExcludingTimeEntries();
         $this->checkTimeEntries($testScenario);
         $this->assertSame(2, $report->timeEntriesCreated);
@@ -41,7 +41,7 @@ class ClockifyTimeEntriesImporterTest extends ImporterTestAbstract
 
     public function test_import_of_test_with_special_characters_description_succeeds(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $timezone     = 'Europe/Vienna';
         $importer     = new ClockifyTimeEntriesImporter();
@@ -49,11 +49,11 @@ class ClockifyTimeEntriesImporterTest extends ImporterTestAbstract
         // Description: \\ 🔥 Special characters  """`!@#$%^&*()_+\-=\[\]{};':"\\|,.''<>\/?~ \\\
         $data = Storage::disk('testfiles')->get('clockify_time_entries_import_test_2.csv');
 
-        // Act
+        /* Act */
         $importer->importData($data, $timezone);
         $report = $importer->getReport();
 
-        // Assert
+        /* Assert */
         $timeEntry = TimeEntry::first();
         $this->assertSame('\\\\ 🔥 Special characters  \'\'\'\'\'\'`!@#$%^&*()_+\-=\[\]{};\':\'\'\\\\|,.\'\'<>\/?~ \\\\\\', $timeEntry->description);
         $this->assertSame(1, $report->timeEntriesCreated);
@@ -66,7 +66,7 @@ class ClockifyTimeEntriesImporterTest extends ImporterTestAbstract
 
     public function test_import_of_test_file_twice_succeeds(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $timezone     = 'Europe/Vienna';
         $importer     = new ClockifyTimeEntriesImporter();
@@ -76,11 +76,11 @@ class ClockifyTimeEntriesImporterTest extends ImporterTestAbstract
         $importer = new ClockifyTimeEntriesImporter();
         $importer->init($organization);
 
-        // Act
+        /* Act */
         $importer->importData($data, $timezone);
         $report = $importer->getReport();
 
-        // Assert
+        /* Assert */
         $testScenario = $this->checkTestScenarioAfterImportExcludingTimeEntries();
         $this->checkTimeEntries($testScenario, true);
         $this->assertSame(2, $report->timeEntriesCreated);
@@ -93,18 +93,18 @@ class ClockifyTimeEntriesImporterTest extends ImporterTestAbstract
 
     public function test_import_fails_if_month_in_date_is_bigger_than_12(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $timezone     = 'Europe/Vienna';
         $importer     = new ClockifyTimeEntriesImporter();
         $importer->init($organization);
         $data = Storage::disk('testfiles')->get('clockify_time_entries_import_test_3.csv');
 
-        // Act
+        /* Act */
         try {
             $importer->importData($data, $timezone);
         } catch (ImportException $e) {
-            // Assert
+            /* Assert */
             $this->assertSame('Start date ("13/15/2024") is invalid, please select the correct date format before exporting from Clockify', $e->getMessage());
 
             return;

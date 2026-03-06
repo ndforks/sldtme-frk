@@ -11,15 +11,15 @@ class HealthCheckEndpointTest extends EndpointTestAbstract
 {
     public function test_up_endpoint_returns_ok(): void
     {
-        // Arrange
+        /* Arrange */
         DB::enableQueryLog();
         DB::flushQueryLog();
 
-        // Act
+        /* Act */
         $response = $this->get('health-check/up');
         $queryLog = DB::getQueryLog();
 
-        // Assert
+        /* Assert */
         $this->assertCount(0, $queryLog);
         $response->assertSuccessful();
         $response->assertExactJson([
@@ -29,13 +29,13 @@ class HealthCheckEndpointTest extends EndpointTestAbstract
 
     public function test_debug_endpoint_returns_ok(): void
     {
-        // Arrange
+        /* Arrange */
         config(['app.debug' => false]);
 
-        // Act
+        /* Act */
         $response = $this->get('health-check/debug');
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertExactJsonStructure([
             'date_time_app',
@@ -54,13 +54,13 @@ class HealthCheckEndpointTest extends EndpointTestAbstract
 
     public function test_debug_endpoint_returns_more_information_if_debug_mode_is_enabled(): void
     {
-        // Arrange
+        /* Arrange */
         config(['app.debug' => true]);
 
-        // Act
+        /* Act */
         $response = $this->get('health-check/debug');
 
-        // Assert
+        /* Assert */
         $response->assertSuccessful();
         $response->assertExactJsonStructure([
             'app_debug',

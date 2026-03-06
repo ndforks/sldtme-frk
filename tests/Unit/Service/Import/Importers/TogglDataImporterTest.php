@@ -17,13 +17,13 @@ class TogglDataImporterTest extends ImporterTestAbstract
 {
     public function test_import_throws_exception_if_data_is_not_zip(): void
     {
-        // Arrange
+        /* Arrange */
         $organization = Organization::factory()->create();
         $timezone     = 'Europe/Vienna';
         $importer     = new TogglDataImporter();
         $importer->init($organization);
 
-        // Act
+        /* Act */
         try {
             $importer->importData('not a zip', $timezone);
         } catch (Exception $e) {
@@ -37,7 +37,7 @@ class TogglDataImporterTest extends ImporterTestAbstract
 
     public function test_import_of_test_file_succeeds(): void
     {
-        // Arrange
+        /* Arrange */
         $zipPath      = $this->createTestZip('toggl_data_import_test_1');
         $timezone     = 'Europe/Vienna';
         $organization = Organization::factory()->create();
@@ -45,11 +45,11 @@ class TogglDataImporterTest extends ImporterTestAbstract
         $importer->init($organization);
         $data = file_get_contents($zipPath);
 
-        // Act
+        /* Act */
         $importer->importData($data, $timezone);
         $report = $importer->getReport();
 
-        // Assert
+        /* Assert */
         $this->checkTestScenarioAfterImportExcludingTimeEntries(true);
         $this->assertSame(0, $report->timeEntriesCreated);
         $this->assertSame(2, $report->tagsCreated);
@@ -61,7 +61,7 @@ class TogglDataImporterTest extends ImporterTestAbstract
 
     public function test_import_of_test_file_twice_succeeds(): void
     {
-        // Arrange
+        /* Arrange */
         $zipPath      = $this->createTestZip('toggl_data_import_test_1');
         $timezone     = 'Europe/Vienna';
         $organization = Organization::factory()->create();
@@ -72,11 +72,11 @@ class TogglDataImporterTest extends ImporterTestAbstract
         $importer = new TogglDataImporter();
         $importer->init($organization);
 
-        // Act
+        /* Act */
         $importer->importData($data, $timezone);
         $report = $importer->getReport();
 
-        // Assert
+        /* Assert */
         $this->checkTestScenarioAfterImportExcludingTimeEntries(true);
         $this->assertSame(0, $report->timeEntriesCreated);
         $this->assertSame(0, $report->tagsCreated);
@@ -88,7 +88,7 @@ class TogglDataImporterTest extends ImporterTestAbstract
 
     public function test_import_of_user_with_unknown_timezone_will_be_mapped_to_utc(): void
     {
-        // Arrange
+        /* Arrange */
         $zipPath      = $this->createTestZip('toggl_data_import_test_2');
         $timezone     = 'Europe/Vienna';
         $organization = Organization::factory()->create();
@@ -96,11 +96,11 @@ class TogglDataImporterTest extends ImporterTestAbstract
         $importer->init($organization);
         $data = file_get_contents($zipPath);
 
-        // Act
+        /* Act */
         $importer->importData($data, $timezone);
         $report = $importer->getReport();
 
-        // Assert
+        /* Assert */
         $this->assertSame(0, $report->timeEntriesCreated);
         $this->assertSame(2, $report->tagsCreated);
         $this->assertSame(2, $report->tasksCreated);
