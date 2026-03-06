@@ -1,8 +1,10 @@
 <?php
 
-namespace Tests\Unit\Filament\Resources;
+namespace Unit\Filament\Resources;
 
 use App\Filament\Resources\OrganizationInvitations\OrganizationInvitationResource;
+use App\Filament\Resources\OrganizationInvitations\Pages\ListOrganizationInvitations;
+use App\Filament\Resources\OrganizationInvitations\Pages\EditOrganizationInvitation;
 use App\Models\Organization;
 use App\Models\OrganizationInvitation;
 use App\Models\User;
@@ -34,7 +36,7 @@ class OrganizationInvitationResourceTest extends FilamentTestCase
         $organizationInvitations = OrganizationInvitation::factory()->forOrganization($organization)->createMany(5);
 
         /* Act */
-        $response = Livewire::test(OrganizationInvitations\Pages\ListOrganizationInvitations::class);
+        $response = Livewire::test(ListOrganizationInvitations::class);
 
         /* Assert */
         $response->assertSuccessful();
@@ -48,7 +50,7 @@ class OrganizationInvitationResourceTest extends FilamentTestCase
         $organizationInvitation = OrganizationInvitation::factory()->forOrganization($organization)->create();
 
         /* Act */
-        $response = Livewire::test(OrganizationInvitations\Pages\EditOrganizationInvitation::class, [
+        $response = Livewire::test(EditOrganizationInvitation::class, [
             'record' => $organizationInvitation->getKey(),
         ]);
 
@@ -63,7 +65,7 @@ class OrganizationInvitationResourceTest extends FilamentTestCase
         $organizationInvitation = OrganizationInvitation::factory()->forOrganization($organization)->create();
 
         /* Act */
-        $response = Livewire::test(OrganizationInvitations\Pages\EditOrganizationInvitation::class, [
+        $response = Livewire::test(EditOrganizationInvitation::class, [
             'record' => $organizationInvitation->getKey(),
         ])->callAction(DeleteAction::class);
 
