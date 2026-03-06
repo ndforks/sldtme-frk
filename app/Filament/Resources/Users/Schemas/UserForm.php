@@ -4,11 +4,15 @@ namespace App\Filament\Resources\Users\Schemas;
 
 use App\Enums\Weekday;
 use App\Models\User;
+use App\Service\TimezoneService;
+use Brick\Money\ISOCurrencyProvider;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Hash;
+use Korridor\LaravelModelValidationRules\Rules\UniqueEloquent;
 
 class UserForm
 {
@@ -81,7 +85,8 @@ class UserForm
                         $currencies = ISOCurrencyProvider::getInstance()->getAvailableCurrencies();
                         $select     = [];
                         foreach ($currencies as $currency) {
-                            $select[$currency->getCurrencyCode()] = $currency->getName() . ' (' . $currency->getCurrencyCode() . ')';
+                            $currencyCode = $currency->getCurrencyCode();
+                            $select[$currencyCode] = $currency->getName() . ' (' . $currencyCode . ')';
                         }
 
                         return $select;
