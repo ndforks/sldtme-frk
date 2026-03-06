@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Concerns\CustomAuditable;
-use App\Models\Concerns\HasUuids;
 use Database\Factories\OrganizationInvitationFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +11,7 @@ use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
- * @property string       $id
+ * @property int          $id
  * @property string       $email
  * @property string       $role
  * @property string       $organization_id
@@ -28,8 +27,6 @@ class OrganizationInvitation extends Model implements AuditableContract
 
     /** @use HasFactory<OrganizationInvitationFactory> */
     use HasFactory;
-
-    use HasUuids;
 
     /**
      * The table associated with the model.

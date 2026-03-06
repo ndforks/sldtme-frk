@@ -29,6 +29,12 @@ return new class () extends Migration {
             $table->string('interval_format')->nullable();
             $table->string('time_format')->nullable();
 
+            $table->foreign('user_id', 'organizations_user_id_foreign')
+                ->references('id')
+                ->on('users')
+                ->restrictOnDelete()
+                ->cascadeOnUpdate();
+
             $table->timestamps();
         });
     }

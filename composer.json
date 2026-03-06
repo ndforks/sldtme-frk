@@ -105,6 +105,12 @@
         "ide-helper": [
             "@php artisan ide-helper:generate",
             "@php artisan ide-helper:meta"
+        ],
+        "aargh": [
+            "@php artisan config:clear",
+            "@php artisan cache:clear",
+            "@php artisan route:clear",
+            "@php artisan view:clear"
         ]
     },
     "extra": {

@@ -13,13 +13,7 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        Schema::table('oauth_access_tokens', static function (Blueprint $table): void {
-            $table->foreign('client_id')
-                ->references('id')
-                ->on('oauth_clients')
-                ->restrictOnDelete()
-                ->cascadeOnUpdate();
-        });
+        Schema::table('oauth_access_tokens', static function (Blueprint $table): void {});
     }
 
     public function down(): void

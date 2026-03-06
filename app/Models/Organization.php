@@ -8,18 +8,15 @@ use App\Enums\IntervalFormat;
 use App\Enums\NumberFormat;
 use App\Enums\TimeFormat;
 use App\Models\Concerns\CustomAuditable;
-use App\Models\Concerns\HasUuids;
 use Database\Factories\OrganizationFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 //use Laravel\Jetstream\Events\TeamCreated;
 //use Laravel\Jetstream\Events\TeamDeleted;
 //use Laravel\Jetstream\Events\TeamUpdated;
@@ -27,7 +24,7 @@ use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
- * @property string                                  $id
+ * @property int                                     $id
  * @property string                                  $name
  * @property bool                                    $personal_team
  * @property string                                  $currency
@@ -57,8 +54,6 @@ class Organization extends Model implements AuditableContract
 
     /** @use HasFactory<OrganizationFactory> */
     use HasFactory;
-
-    use HasUuids;
 
     /**
      * The attributes that should be cast.
@@ -167,23 +162,5 @@ class Organization extends Model implements AuditableContract
     {
         return $this->users()
             ->where('is_placeholder', false);
-    }
-
-    /**
-     * This method prevents an unhandled exception when the ID is not a UUID.
-     * Normally this can be fixed with a route pattern, but Jetstream does not use route model binding.
-     *
-     * @param array<string> $columns
-     */
-    public function findOrFail(string $id, array $columns = ['*']): JetstreamTeam
-    {
-        if ( ! Str::isUuid($id)) {
-            throw (new ModelNotFoundException())->setModel(
-                self::class,
-                $id
-            );
-        }
-
-        return parent::findOrFail($id, $columns);
     }
 }
