@@ -11,6 +11,8 @@ use App\Filament\Resources\Clients;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\UsesClass;
 use Tests\Unit\Filament\FilamentTestCase;
+use App\Filament\Resources\Clients\Pages\EditClient;
+use App\Filament\Resources\Clients\Pages\CreateClient;
 
 #[UsesClass(ClientResource::class)]
 class ClientResourceTest extends FilamentTestCase
@@ -45,7 +47,7 @@ class ClientResourceTest extends FilamentTestCase
         $client = Client::factory()->create();
 
         /* Act */
-        $response = Livewire::test(Clients\Pages\EditClient::class, ['record' => $client->getKey()]);
+        $response = Livewire::test(EditClient::class, ['record' => $client->getKey()]);
 
         /* Assert */
         $response->assertSuccessful();
@@ -61,7 +63,7 @@ class ClientResourceTest extends FilamentTestCase
         ];
 
         /* Act */
-        $response = Livewire::test(Clients\Pages\CreateClient::class)
+        $response = Livewire::test(CreateClient::class)
             ->fillForm($payload)
             ->call('create');
 
@@ -74,7 +76,7 @@ class ClientResourceTest extends FilamentTestCase
     public function test_cannot_create_client_without_required_fields(): void
     {
         /* Act */
-        $response = Livewire::test(Clients\Pages\CreateClient::class)
+        $response = Livewire::test(CreateClient::class)
             ->fillForm([])
             ->call('create');
 
@@ -92,7 +94,7 @@ class ClientResourceTest extends FilamentTestCase
         ];
 
         /* Act */
-        $response = Livewire::test(Clients\Pages\EditClient::class, ['record' => $client->getKey()])
+        $response = Livewire::test(EditClient::class, ['record' => $client->getKey()])
             ->fillForm($payload)
             ->call('save');
 
@@ -112,7 +114,7 @@ class ClientResourceTest extends FilamentTestCase
         ];
 
         /* Act */
-        $response = Livewire::test(Clients\Pages\EditClient::class, ['record' => $client->getKey()])
+        $response = Livewire::test(EditClient::class, ['record' => $client->getKey()])
             ->fillForm($payload)
             ->call('save');
 
@@ -126,7 +128,7 @@ class ClientResourceTest extends FilamentTestCase
         $client = Client::factory()->create();
 
         /* Act */
-        $response = Livewire::test(Clients\Pages\EditClient::class, ['record' => $client->getKey()])
+        $response = Livewire::test(EditClient::class, ['record' => $client->getKey()])
             ->callAction('delete');
 
         /* Assert */

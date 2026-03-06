@@ -1,8 +1,12 @@
 <?php
 
-namespace Tests\Unit\Filament\Resources;
+namespace Unit\Filament\Resources;
 
 use App\Filament\Resources\Organizations\OrganizationResource;
+use App\Filament\Resources\Organizations\Pages\EditOrganization;
+use App\Filament\Resources\Organizations\Pages\ListOrganizations;
+use App\Filament\Resources\Organizations\RelationManagers\InvitationsRelationManager;
+use App\Filament\Resources\Organizations\RelationManagers\UsersRelationManager;
 use App\Models\Organization;
 use App\Models\OrganizationInvitation;
 use App\Models\User;
@@ -36,7 +40,7 @@ class OrganizationResourceTest extends FilamentTestCase
         ])->createMany(5);
 
         /* Act */
-        $response = Livewire::test(Organizations\Pages\ListOrganizations::class);
+        $response = Livewire::test(ListOrganizations::class);
 
         /* Assert */
         $response->assertSuccessful();
@@ -49,7 +53,7 @@ class OrganizationResourceTest extends FilamentTestCase
         $organization = Organization::factory()->create();
 
         /* Act */
-        $response = Livewire::test(Organizations\Pages\EditOrganization::class, ['record' => $organization->getKey()]);
+        $response = Livewire::test(EditOrganization::class, ['record' => $organization->getKey()]);
 
         /* Assert */
         $response->assertSuccessful();
@@ -66,7 +70,7 @@ class OrganizationResourceTest extends FilamentTestCase
         });
 
         /* Act */
-        $response = Livewire::test(Organizations\Pages\EditOrganization::class, ['record' => $user->organization->getKey()])
+        $response = Livewire::test(EditOrganization::class, ['record' => $user->organization->getKey()])
             ->callAction('delete')
             ->assertHasNoActionErrors();
 
@@ -84,9 +88,9 @@ class OrganizationResourceTest extends FilamentTestCase
         $organization->users()->attach($user2);
 
         /* Act */
-        $response = Livewire::test(Organizations\RelationManagers\UsersRelationManager::class, [
+        $response = Livewire::test(UsersRelationManager::class, [
             'ownerRecord' => $organization,
-            'pageClass'   => Organizations\Pages\EditOrganization::class,
+            'pageClass'   => EditOrganization::class,
         ]);
 
         /* Assert */
@@ -101,9 +105,9 @@ class OrganizationResourceTest extends FilamentTestCase
         $organizationInvitations = OrganizationInvitation::factory()->forOrganization($organization)->createMany(5);
 
         /* Act */
-        $response = Livewire::test(Organizations\RelationManagers\InvitationsRelationManager::class, [
+        $response = Livewire::test(InvitationsRelationManager::class, [
             'ownerRecord' => $organization,
-            'pageClass'   => Organizations\Pages\EditOrganization::class,
+            'pageClass'   => EditOrganization::class,
         ]);
 
         /* Assert */
